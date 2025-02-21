@@ -1,0 +1,7 @@
+{
+    "mandatoryAffixes": [
+        "TKA"
+    ],
+    "obsoleteTagAllowedVersions": "25.0",
+    "obsoleteTagMinAllowedMajorMinor": "25.0"
+}

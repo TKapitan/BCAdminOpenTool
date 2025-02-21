@@ -1,19 +1,20 @@
 {
   "id": "81e14ff7-68aa-4525-a224-b81f83de91a2",
-  "name": "BCAdminOpenTool",
+  "name": "BC Admin Open Tool",
   "publisher": "BCCaptain.com.au",
   "version": "1.0.0.0",
-  "brief": "",
-  "description": "",
-  "privacyStatement": "",
-  "EULA": "",
-  "help": "",
-  "url": "",
-  "logo": "",
+  "brief": "Community maintained tool for managing Business Central environments.",
+  "description": "Community maintained tool for managing Business Central environments.",
+  "privacyStatement": "https://github.com/TKapitan/BCAdminOpenTool",
+  "EULA": "https://github.com/TKapitan/BCAdminOpenTool",
+  "help": "https://github.com/TKapitan/BCAdminOpenTool",
+  "contextSensitiveHelpUrl": "https://github.com/TKapitan/BCAdminOpenTool",
+  "url": "https://github.com/TKapitan/BCAdminOpenTool",
+  "logo": "../Resources/logo.png",
   "dependencies": [],
   "screenshots": [],
-  "platform": "1.0.0.0",
-  "application": "22.0.0.0",
+  "platform": "25.0.0.0",
+  "application": "25.0.0.0",
   "idRanges": [
     {
       "from": 73270,
@@ -21,11 +22,12 @@
     }
   ],
   "features": [
-    "NoImplicitWith"
+    "NoImplicitWith",
+    "TranslationFile"
   ],
   "resourceExposurePolicy": {
     "allowDebugging": true,
-    "allowDownloadingSource": false,
-    "includeSourceInSymbolFile": false
+    "allowDownloadingSource": true,
+    "includeSourceInSymbolFile": true
   }
 }

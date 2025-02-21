@@ -1,13 +1,35 @@
+## --- AL gitignore ---
+## Ignores binary Symbols files, environment and VScode settings 
+## temporary files from Visual Studio and Visual Studio code
+
+# Binary files
+.alpackages/
+.alcache/
+.altemplates/
 *.app
-*.flf
+
+# Launch.json
+launch.json
+
+# NAV/BC license files
 *.bclicense
-*.g.xlf
-.DS_Store
-Thumbs.db
-TestResults*.xml
-bcptTestResults*.json
-BuildOutput.txt
+*.flf
+
+# Temp files
+.vs/
+.snapshots/
+TestResults.xml
 rad.json
+.output
+
+# Others
+~$*
+*~v
+
+# auto generated translation files
+*.g.xlf
+
+# AL-Go
 .output/
 .dependencies/
 .buildartifacts/

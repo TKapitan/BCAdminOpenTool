@@ -1,0 +1,23 @@
+{
+    "name": "PTE RuleSet",
+    "rules": [
+        {
+            "id": "AS0092",
+            "action": "None",
+            "justification": "No telemetry - community tool without support"
+        },
+        {
+            "id": "AA0248",
+            "action": "None",
+            "justification": "this keyword - Not working properly in all cases"
+        },
+        {
+            "id": "AS0084",
+            "action": "None",
+            "justification": "we want appsourcecop but we use pte ranges"
+        }
+
+
+        
+    ]
+}
