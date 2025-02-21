@@ -15,9 +15,16 @@
             "id": "AS0084",
             "action": "None",
             "justification": "we want appsourcecop but we use pte ranges"
+        },
+        {
+            "id": "LC0015",
+            "action": "None",
+            "justification": "My personal preference - don't respect this rule (using only tabledata permissions)"
+        },
+        {
+            "id": "LC0034",
+            "action": "None",
+            "justification": "My personal preference - don't respect this rule (extensible property don't need to be define everywhere)"
         }
-
-
-        
     ]
 }

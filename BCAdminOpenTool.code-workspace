@@ -7,5 +7,70 @@
       "path": ".AL-Go"
     }
   ],
-  "settings": {}
+  "settings": {
+    "al.browser": "Edge",
+    "al.enableCodeAnalysis": true,
+    "al.backgroundCodeAnalysis": "Project",
+    "al.enableCodeActions": true,
+    "al.enableExternalRulesets": true,
+    "CRS.AlSubFolderName": "src",
+    "CRS.FileNamePattern": "<ObjectNameShort>.<ObjectTypeShortPascalCase>.al",
+    "CRS.FileNamePatternExtensions": "<ObjectNameShort>.<ObjectTypeShortPascalCase>.al",
+    "CRS.RemovePrefixFromFilename": true,
+    "CRS.ObjectNamePrefix": "TKA",
+    "CRS.OnSaveAlFileAction": "Rename",
+    "alOutline.enableCodeCopFixes": true,
+    "alOutline.completionProviders": [
+      "VariableNamesWithType",
+      "VariableNames"
+    ],
+    "alOutline.fixCaseRemovesQuotesFromDataTypeIdentifiers": false,
+    "alOutline.fixCaseRemovesQuotesFromNonDataTypeIdentifiers": false,
+    "alOutline.codeCleanupActions": [
+      "AddApplicationAreas",
+      "AddDataClassifications",
+      "AddEnumValuesCaptions",
+      "AddMissingParentheses",
+      "AddObjectCaptions",
+      "AddTableFieldCaptions",
+      "AddToolTips",
+      "CollapseEmptyBrackets",
+      "ConvertObjectIdsToNames",
+      "FixIdentifiersCase",
+      "FixKeywordsCase",
+      "FormatDocument",
+      "OneStatementPerLine",
+      "RemoveBeginEnd",
+      "RemoveEmptyLines",
+      "RemoveEmptySections",
+      "RemoveEmptyTriggers",
+      "RemoveRedundantAppAreas",
+      "RemoveRedundantDataClassification",
+      "RemoveStrSubstNoFromError",
+      "RemoveUnusedUsings",
+      "RemoveUnusedVariables",
+      "RemoveWithStatements",
+      "TrimTrailingWhitespace"
+    ],
+    "editor.formatOnSave": true,
+    "editor.useTabStops": true,
+    "editor.trimAutoWhitespace": true,
+    "editor.tabSize": 4
+  },
+  "extensions": {
+    "recommendations": [
+      "davidfeldhoff.al-codeactions",
+      "wbrakowski.al-navigator",
+      "jamespearson.al-test-runner",
+      "BartPermentier.al-toolbox",
+      "rasmus.al-var-helper",
+      "andrzejzwierzchowski.al-code-outline",
+      "chunsen.bracket-select",
+      "stefanmaron.businesscentral-lintercop",
+      "nwallace.createGUID",
+      "wayou.vscode-todo-highlight",
+      "Gruntfuggly.todo-tree",
+      "waldo.crs-al-language-extension"
+    ]
+  }
 }
