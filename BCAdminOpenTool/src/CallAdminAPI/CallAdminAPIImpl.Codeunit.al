@@ -71,14 +71,14 @@ codeunit 73270 TKACallAdminAPIImpl
     [InherentPermissions(PermissionObjectType::TableData, Database::TKAAdminCenterAPISetup, 'R')]
     local procedure GetBearerToken(ForBCTenant: Record TKAManagedBCTenant): SecretText
     var
-        BCAdminApp: Record TKAManagedBCAdministrationApp;
+        ManagedBCAdministrationApp: Record TKAManagedBCAdministrationApp;
         AdminCenterAPISetup: Record TKAAdminCenterAPISetup;
         OAuth2: Codeunit OAuth2;
         AccessToken: SecretText;
         AuthFailedErr: Label 'Failed to acquire token.';
     begin
-        BCAdminApp.ReadIsolation(IsolationLevel::ReadCommitted);
-        BCAdminApp.Get(ForBCTenant.ClientId);
+        ManagedBCAdministrationApp.ReadIsolation(IsolationLevel::ReadCommitted);
+        ManagedBCAdministrationApp.Get(ForBCTenant.ClientId);
 
         AdminCenterAPISetup.ReadIsolation(IsolationLevel::ReadCommitted);
         AdminCenterAPISetup.SetLoadFields(AuthUrl);
@@ -86,8 +86,8 @@ codeunit 73270 TKACallAdminAPIImpl
 
         ClearLastError();
         if not OAuth2.AcquireTokenWithClientCredentials(
-            Format(BCAdminApp.ClientId, 0, 4),
-            BCAdminApp.GetClientSecretAsSecretText(),
+            Format(ManagedBCAdministrationApp.ClientId, 0, 4),
+            ManagedBCAdministrationApp.GetClientSecretAsSecretText(),
             AdminCenterAPISetup.AuthUrl.Replace('%tenantid%', Format(ForBCTenant.TenantId, 0, 4)),
             '', // RedirectUri
             'https://api.businesscentral.dynamics.com/.default',

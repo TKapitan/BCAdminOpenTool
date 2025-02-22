@@ -97,12 +97,12 @@ table 73271 TKAManagedBCAdministrationApp
     [InherentPermissions(PermissionObjectType::TableData, Database::TKAManagedBCTenant, 'R')]
     local procedure TestNotUsed()
     var
-        BCTenant: Record TKAManagedBCTenant;
+        ManagedBCTenant: Record TKAManagedBCTenant;
         TheBCAdminAppIsUsedErr: Label 'The app is configured for a tenant and cannot be deleted.';
     begin
-        BCTenant.ReadIsolation(IsolationLevel::ReadCommitted);
-        BCTenant.SetRange(ClientId, Rec.ClientId);
-        if not BCTenant.IsEmpty() then
+        ManagedBCTenant.ReadIsolation(IsolationLevel::ReadCommitted);
+        ManagedBCTenant.SetRange(ClientId, Rec.ClientId);
+        if not ManagedBCTenant.IsEmpty() then
             Error(TheBCAdminAppIsUsedErr);
     end;
 

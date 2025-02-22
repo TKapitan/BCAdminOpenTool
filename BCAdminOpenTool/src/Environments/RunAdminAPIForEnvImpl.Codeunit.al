@@ -39,10 +39,17 @@ codeunit 73273 TKARunAdminAPIForEnvImpl
         end;
     end;
 
+    local procedure DeleteDeletedEnvironments(TenantId: Guid; ListOfFoundEnvironments: List of [Text[100]])
+    var
+        ManagedBCEnvironment: Record TKAManagedBCEnvironment;
+    begin
+
+    end;
+
     [InherentPermissions(PermissionObjectType::TableData, Database::TKAManagedBCEnvironment, 'RIM')]
     local procedure ParseEnvironment(var JsonEnvironment: JsonObject; TenantId: Guid; EnvironmentName: Text[100])
     var
-        BCEnvironment: Record TKAManagedBCEnvironment;
+        ManagedBCEnvironment: Record TKAManagedBCEnvironment;
         JsonTokenValue: JsonToken;
     begin
         JsonEnvironment.Get('name', JsonTokenValue);
@@ -50,35 +57,35 @@ codeunit 73273 TKARunAdminAPIForEnvImpl
         JsonEnvironment.Get('aadTenantId', JsonTokenValue);
         Evaluate(TenantId, JsonTokenValue.AsValue().AsText());
 
-        if not BCEnvironment.Get(TenantId, EnvironmentName) then begin
-            BCEnvironment.Init();
-            BCEnvironment.Validate(TenantId, TenantId);
-            BCEnvironment.Validate(Name, EnvironmentName);
-            BCEnvironment.Insert(true);
+        if not ManagedBCEnvironment.Get(TenantId, EnvironmentName) then begin
+            ManagedBCEnvironment.Init();
+            ManagedBCEnvironment.Validate(TenantId, TenantId);
+            ManagedBCEnvironment.Validate(Name, EnvironmentName);
+            ManagedBCEnvironment.Insert(true);
         end;
         JsonEnvironment.Get('type', JsonTokenValue);
-        BCEnvironment.Validate(Type, CopyStr(JsonTokenValue.AsValue().AsText(), 1, MaxStrLen(BCEnvironment.Type)));
+        ManagedBCEnvironment.Validate(Type, CopyStr(JsonTokenValue.AsValue().AsText(), 1, MaxStrLen(ManagedBCEnvironment.Type)));
         JsonEnvironment.Get('countryCode', JsonTokenValue);
-        BCEnvironment.Validate(CountryCode, CopyStr(JsonTokenValue.AsValue().AsText(), 1, MaxStrLen(BCEnvironment.CountryCode)));
+        ManagedBCEnvironment.Validate(CountryCode, CopyStr(JsonTokenValue.AsValue().AsText(), 1, MaxStrLen(ManagedBCEnvironment.CountryCode)));
         JsonEnvironment.Get('applicationVersion', JsonTokenValue);
-        BCEnvironment.Validate(ApplicationVersion, CopyStr(JsonTokenValue.AsValue().AsText(), 1, MaxStrLen(BCEnvironment.ApplicationVersion)));
+        ManagedBCEnvironment.Validate(ApplicationVersion, CopyStr(JsonTokenValue.AsValue().AsText(), 1, MaxStrLen(ManagedBCEnvironment.ApplicationVersion)));
         JsonEnvironment.Get('platformVersion', JsonTokenValue);
-        BCEnvironment.Validate(PlatformVersion, CopyStr(JsonTokenValue.AsValue().AsText(), 1, MaxStrLen(BCEnvironment.PlatformVersion)));
+        ManagedBCEnvironment.Validate(PlatformVersion, CopyStr(JsonTokenValue.AsValue().AsText(), 1, MaxStrLen(ManagedBCEnvironment.PlatformVersion)));
         JsonEnvironment.Get('status', JsonTokenValue);
-        BCEnvironment.Validate(Status, CopyStr(JsonTokenValue.AsValue().AsText(), 1, MaxStrLen(BCEnvironment.Status)));
+        ManagedBCEnvironment.Validate(Status, CopyStr(JsonTokenValue.AsValue().AsText(), 1, MaxStrLen(ManagedBCEnvironment.Status)));
         JsonEnvironment.Get('webClientLoginUrl', JsonTokenValue);
-        BCEnvironment.Validate(WebClientURL, CopyStr(JsonTokenValue.AsValue().AsText(), 1, MaxStrLen(BCEnvironment.WebClientURL)));
+        ManagedBCEnvironment.Validate(WebClientURL, CopyStr(JsonTokenValue.AsValue().AsText(), 1, MaxStrLen(ManagedBCEnvironment.WebClientURL)));
 
         // Other fields (not sure if they are always included in the response)
         if JsonEnvironment.Get('ringName', JsonTokenValue) then
-            BCEnvironment.Validate(RingName, CopyStr(JsonTokenValue.AsValue().AsText(), 1, MaxStrLen(BCEnvironment.RingName)));
+            ManagedBCEnvironment.Validate(RingName, CopyStr(JsonTokenValue.AsValue().AsText(), 1, MaxStrLen(ManagedBCEnvironment.RingName)));
         if JsonEnvironment.Get('locationName', JsonTokenValue) then
-            BCEnvironment.Validate(LocationName, CopyStr(JsonTokenValue.AsValue().AsText(), 1, MaxStrLen(BCEnvironment.LocationName)));
+            ManagedBCEnvironment.Validate(LocationName, CopyStr(JsonTokenValue.AsValue().AsText(), 1, MaxStrLen(ManagedBCEnvironment.LocationName)));
         if JsonEnvironment.Get('geoName', JsonTokenValue) then
-            BCEnvironment.Validate(GeoName, CopyStr(JsonTokenValue.AsValue().AsText(), 1, MaxStrLen(BCEnvironment.GeoName)));
+            ManagedBCEnvironment.Validate(GeoName, CopyStr(JsonTokenValue.AsValue().AsText(), 1, MaxStrLen(ManagedBCEnvironment.GeoName)));
         if JsonEnvironment.Get('appInsightsKey', JsonTokenValue) then
-            BCEnvironment.Validate(ApplicationInsightsKey, CopyStr(JsonTokenValue.AsValue().AsText(), 1, MaxStrLen(BCEnvironment.ApplicationInsightsKey)));
-        BCEnvironment.Validate(EnvironmentModifiedAt, CurrentDateTime());
-        BCEnvironment.Modify(true);
+            ManagedBCEnvironment.Validate(ApplicationInsightsKey, CopyStr(JsonTokenValue.AsValue().AsText(), 1, MaxStrLen(ManagedBCEnvironment.ApplicationInsightsKey)));
+        ManagedBCEnvironment.Validate(EnvironmentModifiedAt, CurrentDateTime());
+        ManagedBCEnvironment.Modify(true);
     end;
 }

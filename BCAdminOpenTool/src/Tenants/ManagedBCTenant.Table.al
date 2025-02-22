@@ -54,9 +54,9 @@ table 73270 TKAManagedBCTenant
     [InherentPermissions(PermissionObjectType::TableData, Database::TKAManagedBCEnvironment, 'D')]
     local procedure DeleteRelatedRecords()
     var
-        BCEnvironment: Record TKAManagedBCEnvironment;
+        ManagedBCEnvironment: Record TKAManagedBCEnvironment;
     begin
-        BCEnvironment.SetRange(TenantId, Rec.TenantId);
-        BCEnvironment.DeleteAll(true);
+        ManagedBCEnvironment.SetRange(TenantId, Rec.TenantId);
+        ManagedBCEnvironment.DeleteAll(true);
     end;
 }
