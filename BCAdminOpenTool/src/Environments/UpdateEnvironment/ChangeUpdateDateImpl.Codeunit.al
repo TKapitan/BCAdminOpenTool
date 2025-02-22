@@ -18,7 +18,7 @@ codeunit 73275 TKAChangeUpdateDateImpl
         if ManagedBCEnvironment.FindSet() then
             repeat
                 ManagedBCEnvironment.TestField(UpdateIsActive, true);
-                if NewUpdateDate > ManagedBCEnvironment.LatestSelectableUpgradeDate.Date() then
+                if NewUpdateDate > ManagedBCEnvironment.LatestSelectableUpgradeDate then
                     Error(DateIsNotAllowedErr, ManagedBCEnvironment.Name);
             until ManagedBCEnvironment.Next() < 1;
     end;
@@ -35,9 +35,9 @@ codeunit 73275 TKAChangeUpdateDateImpl
             repeat
                 Clear(RequestBodyJsonObject);
                 if not ChangeUpdateDate then
-                    //NewUpdateDate := ManagedBCEnvironment.UpgradeDate;
+                    NewUpdateDate := ManagedBCEnvironment.UpgradeDate;
                 if not ChangeIgnoreUpgradeWindow then
-                        NewIgnoreUpgradeWindow := ManagedBCEnvironment.IgnoreUpgradeWindow;
+                    NewIgnoreUpgradeWindow := ManagedBCEnvironment.IgnoreUpgradeWindow;
 
                 RequestBodyJsonObject.Add('runOn', Format(NewUpdateDate, 0, 9) + 'T00:00:00Z');
                 RequestBodyJsonObject.Add('ignoreUpgradeWindow', NewIgnoreUpgradeWindow);

@@ -124,11 +124,11 @@ codeunit 73274 TKAProcessAdminAPIEnvRespImpl
         JsonResponse.Get('didTenantSelectDate', JsonTokenValue);
         ManagedBCEnvironment.Validate(DidTenantSelectDate, JsonTokenValue.AsValue().AsBoolean());
         JsonResponse.Get('earliestSelectableUpgradeDate', JsonTokenValue);
-        ManagedBCEnvironment.Validate(EarliestSelectableUpgradeDate, GetJsonTokenAsDateTime(JsonTokenValue));
+        ManagedBCEnvironment.Validate(EarliestSelectableUpgradeDate, GetJsonDateTimeTokenAsDate(JsonTokenValue));
         JsonResponse.Get('latestSelectableUpgradeDate', JsonTokenValue);
-        ManagedBCEnvironment.Validate(LatestSelectableUpgradeDate, GetJsonTokenAsDateTime(JsonTokenValue));
+        ManagedBCEnvironment.Validate(LatestSelectableUpgradeDate, GetJsonDateTimeTokenAsDate(JsonTokenValue));
         JsonResponse.Get('upgradeDate', JsonTokenValue);
-        ManagedBCEnvironment.Validate(UpgradeDate, GetJsonTokenAsDateTime(JsonTokenValue));
+        ManagedBCEnvironment.Validate(UpgradeDate, GetJsonDateTimeTokenAsDate(JsonTokenValue));
         JsonResponse.Get('upgradeStatus', JsonTokenValue);
         ManagedBCEnvironment.Validate(UpdateStatus, CopyStr(JsonTokenValue.AsValue().AsText(), 1, MaxStrLen(ManagedBCEnvironment.UpdateTargetVersion)));
         JsonResponse.Get('ignoreUpgradeWindow', JsonTokenValue);
@@ -145,9 +145,9 @@ codeunit 73274 TKAProcessAdminAPIEnvRespImpl
         ManagedBCEnvironment.Validate(UpdateTargetVersion, '');
         ManagedBCEnvironment.Validate(CanTenantSelectDate, false);
         ManagedBCEnvironment.Validate(DidTenantSelectDate, false);
-        ManagedBCEnvironment.Validate(EarliestSelectableUpgradeDate, 0DT);
-        ManagedBCEnvironment.Validate(LatestSelectableUpgradeDate, 0DT);
-        ManagedBCEnvironment.Validate(UpgradeDate, 0DT);
+        ManagedBCEnvironment.Validate(EarliestSelectableUpgradeDate, 0D);
+        ManagedBCEnvironment.Validate(LatestSelectableUpgradeDate, 0D);
+        ManagedBCEnvironment.Validate(UpgradeDate, 0D);
         ManagedBCEnvironment.Validate(UpdateStatus, '');
         ManagedBCEnvironment.Validate(IgnoreUpgradeWindow, false);
         ManagedBCEnvironment.Modify(true);
@@ -164,6 +164,23 @@ codeunit 73274 TKAProcessAdminAPIEnvRespImpl
         if TempDateTime.Date.Year = 1753 then // Fix for error 'Cannot write the value 01/01/1753 10:00 AM to the field...
             exit(0DT);
         exit(TempDateTime);
+    end;
+
+    local procedure GetJsonDateTimeTokenAsDate(var JsonTokenValue: JsonToken): Date
+    var
+        TypeHelper: Codeunit "Type Helper";
+        TempDateTimeInCurrentTimeZone, TempDateTimeInUTC : DateTime;
+        TimezoneOffset: Duration;
+    begin
+        TempDateTimeInCurrentTimeZone := GetJsonTokenAsDateTime(JsonTokenValue);
+        if TempDateTimeInCurrentTimeZone = 0DT then
+            exit(0D);
+        if not TypeHelper.GetUserTimezoneOffset(TimezoneOffset) then
+            TimezoneOffset := 0;
+#pragma warning disable AA0206 // This check is broken, DateTime.Date() is not considered as usage
+        TempDateTimeInUTC := TempDateTimeInCurrentTimeZone - TimezoneOffset;
+#pragma warning restore AA0206
+        exit(TempDateTimeInUTC.Date());
     end;
 
     #endregion Helpers

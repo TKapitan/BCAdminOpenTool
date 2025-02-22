@@ -113,17 +113,17 @@ table 73273 TKAManagedBCEnvironment
             Caption = 'Did Tenant Select Date';
             ToolTip = 'Indicates if the tenant has selected the current date for the update.';
         }
-        field(720; EarliestSelectableUpgradeDate; DateTime)
+        field(720; EarliestSelectableUpgradeDate; Date)
         {
             Caption = 'Earliest Selectable Upgrade Date';
             ToolTip = 'Specifies the earliest date that can be chosen for the update.';
         }
-        field(730; LatestSelectableUpgradeDate; DateTime)
+        field(730; LatestSelectableUpgradeDate; Date)
         {
             Caption = 'Latest Selectable Upgrade Date';
             ToolTip = 'Specifies the latest date that can be chosen for the update.';
         }
-        field(740; UpgradeDate; DateTime)
+        field(740; UpgradeDate; Date)
         {
             Caption = 'Upgrade Date';
             ToolTip = 'The currently selected scheduled date of the update.';
