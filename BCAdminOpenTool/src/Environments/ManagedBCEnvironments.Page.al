@@ -2,6 +2,7 @@ page 73273 TKAManagedBCEnvironments
 {
     ApplicationArea = All;
     Caption = 'Managed BC Environments';
+    CardPageId = TKAManagedBCEnvironmentCard;
     InsertAllowed = false;
     ModifyAllowed = false;
     DeleteAllowed = true;
@@ -22,6 +23,33 @@ page 73273 TKAManagedBCEnvironments
                 field(TenantName; Rec.TenantName) { }
                 field(Name; Rec.Name) { }
                 field(Type; Rec."Type") { }
+                field(RingName; Rec.RingName)
+                {
+                    Visible = false;
+                }
+                field(CountryCode; Rec.CountryCode) { }
+                field(ApplicationVersion; Rec.ApplicationVersion) { }
+                field(PlatformVersion; Rec.PlatformVersion) { }
+                field(Status; Rec.Status) { }
+                field(AppSourceAppsUpdateCadence; Rec.AppSourceAppsUpdateCadence) { }
+                field(LocationName; Rec.LocationName) { }
+                field(GeoName; Rec.GeoName) { }
+                field(ApplicationInsightsKey; Rec.ApplicationInsightsKey)
+                {
+                    Visible = false;
+                }
+                field(SoftDeletedOn; Rec.SoftDeletedOn)
+                {
+                    Visible = false;
+                }
+                field(HardDeletePendingOn; Rec.HardDeletePendingOn)
+                {
+                    Visible = false;
+                }
+                field(DeleteReason; Rec.DeleteReason)
+                {
+                    Visible = false;
+                }
                 field(OpenEnvironmentField; OpenEnvironmentLbl)
                 {
                     Caption = 'Web Client';
@@ -32,18 +60,6 @@ page 73273 TKAManagedBCEnvironments
                         Hyperlink(Rec.WebClientURL);
                     end;
                 }
-                field(RingName; Rec.RingName) { }
-                field(CountryCode; Rec.CountryCode) { }
-                field(ApplicationVersion; Rec.ApplicationVersion) { }
-                field(PlatformVersion; Rec.PlatformVersion) { }
-                field(Status; Rec.Status) { }
-                field(AppSourceAppsUpdateCadence; Rec.AppSourceAppsUpdateCadence) { }
-                field(LocationName; Rec.LocationName) { }
-                field(GeoName; Rec.GeoName) { }
-                field(ApplicationInsightsKey; Rec.ApplicationInsightsKey) { }
-                field(SoftDeletedOn; Rec.SoftDeletedOn) { }
-                field(HardDeletePendingOn; Rec.HardDeletePendingOn) { }
-                field(DeleteReason; Rec.DeleteReason) { }
                 field(EnvironmentModifiedAt; Rec.EnvironmentModifiedAt) { }
             }
         }
