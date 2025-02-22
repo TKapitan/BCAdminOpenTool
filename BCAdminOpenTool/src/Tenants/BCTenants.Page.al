@@ -24,4 +24,25 @@ page 73271 TKABCTenants
             }
         }
     }
+
+    actions
+    {
+        area(Processing)
+        {
+            action(TestConnection)
+            {
+                ApplicationArea = All;
+                Caption = 'Test Connection';
+                Image = TestDatabase;
+                ToolTip = 'Allows to test the connection to the tenant using the specified client ID.';
+
+                trigger OnAction()
+                var
+                    ConnectToTenant: Codeunit TKACallAdminAPI;
+                begin
+                    ConnectToTenant.TestAdminCenterConnection(Rec);
+                end;
+            }
+        }
+    }
 }

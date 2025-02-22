@@ -24,7 +24,6 @@ table 73271 TKABCAdminApp
             DataClassification = SystemMetadata;
             Editable = false;
         }
-
     }
 
     keys
@@ -83,7 +82,7 @@ table 73271 TKABCAdminApp
     /// </summary>
     /// <returns>Client secret as secret text</returns>
     [NonDebuggable]
-    procedure GetSecretAsSecretText() Value: SecretText
+    procedure GetClientSecretAsSecretText() Value: SecretText
     begin
         if IsNullGuid(Rec.ClientSecretID) then
             exit;

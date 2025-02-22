@@ -25,6 +25,11 @@
             "id": "LC0034",
             "action": "None",
             "justification": "My personal preference - don't respect this rule (extensible property don't need to be define everywhere)"
+        },
+        {
+            "id": "LC0084",
+            "action": "None",
+            "justification": "My personal preference - don't respect this rule (sometimes the Get() error message is enough)"
         }
     ]
 }
