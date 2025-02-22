@@ -1,10 +1,10 @@
-page 73271 TKABCTenants
+page 73271 TKAManagedBCTenants
 {
-    Caption = 'BC Tenants';
+    Caption = 'Managed BC Tenants';
     PageType = List;
     UsageCategory = Administration;
     ApplicationArea = All;
-    SourceTable = TKABCTenant;
+    SourceTable = TKAManagedBCTenant;
 
     layout
     {
@@ -67,7 +67,7 @@ page 73271 TKABCTenants
                 Caption = 'Environments';
                 Image = ShowList;
                 ToolTip = 'Navigates to the environments for the tenant.';
-                RunObject = page TKABCEnvironments;
+                RunObject = page TKAManagedBCEnvironments;
                 RunPageLink = TenantId = field(TenantId);
             }
         }

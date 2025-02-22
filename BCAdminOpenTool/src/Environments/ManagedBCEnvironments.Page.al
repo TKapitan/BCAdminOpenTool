@@ -1,12 +1,12 @@
-page 73273 TKABCEnvironments
+page 73273 TKAManagedBCEnvironments
 {
     ApplicationArea = All;
-    Caption = 'BC Environments';
+    Caption = 'Managed BC Environments';
     InsertAllowed = false;
     ModifyAllowed = false;
     DeleteAllowed = true;
     PageType = List;
-    SourceTable = TKABCEnvironment;
+    SourceTable = TKAManagedBCEnvironment;
     UsageCategory = Lists;
 
     layout

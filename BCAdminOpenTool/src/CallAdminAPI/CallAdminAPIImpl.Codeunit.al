@@ -6,7 +6,7 @@ codeunit 73270 TKACallAdminAPIImpl
     /// Verifies the connection to the specified BC tenant.
     /// </summary>
     /// <param name="ForBCTenant">Specifies the BC tenant to connect to.</param>
-    procedure TestAdminCenterConnection(ForBCTenant: Record TKABCTenant)
+    procedure TestAdminCenterConnection(ForBCTenant: Record TKAManagedBCTenant)
     var
         ResponseText: Text;
         ConnectionSuccessfulButUnexpectedMessageReceivedErr: Label 'Connection to tenant %1 (%2) was successful, but an unexpected message was received.', Comment = '%1 - TenantId, %2 - Name';
@@ -23,7 +23,7 @@ codeunit 73270 TKACallAdminAPIImpl
     /// </summary>
     /// <param name="ForBCTenant">Specifies the BC tenant for which the environments are to be retrieved.</param>
     /// <returns></returns>
-    procedure GetEnvironmentsForTenant(ForBCTenant: Record TKABCTenant): Text
+    procedure GetEnvironmentsForTenant(ForBCTenant: Record TKAManagedBCTenant): Text
     var
         CallAdminAPIImpl: Codeunit TKACallAdminAPIImpl;
         ResponseInStream: InStream;
@@ -41,7 +41,7 @@ codeunit 73270 TKACallAdminAPIImpl
     /// <param name="Endpoint">Specifies the API endpoint to be called.</param>
     /// <param name="ResponseInStream">Specifies the response stream from the API call.</param>
     [InherentPermissions(PermissionObjectType::TableData, Database::TKAAdminCenterAPISetup, 'R')]
-    procedure CallAdminAPI(ForBCTenant: Record TKABCTenant; Endpoint: Text; var ResponseInStream: InStream)
+    procedure CallAdminAPI(ForBCTenant: Record TKAManagedBCTenant; Endpoint: Text; var ResponseInStream: InStream)
     var
         AdminCenterAPISetup: Record TKAAdminCenterAPISetup;
         HttpRequestMessage: HttpRequestMessage;
@@ -67,11 +67,11 @@ codeunit 73270 TKACallAdminAPIImpl
         HttpResponseMessage.Content().ReadAs(ResponseInStream);
     end;
 
-    [InherentPermissions(PermissionObjectType::TableData, Database::TKABCAdminApp, 'R')]
+    [InherentPermissions(PermissionObjectType::TableData, Database::TKAManagedBCAdministrationApp, 'R')]
     [InherentPermissions(PermissionObjectType::TableData, Database::TKAAdminCenterAPISetup, 'R')]
-    local procedure GetBearerToken(ForBCTenant: Record TKABCTenant): SecretText
+    local procedure GetBearerToken(ForBCTenant: Record TKAManagedBCTenant): SecretText
     var
-        BCAdminApp: Record TKABCAdminApp;
+        BCAdminApp: Record TKAManagedBCAdministrationApp;
         AdminCenterAPISetup: Record TKAAdminCenterAPISetup;
         OAuth2: Codeunit OAuth2;
         AccessToken: SecretText;

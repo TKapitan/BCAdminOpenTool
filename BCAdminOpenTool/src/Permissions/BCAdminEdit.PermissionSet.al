@@ -5,6 +5,6 @@ permissionset 73271 TKABCAdminEdit
     IncludedPermissionSets =
         TKABCAdminRead;
     Permissions =
-        tabledata TKABCTenant = IMD,
-        tabledata TKABCAdminApp = IMD;
+        tabledata TKAManagedBCTenant = IMD,
+        tabledata TKAManagedBCAdministrationApp = IMD;
 }

@@ -1,9 +1,9 @@
-table 73273 TKABCEnvironment
+table 73273 TKAManagedBCEnvironment
 {
-    Caption = 'BC Environment';
+    Caption = 'Managed BC Environment';
     DataClassification = CustomerContent;
-    DrillDownPageId = TKABCEnvironments;
-    LookupPageId = TKABCEnvironments;
+    DrillDownPageId = TKAManagedBCEnvironments;
+    LookupPageId = TKAManagedBCEnvironments;
 
     fields
     {
@@ -23,7 +23,7 @@ table 73273 TKABCEnvironment
             Caption = 'Tenant Name';
             Editable = false;
             FieldClass = FlowField;
-            CalcFormula = lookup(TKABCTenant.Name where(TenantId = field(TenantId)));
+            CalcFormula = lookup(TKAManagedBCTenant.Name where(TenantId = field(TenantId)));
             ToolTip = 'Specifies the name of the tenant.';
         }
         field(5; Type; Text[20])
@@ -73,6 +73,7 @@ table 73273 TKABCEnvironment
         }
         field(300; WebClientURL; Text[500])
         {
+            AllowInCustomizations = Always;
             Caption = 'Web Client URL';
             ToolTip = 'Specifies the URL of the web client for the environment.';
             ExtendedDatatype = URL;

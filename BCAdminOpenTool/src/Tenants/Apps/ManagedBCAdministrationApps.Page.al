@@ -1,10 +1,10 @@
-page 73270 TKABCAdminApps
+page 73270 TKAManagedBCAdministrationApps
 {
-    Caption = 'BC Admin Apps';
+    Caption = 'Managed BC Administration Apps';
     PageType = List;
     UsageCategory = Administration;
     ApplicationArea = All;
-    SourceTable = TKABCAdminApp;
+    SourceTable = TKAManagedBCAdministrationApp;
 
     layout
     {

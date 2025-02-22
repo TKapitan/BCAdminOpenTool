@@ -1,9 +1,9 @@
-table 73271 TKABCAdminApp
+table 73271 TKAManagedBCAdministrationApp
 {
-    Caption = 'BC Admin App';
+    Caption = 'Managed BC Administratior App';
     DataClassification = CustomerContent;
-    DrillDownPageId = TKABCAdminApps;
-    LookupPageId = TKABCAdminApps;
+    DrillDownPageId = TKAManagedBCAdministrationApps;
+    LookupPageId = TKAManagedBCAdministrationApps;
 
     fields
     {
@@ -94,10 +94,10 @@ table 73271 TKABCAdminApp
     #endregion "Global Procedures"
     #region "Local Procedures"
 
-    [InherentPermissions(PermissionObjectType::TableData, Database::TKABCTenant, 'R')]
+    [InherentPermissions(PermissionObjectType::TableData, Database::TKAManagedBCTenant, 'R')]
     local procedure TestNotUsed()
     var
-        BCTenant: Record TKABCTenant;
+        BCTenant: Record TKAManagedBCTenant;
         TheBCAdminAppIsUsedErr: Label 'The app is configured for a tenant and cannot be deleted.';
     begin
         BCTenant.ReadIsolation(IsolationLevel::ReadCommitted);

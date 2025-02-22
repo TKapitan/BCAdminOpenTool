@@ -6,8 +6,8 @@ codeunit 73273 TKARunAdminAPIForEnvImpl
     /// Create or update environments for a tenant.
     /// </summary>
     /// <param name="ForBCTenant">The tenant for which to create or update environments.</param>
-    [InherentPermissions(PermissionObjectType::TableData, Database::TKABCTenant, 'M')]
-    procedure CreateUpdateEnvironmentsForTenant(var ForBCTenant: Record TKABCTenant)
+    [InherentPermissions(PermissionObjectType::TableData, Database::TKAManagedBCTenant, 'M')]
+    procedure CreateUpdateEnvironmentsForTenant(var ForBCTenant: Record TKAManagedBCTenant)
     var
         CallAdminAPI: Codeunit TKACallAdminAPI;
         Response: Text;
@@ -39,10 +39,10 @@ codeunit 73273 TKARunAdminAPIForEnvImpl
         end;
     end;
 
-    [InherentPermissions(PermissionObjectType::TableData, Database::TKABCEnvironment, 'RIM')]
+    [InherentPermissions(PermissionObjectType::TableData, Database::TKAManagedBCEnvironment, 'RIM')]
     local procedure ParseEnvironment(var JsonEnvironment: JsonObject; TenantId: Guid; EnvironmentName: Text[100])
     var
-        BCEnvironment: Record TKABCEnvironment;
+        BCEnvironment: Record TKAManagedBCEnvironment;
         JsonTokenValue: JsonToken;
     begin
         JsonEnvironment.Get('name', JsonTokenValue);

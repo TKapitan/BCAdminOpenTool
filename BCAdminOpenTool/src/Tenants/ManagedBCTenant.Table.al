@@ -1,9 +1,9 @@
-table 73270 TKABCTenant
+table 73270 TKAManagedBCTenant
 {
-    Caption = 'BC Tenant';
+    Caption = 'Managed BC Tenant';
     DataClassification = CustomerContent;
-    DrillDownPageId = TKABCTenants;
-    LookupPageId = TKABCTenants;
+    DrillDownPageId = TKAManagedBCTenants;
+    LookupPageId = TKAManagedBCTenants;
 
     fields
     {
@@ -21,7 +21,7 @@ table 73270 TKABCTenant
         field(10; ClientId; Guid)
         {
             Caption = 'Client ID';
-            TableRelation = TKABCAdminApp.ClientId;
+            TableRelation = TKAManagedBCAdministrationApp.ClientId;
             ToolTip = 'Specifies the client ID for the tenant.';
         }
         field(1000; EnvironmentsModifiedAt; DateTime)
@@ -51,10 +51,10 @@ table 73270 TKABCTenant
         DeleteRelatedRecords();
     end;
 
-    [InherentPermissions(PermissionObjectType::TableData, Database::TKABCEnvironment, 'D')]
+    [InherentPermissions(PermissionObjectType::TableData, Database::TKAManagedBCEnvironment, 'D')]
     local procedure DeleteRelatedRecords()
     var
-        BCEnvironment: Record TKABCEnvironment;
+        BCEnvironment: Record TKAManagedBCEnvironment;
     begin
         BCEnvironment.SetRange(TenantId, Rec.TenantId);
         BCEnvironment.DeleteAll(true);
