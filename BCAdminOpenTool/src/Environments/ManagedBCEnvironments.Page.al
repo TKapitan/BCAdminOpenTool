@@ -37,9 +37,13 @@ page 73273 TKAManagedBCEnvironments
                 field(ApplicationVersion; Rec.ApplicationVersion) { }
                 field(PlatformVersion; Rec.PlatformVersion) { }
                 field(Status; Rec.Status) { }
+                field(AppSourceAppsUpdateCadence; Rec.AppSourceAppsUpdateCadence) { }
                 field(LocationName; Rec.LocationName) { }
                 field(GeoName; Rec.GeoName) { }
                 field(ApplicationInsightsKey; Rec.ApplicationInsightsKey) { }
+                field(SoftDeletedOn; Rec.SoftDeletedOn) { }
+                field(HardDeletePendingOn; Rec.HardDeletePendingOn) { }
+                field(DeleteReason; Rec.DeleteReason) { }
                 field(EnvironmentModifiedAt; Rec.EnvironmentModifiedAt) { }
             }
         }

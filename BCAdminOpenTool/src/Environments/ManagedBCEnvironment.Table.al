@@ -71,12 +71,32 @@ table 73273 TKAManagedBCEnvironment
             Caption = 'AppInsights Key';
             ToolTip = 'Specifies the Application Insights key of the environment.';
         }
+        field(260; AppSourceAppsUpdateCadence; Text[50])
+        {
+            Caption = 'AppSource Apps Update Cadence';
+            ToolTip = 'Specifies the update cadence of the AppSource apps in the environment.';
+        }
         field(300; WebClientURL; Text[500])
         {
             AllowInCustomizations = Always;
             Caption = 'Web Client URL';
             ToolTip = 'Specifies the URL of the web client for the environment.';
             ExtendedDatatype = URL;
+        }
+        field(500; SoftDeletedOn; DateTime)
+        {
+            Caption = 'Soft Deleted On';
+            ToolTip = 'Specifies the date and time when the record was soft deleted.';
+        }
+        field(505; HardDeletePendingOn; DateTime)
+        {
+            Caption = 'Hard Delete Pending On';
+            ToolTip = 'Specifies the date and time when the record will be hard deleted.';
+        }
+        field(510; DeleteReason; Text[100])
+        {
+            Caption = 'Delete Reason';
+            ToolTip = 'Specifies the reason why the environment was deleted.';
         }
         field(1000; EnvironmentModifiedAt; DateTime)
         {
