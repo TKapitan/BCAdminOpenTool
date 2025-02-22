@@ -57,7 +57,9 @@ codeunit 73273 TKARunAdminAPIForEnvImpl
     end;
 
     [InherentPermissions(PermissionObjectType::TableData, Database::TKAManagedBCEnvironment, 'RIM')]
+#pragma warning disable LC0010 // Cyclomatic complexity is caused by the number of fields
     local procedure ParseEnvironment(var JsonEnvironment: JsonObject; TenantId: Guid; EnvironmentName: Text[100])
+#pragma warning restore LC0010
     var
         ManagedBCEnvironment: Record TKAManagedBCEnvironment;
         JsonTokenValue: JsonToken;
@@ -95,6 +97,14 @@ codeunit 73273 TKARunAdminAPIForEnvImpl
             ManagedBCEnvironment.Validate(GeoName, CopyStr(JsonTokenValue.AsValue().AsText(), 1, MaxStrLen(ManagedBCEnvironment.GeoName)));
         if JsonEnvironment.Get('appInsightsKey', JsonTokenValue) then
             ManagedBCEnvironment.Validate(ApplicationInsightsKey, CopyStr(JsonTokenValue.AsValue().AsText(), 1, MaxStrLen(ManagedBCEnvironment.ApplicationInsightsKey)));
+        if JsonEnvironment.Get('AppSourceAppsUpdateCadence', JsonTokenValue) then
+            ManagedBCEnvironment.Validate(AppSourceAppsUpdateCadence, CopyStr(JsonTokenValue.AsValue().AsText(), 1, MaxStrLen(ManagedBCEnvironment.AppSourceAppsUpdateCadence)));
+        if JsonEnvironment.Get('SoftDeletedOn', JsonTokenValue) then
+            ManagedBCEnvironment.Validate(SoftDeletedOn, JsonTokenValue.AsValue().AsDateTime());
+        if JsonEnvironment.Get('HardDeletePendingOn', JsonTokenValue) then
+            ManagedBCEnvironment.Validate(HardDeletePendingOn, JsonTokenValue.AsValue().AsDateTime());
+        if JsonEnvironment.Get('DeleteReason', JsonTokenValue) then
+            ManagedBCEnvironment.Validate(DeleteReason, CopyStr(JsonTokenValue.AsValue().AsText(), 1, MaxStrLen(ManagedBCEnvironment.DeleteReason)));
         ManagedBCEnvironment.Validate(EnvironmentModifiedAt, CurrentDateTime());
         ManagedBCEnvironment.Modify(true);
     end;
