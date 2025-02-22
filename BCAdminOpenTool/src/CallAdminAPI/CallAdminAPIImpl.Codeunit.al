@@ -2,6 +2,8 @@ codeunit 73270 TKACallAdminAPIImpl
 {
     Access = Internal;
 
+    #region Internal Procedures
+
     /// <summary>
     /// Verifies the connection to the specified BC tenant.
     /// </summary>
@@ -20,33 +22,69 @@ codeunit 73270 TKACallAdminAPIImpl
     end;
 
     /// <summary>
-    /// Calls the Admin API for the specified BC tenant and API endpoint.
+    /// Calls the GET method of the Admin API for the specified BC tenant and API endpoint.
     /// </summary>
     /// <param name="ForBCTenant">Specifies the BC tenant for which the API call is to be made.</param>
     /// <param name="Endpoint">Specifies the API endpoint to be called.</param>
     /// <returns>Response as a text</returns>
-    [InherentPermissions(PermissionObjectType::TableData, Database::TKAAdminCenterAPISetup, 'R')]
     procedure GetFromAdminAPI(ForBCTenant: Record TKAManagedBCTenant; Endpoint: Text): Text
     var
-        AdminCenterAPISetup: Record TKAAdminCenterAPISetup;
         HttpRequestMessage: HttpRequestMessage;
         HttpHeaders: HttpHeaders;
+    begin
+        HttpRequestMessage.GetHeaders(HttpHeaders);
+        HttpHeaders.Add('Authorization', GetBearerToken(ForBCTenant.TenantId, ForBCTenant.ClientId));
+
+        HttpRequestMessage.SetRequestUri(GetBaseAPIUrl() + Endpoint);
+        HttpRequestMessage.Method('GET');
+        exit(SendAPIRequest(HttpRequestMessage));
+    end;
+
+    /// <summary>
+    /// Calls the PUT method of the Admin API for the specified BC tenant and API endpoint.
+    /// </summary>
+    /// <param name="ManagedBCEnvironment">Specifies the managed BC environment for which the API call is to be made.</param>
+    /// <param name="Endpoint">Specifies the API endpoint to be called.</param>
+    /// <param name="RequestBody">Specifies the request body as a JsonObject</param>
+    /// <returns>Response as a text</returns>
+    [InherentPermissions(PermissionObjectType::TableData, Database::TKAManagedBCTenant, 'R')]
+    procedure PutToAdminAPI(ManagedBCEnvironment: Record TKAManagedBCEnvironment; Endpoint: Text; RequestBody: JsonObject): Text
+    var
+        ManagedBCTenant: Record TKAManagedBCTenant;
+        HttpRequestMessage: HttpRequestMessage;
+        HttpContent: HttpContent;
+        HttpRequestHeaders, HttpContextHeaders : HttpHeaders;
+        RequestBodyAsText: Text;
+    begin
+        ManagedBCTenant.ReadIsolation(IsolationLevel::ReadCommitted);
+        ManagedBCTenant.SetLoadFields(ClientId);
+        ManagedBCTenant.Get(ManagedBCEnvironment.TenantId);
+
+        HttpRequestMessage.GetHeaders(HttpRequestHeaders);
+        HttpRequestHeaders.Add('Authorization', GetBearerToken(ManagedBCEnvironment.TenantId, ManagedBCTenant.ClientId));
+
+        RequestBody.WriteTo(RequestBodyAsText);
+        HttpContent.WriteFrom(RequestBodyAsText);
+        HttpContent.GetHeaders(HttpContextHeaders);
+        ReplaceHttpHeader(HttpContextHeaders, 'Content-Type', 'application/json');
+        HttpRequestMessage.Content(HttpContent);
+
+        HttpRequestMessage.SetRequestUri(GetBaseAPIUrl() + Endpoint);
+        HttpRequestMessage.Method('PUT');
+        exit(SendAPIRequest(HttpRequestMessage));
+    end;
+
+    #endregion Internal Procedures
+    #region Local Procedures
+
+    local procedure SendAPIRequest(var HttpRequestMessage: HttpRequestMessage): Text
+    var
         HttpClient: HttpClient;
         ResponseInStream: InStream;
         HttpResponseMessage: HttpResponseMessage;
         Result: Text;
         AdminAPICallFailedErr: Label 'Admin API call failed.';
     begin
-        AdminCenterAPISetup.ReadIsolation(IsolationLevel::ReadCommitted);
-        AdminCenterAPISetup.SetLoadFields(APIUrl);
-        AdminCenterAPISetup.Get();
-
-        HttpRequestMessage.GetHeaders(HttpHeaders);
-        HttpHeaders.Add('Authorization', GetBearerToken(ForBCTenant));
-
-        HttpRequestMessage.SetRequestUri(AdminCenterAPISetup.APIUrl + Endpoint);
-        HttpRequestMessage.Method('GET');
-
         HttpClient.Send(HttpRequestMessage, HttpResponseMessage);
         if not HttpResponseMessage.IsSuccessStatusCode() then
             ThrowError(AdminAPICallFailedErr, HttpResponseMessage);
@@ -57,7 +95,7 @@ codeunit 73270 TKACallAdminAPIImpl
 
     [InherentPermissions(PermissionObjectType::TableData, Database::TKAManagedBCAdministrationApp, 'R')]
     [InherentPermissions(PermissionObjectType::TableData, Database::TKAAdminCenterAPISetup, 'R')]
-    local procedure GetBearerToken(ForBCTenant: Record TKAManagedBCTenant): SecretText
+    local procedure GetBearerToken(TenantId: Guid; ClientId: Guid): SecretText
     var
         ManagedBCAdministrationApp: Record TKAManagedBCAdministrationApp;
         AdminCenterAPISetup: Record TKAAdminCenterAPISetup;
@@ -66,7 +104,7 @@ codeunit 73270 TKACallAdminAPIImpl
         AuthFailedErr: Label 'Failed to acquire token.';
     begin
         ManagedBCAdministrationApp.ReadIsolation(IsolationLevel::ReadCommitted);
-        ManagedBCAdministrationApp.Get(ForBCTenant.ClientId);
+        ManagedBCAdministrationApp.Get(ClientId);
 
         AdminCenterAPISetup.ReadIsolation(IsolationLevel::ReadCommitted);
         AdminCenterAPISetup.SetLoadFields(AuthUrl);
@@ -76,7 +114,7 @@ codeunit 73270 TKACallAdminAPIImpl
         if not OAuth2.AcquireTokenWithClientCredentials(
             Format(ManagedBCAdministrationApp.ClientId, 0, 4),
             ManagedBCAdministrationApp.GetClientSecretAsSecretText(),
-            AdminCenterAPISetup.AuthUrl.Replace('%tenantid%', Format(ForBCTenant.TenantId, 0, 4)),
+            AdminCenterAPISetup.AuthUrl.Replace('%tenantid%', Format(TenantId, 0, 4)),
             '', // RedirectUri
             'https://api.businesscentral.dynamics.com/.default',
             AccessToken
@@ -121,4 +159,24 @@ codeunit 73270 TKACallAdminAPIImpl
         NewErrorInfo.CustomDimensions(CustomDimensions);
         Error(NewErrorInfo);
     end;
+
+    [InherentPermissions(PermissionObjectType::TableData, Database::TKAAdminCenterAPISetup, 'R')]
+    local procedure GetBaseAPIUrl(): Text
+    var
+        AdminCenterAPISetup: Record TKAAdminCenterAPISetup;
+    begin
+        AdminCenterAPISetup.ReadIsolation(IsolationLevel::ReadCommitted);
+        AdminCenterAPISetup.SetLoadFields(APIUrl);
+        AdminCenterAPISetup.Get();
+        exit(AdminCenterAPISetup.APIUrl);
+    end;
+
+    local procedure ReplaceHttpHeader(var HttpHeaders: HttpHeaders; Name: Text; Value: Text)
+    begin
+        if HttpHeaders.Contains(Name) then
+            HttpHeaders.Remove(Name);
+        HttpHeaders.Add(Name, Value);
+    end;
+
+    #endregion Local Procedures
 }

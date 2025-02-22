@@ -68,6 +68,30 @@ page 73273 TKAManagedBCEnvironments
         }
     }
 
+    actions
+    {
+        area(Processing)
+        {
+            action(ChangeUpdateDate)
+            {
+                ApplicationArea = All;
+                Caption = 'Change Update Date';
+                ToolTip = 'Change the update date for the selected environments.';
+                Image = ChangeLog;
+
+                trigger OnAction()
+                var
+                    ManagedBCEnvironment: Record TKAManagedBCEnvironment;
+                    ChangeUpdateDate: Report TKAChangeUpdateDate;
+                begin
+                    CurrPage.SetSelectionFilter(ManagedBCEnvironment);
+                    ChangeUpdateDate.SetEnvironmentsToUpdate(ManagedBCEnvironment);
+                    ChangeUpdateDate.RunModal();
+                end;
+            }
+        }
+    }
+
     var
         OpenEnvironmentLbl: Label 'Open Environment';
 }

@@ -26,6 +26,18 @@ codeunit 73271 TKACallAdminAPI
     end;
 
     /// <summary>
+    /// Calls the PUT method of the Admin API for the specified BC tenant and API endpoint.
+    /// </summary>
+    /// <param name="ManagedBCEnvironment">Specifies the managed BC environment for which the API call is to be made.</param>
+    /// <param name="Endpoint">Specifies the API endpoint to be called.</param>
+    /// <param name="RequestBody">Specifies the request body as a JsonObject</param>
+    /// <returns>Response as a text</returns>
+    procedure PutToAdminAPI(ManagedBCEnvironment: Record TKAManagedBCEnvironment; Endpoint: Text; RequestBody: JsonObject): Text
+    begin
+        exit(CallAdminAPIImpl.PutToAdminAPI(ManagedBCEnvironment, Endpoint, RequestBody));
+    end;
+
+    /// <summary>
     /// Returns the endpoint for getting all environments.
     /// </summary>
     /// <returns>String containing the endpoint for getting all environments.</returns>
