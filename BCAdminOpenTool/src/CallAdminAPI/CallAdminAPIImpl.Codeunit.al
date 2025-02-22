@@ -11,12 +11,14 @@ codeunit 73270 TKACallAdminAPIImpl
         CallAdminAPIImpl: Codeunit TKACallAdminAPIImpl;
         ResponseInStream: InStream;
         ResponseText: Text;
+        ConnectionSuccessfulButUnexpectedMessageReceivedErr: Label 'Connection to tenant %1 (%2) was successful, but an unexpected message was received.', Comment = '%1 - TenantId, %2 - Name';
         ConnectionSuccessfulMsg: Label 'Connection to tenant %1 (%2) was successful.', Comment = '%1 - TenantId, %2 - Name';
     begin
         CallAdminAPIImpl.CallAdminAPI(ForBCTenant, '/applications/BusinessCentral/environments', ResponseInStream);
         ResponseInStream.ReadText(ResponseText);
-        if ResponseText.Contains('"applicationFamily":"BusinessCentral"') then
-            Message(ConnectionSuccessfulMsg, ForBCTenant.TenantId, ForBCTenant.Name);
+        if not ResponseText.Contains('"applicationFamily":"BusinessCentral"') then
+            Error(ConnectionSuccessfulButUnexpectedMessageReceivedErr, ForBCTenant.TenantId, ForBCTenant.Name);
+        Message(ConnectionSuccessfulMsg, ForBCTenant.TenantId, ForBCTenant.Name);
     end;
 
     /// <summary>
