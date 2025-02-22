@@ -11,15 +11,18 @@ codeunit 73275 TKAChangeUpdateDateImpl
     [InherentPermissions(PermissionObjectType::TableData, Database::TKAManagedBCEnvironment, 'R')]
     local procedure TestChangesPossible(var ManagedBCEnvironment: Record TKAManagedBCEnvironment; ChangeUpdateDate: Boolean; NewUpdateDate: Date)
     var
-        DateIsNotAllowedErr: Label 'Environment %1 cannot be changed. The new update date is after the latest selectable upgrade date.', Comment = '%1 - Environment Name';
+        DateIsAfterAllowedDateErr: Label 'Environment %1 cannot be changed. The new update date is after the latest selectable upgrade date.', Comment = '%1 - Environment Name';
+        DateIsBeforeAllowedDateErr: Label 'Environment %1 cannot be changed. The new update date is before the earliest selectable upgrade date.', Comment = '%1 - Environment Name';
     begin
         if not ChangeUpdateDate then
             exit;
         if ManagedBCEnvironment.FindSet() then
             repeat
                 ManagedBCEnvironment.TestField(UpdateIsActive, true);
+                if (NewUpdateDate < ManagedBCEnvironment.EarliestSelectableUpgradeDate) or (NewUpdateDate < Today()) then
+                    Error(DateIsBeforeAllowedDateErr, ManagedBCEnvironment.Name);
                 if NewUpdateDate > ManagedBCEnvironment.LatestSelectableUpgradeDate then
-                    Error(DateIsNotAllowedErr, ManagedBCEnvironment.Name);
+                    Error(DateIsAfterAllowedDateErr, ManagedBCEnvironment.Name);
             until ManagedBCEnvironment.Next() < 1;
     end;
 
