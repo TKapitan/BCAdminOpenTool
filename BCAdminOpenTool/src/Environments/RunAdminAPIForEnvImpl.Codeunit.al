@@ -97,13 +97,13 @@ codeunit 73273 TKARunAdminAPIForEnvImpl
             ManagedBCEnvironment.Validate(GeoName, CopyStr(JsonTokenValue.AsValue().AsText(), 1, MaxStrLen(ManagedBCEnvironment.GeoName)));
         if JsonEnvironment.Get('appInsightsKey', JsonTokenValue) then
             ManagedBCEnvironment.Validate(ApplicationInsightsKey, CopyStr(JsonTokenValue.AsValue().AsText(), 1, MaxStrLen(ManagedBCEnvironment.ApplicationInsightsKey)));
-        if JsonEnvironment.Get('AppSourceAppsUpdateCadence', JsonTokenValue) then
+        if JsonEnvironment.Get('appSourceAppsUpdateCadence', JsonTokenValue) then
             ManagedBCEnvironment.Validate(AppSourceAppsUpdateCadence, CopyStr(JsonTokenValue.AsValue().AsText(), 1, MaxStrLen(ManagedBCEnvironment.AppSourceAppsUpdateCadence)));
-        if JsonEnvironment.Get('SoftDeletedOn', JsonTokenValue) then
+        if JsonEnvironment.Get('softDeletedOn', JsonTokenValue) then
             ManagedBCEnvironment.Validate(SoftDeletedOn, JsonTokenValue.AsValue().AsDateTime());
-        if JsonEnvironment.Get('HardDeletePendingOn', JsonTokenValue) then
+        if JsonEnvironment.Get('hardDeletePendingOn', JsonTokenValue) then
             ManagedBCEnvironment.Validate(HardDeletePendingOn, JsonTokenValue.AsValue().AsDateTime());
-        if JsonEnvironment.Get('DeleteReason', JsonTokenValue) then
+        if JsonEnvironment.Get('deleteReason', JsonTokenValue) then
             ManagedBCEnvironment.Validate(DeleteReason, CopyStr(JsonTokenValue.AsValue().AsText(), 1, MaxStrLen(ManagedBCEnvironment.DeleteReason)));
         ManagedBCEnvironment.Validate(EnvironmentModifiedAt, CurrentDateTime());
         ManagedBCEnvironment.Modify(true);
