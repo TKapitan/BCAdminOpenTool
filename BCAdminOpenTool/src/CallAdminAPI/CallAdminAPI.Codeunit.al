@@ -13,4 +13,14 @@ codeunit 73271 TKACallAdminAPI
     begin
         CallAdminAPIImpl.TestAdminCenterConnection(ForBCTenant);
     end;
+
+    /// <summary>
+    /// Gets the environments for the specified BC tenant.
+    /// </summary>
+    /// <param name="ForBCTenant">Specifies the BC tenant for which the environments are to be retrieved.</param>
+    /// <returns></returns>
+    procedure GetEnvironmentsForTenant(ForBCTenant: Record TKABCTenant): Text
+    begin
+        exit(CallAdminAPIImpl.GetEnvironmentsForTenant(ForBCTenant));
+    end;
 }

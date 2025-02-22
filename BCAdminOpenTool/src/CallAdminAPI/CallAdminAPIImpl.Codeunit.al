@@ -8,17 +8,30 @@ codeunit 73270 TKACallAdminAPIImpl
     /// <param name="ForBCTenant">Specifies the BC tenant to connect to.</param>
     procedure TestAdminCenterConnection(ForBCTenant: Record TKABCTenant)
     var
-        CallAdminAPIImpl: Codeunit TKACallAdminAPIImpl;
-        ResponseInStream: InStream;
         ResponseText: Text;
         ConnectionSuccessfulButUnexpectedMessageReceivedErr: Label 'Connection to tenant %1 (%2) was successful, but an unexpected message was received.', Comment = '%1 - TenantId, %2 - Name';
         ConnectionSuccessfulMsg: Label 'Connection to tenant %1 (%2) was successful.', Comment = '%1 - TenantId, %2 - Name';
     begin
-        CallAdminAPIImpl.CallAdminAPI(ForBCTenant, '/applications/BusinessCentral/environments', ResponseInStream);
-        ResponseInStream.ReadText(ResponseText);
+        ResponseText := GetEnvironmentsForTenant(ForBCTenant);
         if not ResponseText.Contains('"applicationFamily":"BusinessCentral"') then
             Error(ConnectionSuccessfulButUnexpectedMessageReceivedErr, ForBCTenant.TenantId, ForBCTenant.Name);
         Message(ConnectionSuccessfulMsg, ForBCTenant.TenantId, ForBCTenant.Name);
+    end;
+
+    /// <summary>
+    /// Gets the environments for the specified BC tenant.
+    /// </summary>
+    /// <param name="ForBCTenant">Specifies the BC tenant for which the environments are to be retrieved.</param>
+    /// <returns></returns>
+    procedure GetEnvironmentsForTenant(ForBCTenant: Record TKABCTenant): Text
+    var
+        CallAdminAPIImpl: Codeunit TKACallAdminAPIImpl;
+        ResponseInStream: InStream;
+        ResponseText: Text;
+    begin
+        CallAdminAPIImpl.CallAdminAPI(ForBCTenant, '/applications/BusinessCentral/environments', ResponseInStream);
+        ResponseInStream.ReadText(ResponseText);
+        exit(ResponseText);
     end;
 
     /// <summary>

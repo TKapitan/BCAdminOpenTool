@@ -44,6 +44,7 @@ table 73271 TKABCAdminApp
 
     trigger OnDelete()
     begin
+        TestNotUsed();
         ClearIsolatedField(Rec.ClientSecretID);
     end;
 
@@ -92,6 +93,18 @@ table 73271 TKABCAdminApp
 
     #endregion "Global Procedures"
     #region "Local Procedures"
+
+    [InherentPermissions(PermissionObjectType::TableData, Database::TKABCTenant, 'R')]
+    local procedure TestNotUsed()
+    var
+        BCTenant: Record TKABCTenant;
+        TheBCAdminAppIsUsedErr: Label 'The app is configured for a tenant and cannot be deleted.';
+    begin
+        BCTenant.ReadIsolation(IsolationLevel::ReadCommitted);
+        BCTenant.SetRange(ClientId, Rec.ClientId);
+        if not BCTenant.IsEmpty() then
+            Error(TheBCAdminAppIsUsedErr);
+    end;
 
     local procedure ClearIsolatedField(var IsolatedGuid: Guid)
     begin

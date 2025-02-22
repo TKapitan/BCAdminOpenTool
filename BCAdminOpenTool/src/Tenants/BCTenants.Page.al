@@ -21,6 +21,7 @@ page 73271 TKABCTenants
                 {
                     ShowMandatory = true;
                 }
+                field(EnvironmentsModifiedAt; Rec.EnvironmentsModifiedAt) { }
             }
         }
     }
@@ -29,6 +30,20 @@ page 73271 TKABCTenants
     {
         area(Processing)
         {
+            action(UpdateEnvironments)
+            {
+                ApplicationArea = All;
+                Caption = 'Update Environments';
+                Image = UpdateDescription;
+                ToolTip = 'Allows to update the environments for the tenant using the specified client ID.';
+
+                trigger OnAction()
+                var
+                    RunAdminAPIForEnv: Codeunit TKARunAdminAPIForEnv;
+                begin
+                    RunAdminAPIForEnv.CreateUpdateEnvironmentsForTenant(Rec);
+                end;
+            }
             action(TestConnection)
             {
                 ApplicationArea = All;
@@ -42,6 +57,18 @@ page 73271 TKABCTenants
                 begin
                     ConnectToTenant.TestAdminCenterConnection(Rec);
                 end;
+            }
+        }
+        area(Navigation)
+        {
+            action(Environments)
+            {
+                ApplicationArea = All;
+                Caption = 'Environments';
+                Image = ShowList;
+                ToolTip = 'Navigates to the environments for the tenant.';
+                RunObject = page TKABCEnvironments;
+                RunPageLink = TenantId = field(TenantId);
             }
         }
     }

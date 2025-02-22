@@ -4,6 +4,7 @@ permissionset 73270 TKABCAdminRead
     Caption = 'BC Admin Read', MaxLength = 30;
     Permissions =
         tabledata TKABCTenant = R,
+        tabledata TKABCEnvironment = R,
         tabledata TKABCAdminApp = R,
         tabledata TKAAdminCenterAPISetup = R;
 }
