@@ -37,13 +37,23 @@ codeunit 73273 TKARunAdminAPIForEnvImpl
             ParseEnvironment(JsonEnvironment, TenantId, EnvironmentName);
             ListOfFoundEnvironments.Add(EnvironmentName);
         end;
+
+        DeleteDeletedEnvironments(TenantId, ListOfFoundEnvironments);
     end;
 
+    [InherentPermissions(PermissionObjectType::TableData, Database::TKAManagedBCEnvironment, 'RD')]
     local procedure DeleteDeletedEnvironments(TenantId: Guid; ListOfFoundEnvironments: List of [Text[100]])
     var
-        ManagedBCEnvironment: Record TKAManagedBCEnvironment;
+        ManagedBCEnvironment, ManagedBCEnvironment2 : Record TKAManagedBCEnvironment;
     begin
-
+        ManagedBCEnvironment.SetRange(TenantId, TenantId);
+        if ManagedBCEnvironment.FindSet() then
+            repeat
+                if not ListOfFoundEnvironments.Contains(ManagedBCEnvironment.Name) then begin
+                    ManagedBCEnvironment2.GetBySystemId(ManagedBCEnvironment.SystemId);
+                    ManagedBCEnvironment2.Delete(true);
+                end;
+            until ManagedBCEnvironment.Next() < 1;
     end;
 
     [InherentPermissions(PermissionObjectType::TableData, Database::TKAManagedBCEnvironment, 'RIM')]
