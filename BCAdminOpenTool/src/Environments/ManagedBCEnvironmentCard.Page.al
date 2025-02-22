@@ -52,6 +52,27 @@ page 73274 TKAManagedBCEnvironmentCard
 
                 field(ApplicationVersion; Rec.ApplicationVersion) { }
                 field(PlatformVersion; Rec.PlatformVersion) { }
+                field(UpdateIsActive; Rec.UpdateIsActive) { }
+                field(UpdateTargetVersion; Rec.UpdateTargetVersion) { }
+                field(CanTenantSelectDate; Rec.CanTenantSelectDate)
+                {
+                    Importance = Additional;
+                }
+                field(DidTenantSelectDate; Rec.DidTenantSelectDate)
+                {
+                    Importance = Additional;
+                }
+                field(EarliestSelectableUpgradeDate; Rec.EarliestSelectableUpgradeDate)
+                {
+                    Importance = Additional;
+                }
+                field(LatestSelectableUpgradeDate; Rec.LatestSelectableUpgradeDate)
+                {
+                    Importance = Additional;
+                }
+                field(UpgradeDate; Rec.UpgradeDate) { }
+                field(UpdateStatus; Rec.UpdateStatus) { }
+                field(IgnoreUpgradeWindow; Rec.IgnoreUpgradeWindow) { }
                 field(AppSourceAppsUpdateCadence; Rec.AppSourceAppsUpdateCadence) { }
             }
             group(StatusDetails)

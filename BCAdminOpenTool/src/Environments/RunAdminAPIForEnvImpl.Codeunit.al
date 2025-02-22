@@ -10,102 +10,46 @@ codeunit 73273 TKARunAdminAPIForEnvImpl
     procedure CreateUpdateEnvironmentsForTenant(var ForBCTenant: Record TKAManagedBCTenant)
     var
         CallAdminAPI: Codeunit TKACallAdminAPI;
+        ProcessAdminAPIEnvRespImpl: Codeunit TKAProcessAdminAPIEnvRespImpl;
         Response: Text;
     begin
-        Response := CallAdminAPI.GetEnvironmentsForTenant(ForBCTenant);
-        Message(Response);
-        ParseGetEnvironmentsResponse(Response);
+        Response := CallAdminAPI.GetFromAdminAPI(ForBCTenant, CallAdminAPI.GetListAllEnvironmentsEndpoint());
+        ProcessAdminAPIEnvRespImpl.ParseGetEnvironmentsResponse(Response);
 
         ForBCTenant.Validate(EnvironmentsModifiedAt, CurrentDateTime());
         ForBCTenant.Modify(true);
+
+        ProcessAdditionalEndpoints(ForBCTenant);
     end;
 
-    local procedure ParseGetEnvironmentsResponse(Response: Text)
+    [InherentPermissions(PermissionObjectType::TableData, Database::TKAManagedBCEnvironment, 'R')]
+    local procedure ProcessAdditionalEndpoints(ManagedBCTenant: Record TKAManagedBCTenant)
     var
-        JsonResponse, JsonEnvironment : JsonObject;
-        JsonTokenValue, JsonTokenEnvironment : JsonToken;
-        JsonEnvironments: JsonArray;
-        TenantId: Guid;
-        ListOfFoundEnvironments: List of [Text[100]];
-        EnvironmentName: Text[100];
+        ManagedBCEnvironment: Record TKAManagedBCEnvironment;
     begin
-        JsonResponse.ReadFrom(Response);
-        JsonResponse.Get('value', JsonTokenValue);
-        JsonEnvironments := JsonTokenValue.AsArray();
-        foreach JsonTokenEnvironment in JsonEnvironments do begin
-            JsonEnvironment := JsonTokenEnvironment.AsObject();
-            ParseEnvironment(JsonEnvironment, TenantId, EnvironmentName);
-            ListOfFoundEnvironments.Add(EnvironmentName);
-        end;
-
-        DeleteDeletedEnvironments(TenantId, ListOfFoundEnvironments);
-    end;
-
-    [InherentPermissions(PermissionObjectType::TableData, Database::TKAManagedBCEnvironment, 'RD')]
-    local procedure DeleteDeletedEnvironments(TenantId: Guid; ListOfFoundEnvironments: List of [Text[100]])
-    var
-        ManagedBCEnvironment, ManagedBCEnvironment2 : Record TKAManagedBCEnvironment;
-    begin
-        ManagedBCEnvironment.SetRange(TenantId, TenantId);
+        ManagedBCEnvironment.ReadIsolation(IsolationLevel::ReadCommitted);
+        ManagedBCEnvironment.SetRange(TenantId, ManagedBCTenant.TenantId);
         if ManagedBCEnvironment.FindSet() then
             repeat
-                if not ListOfFoundEnvironments.Contains(ManagedBCEnvironment.Name) then begin
-                    ManagedBCEnvironment2.GetBySystemId(ManagedBCEnvironment.SystemId);
-                    ManagedBCEnvironment2.Delete(true);
-                end;
+                GetScheduledUpdateForEnvironment(ManagedBCTenant, ManagedBCEnvironment);
             until ManagedBCEnvironment.Next() < 1;
     end;
 
-    [InherentPermissions(PermissionObjectType::TableData, Database::TKAManagedBCEnvironment, 'RIM')]
-#pragma warning disable LC0010 // Cyclomatic complexity is caused by the number of fields
-    local procedure ParseEnvironment(var JsonEnvironment: JsonObject; TenantId: Guid; EnvironmentName: Text[100])
-#pragma warning restore LC0010
+    [InherentPermissions(PermissionObjectType::TableData, Database::TKAAdminCenterAPISetup, 'R')]
+    local procedure GetScheduledUpdateForEnvironment(ManagedBCTenant: Record TKAManagedBCTenant; ManagedBCEnvironment: Record TKAManagedBCEnvironment)
     var
-        ManagedBCEnvironment: Record TKAManagedBCEnvironment;
-        JsonTokenValue: JsonToken;
+        AdminCenterAPISetup: Record TKAAdminCenterAPISetup;
+        CallAdminAPI: Codeunit TKACallAdminAPI;
+        ProcessAdminAPIEnvRespImpl: Codeunit TKAProcessAdminAPIEnvRespImpl;
+        Response: Text;
     begin
-        JsonEnvironment.Get('name', JsonTokenValue);
-        EnvironmentName := CopyStr(JsonTokenValue.AsValue().AsText(), 1, MaxStrLen(EnvironmentName));
-        JsonEnvironment.Get('aadTenantId', JsonTokenValue);
-        Evaluate(TenantId, JsonTokenValue.AsValue().AsText());
+        AdminCenterAPISetup.ReadIsolation(IsolationLevel::ReadUncommitted);
+        AdminCenterAPISetup.SetLoadFields(GetScheduledUpdateAPIEnabled);
+        AdminCenterAPISetup.Get();
+        if not AdminCenterAPISetup.GetScheduledUpdateAPIEnabled then
+            exit;
 
-        if not ManagedBCEnvironment.Get(TenantId, EnvironmentName) then begin
-            ManagedBCEnvironment.Init();
-            ManagedBCEnvironment.Validate(TenantId, TenantId);
-            ManagedBCEnvironment.Validate(Name, EnvironmentName);
-            ManagedBCEnvironment.Insert(true);
-        end;
-        JsonEnvironment.Get('type', JsonTokenValue);
-        ManagedBCEnvironment.Validate(Type, CopyStr(JsonTokenValue.AsValue().AsText(), 1, MaxStrLen(ManagedBCEnvironment.Type)));
-        JsonEnvironment.Get('countryCode', JsonTokenValue);
-        ManagedBCEnvironment.Validate(CountryCode, CopyStr(JsonTokenValue.AsValue().AsText(), 1, MaxStrLen(ManagedBCEnvironment.CountryCode)));
-        JsonEnvironment.Get('applicationVersion', JsonTokenValue);
-        ManagedBCEnvironment.Validate(ApplicationVersion, CopyStr(JsonTokenValue.AsValue().AsText(), 1, MaxStrLen(ManagedBCEnvironment.ApplicationVersion)));
-        JsonEnvironment.Get('platformVersion', JsonTokenValue);
-        ManagedBCEnvironment.Validate(PlatformVersion, CopyStr(JsonTokenValue.AsValue().AsText(), 1, MaxStrLen(ManagedBCEnvironment.PlatformVersion)));
-        JsonEnvironment.Get('status', JsonTokenValue);
-        ManagedBCEnvironment.Validate(Status, CopyStr(JsonTokenValue.AsValue().AsText(), 1, MaxStrLen(ManagedBCEnvironment.Status)));
-        JsonEnvironment.Get('webClientLoginUrl', JsonTokenValue);
-        ManagedBCEnvironment.Validate(WebClientURL, CopyStr(JsonTokenValue.AsValue().AsText(), 1, MaxStrLen(ManagedBCEnvironment.WebClientURL)));
-
-        // Other fields (not sure if they are always included in the response)
-        if JsonEnvironment.Get('ringName', JsonTokenValue) then
-            ManagedBCEnvironment.Validate(RingName, CopyStr(JsonTokenValue.AsValue().AsText(), 1, MaxStrLen(ManagedBCEnvironment.RingName)));
-        if JsonEnvironment.Get('locationName', JsonTokenValue) then
-            ManagedBCEnvironment.Validate(LocationName, CopyStr(JsonTokenValue.AsValue().AsText(), 1, MaxStrLen(ManagedBCEnvironment.LocationName)));
-        if JsonEnvironment.Get('geoName', JsonTokenValue) then
-            ManagedBCEnvironment.Validate(GeoName, CopyStr(JsonTokenValue.AsValue().AsText(), 1, MaxStrLen(ManagedBCEnvironment.GeoName)));
-        if JsonEnvironment.Get('appInsightsKey', JsonTokenValue) then
-            ManagedBCEnvironment.Validate(ApplicationInsightsKey, CopyStr(JsonTokenValue.AsValue().AsText(), 1, MaxStrLen(ManagedBCEnvironment.ApplicationInsightsKey)));
-        if JsonEnvironment.Get('appSourceAppsUpdateCadence', JsonTokenValue) then
-            ManagedBCEnvironment.Validate(AppSourceAppsUpdateCadence, CopyStr(JsonTokenValue.AsValue().AsText(), 1, MaxStrLen(ManagedBCEnvironment.AppSourceAppsUpdateCadence)));
-        if JsonEnvironment.Get('softDeletedOn', JsonTokenValue) then
-            ManagedBCEnvironment.Validate(SoftDeletedOn, JsonTokenValue.AsValue().AsDateTime());
-        if JsonEnvironment.Get('hardDeletePendingOn', JsonTokenValue) then
-            ManagedBCEnvironment.Validate(HardDeletePendingOn, JsonTokenValue.AsValue().AsDateTime());
-        if JsonEnvironment.Get('deleteReason', JsonTokenValue) then
-            ManagedBCEnvironment.Validate(DeleteReason, CopyStr(JsonTokenValue.AsValue().AsText(), 1, MaxStrLen(ManagedBCEnvironment.DeleteReason)));
-        ManagedBCEnvironment.Validate(EnvironmentModifiedAt, CurrentDateTime());
-        ManagedBCEnvironment.Modify(true);
+        Response := CallAdminAPI.GetFromAdminAPI(ManagedBCTenant, CallAdminAPI.GetScheduledUpdateForEnvironmentEndpoint(ManagedBCEnvironment.Name));
+        ProcessAdminAPIEnvRespImpl.ParseGetScheduledUpdateResponse(Response, ManagedBCEnvironment);
     end;
 }

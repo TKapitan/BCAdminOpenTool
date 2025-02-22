@@ -20,8 +20,8 @@ page 73273 TKAManagedBCEnvironments
                 {
                     Visible = false;
                 }
-                field(TenantName; Rec.TenantName) { }
                 field(Name; Rec.Name) { }
+                field(TenantName; Rec.TenantName) { }
                 field(Type; Rec."Type") { }
                 field(RingName; Rec.RingName)
                 {
@@ -30,6 +30,9 @@ page 73273 TKAManagedBCEnvironments
                 field(CountryCode; Rec.CountryCode) { }
                 field(ApplicationVersion; Rec.ApplicationVersion) { }
                 field(PlatformVersion; Rec.PlatformVersion) { }
+                field(UpdateIsActive; Rec.UpdateIsActive) { }
+                field(UpdateTargetVersion; Rec.UpdateTargetVersion) { }
+                field(UpgradeDate; Rec.UpgradeDate) { }
                 field(Status; Rec.Status) { }
                 field(AppSourceAppsUpdateCadence; Rec.AppSourceAppsUpdateCadence) { }
                 field(LocationName; Rec.LocationName) { }

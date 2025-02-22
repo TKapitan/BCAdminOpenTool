@@ -8,30 +8,15 @@ codeunit 73270 TKACallAdminAPIImpl
     /// <param name="ForBCTenant">Specifies the BC tenant to connect to.</param>
     procedure TestAdminCenterConnection(ForBCTenant: Record TKAManagedBCTenant)
     var
+        CallAdminAPI: Codeunit TKACallAdminAPI;
         ResponseText: Text;
         ConnectionSuccessfulButUnexpectedMessageReceivedErr: Label 'Connection to tenant %1 (%2) was successful, but an unexpected message was received.', Comment = '%1 - TenantId, %2 - Name';
         ConnectionSuccessfulMsg: Label 'Connection to tenant %1 (%2) was successful.', Comment = '%1 - TenantId, %2 - Name';
     begin
-        ResponseText := GetEnvironmentsForTenant(ForBCTenant);
+        ResponseText := GetFromAdminAPI(ForBCTenant, CallAdminAPI.GetListAllEnvironmentsEndpoint());
         if not ResponseText.Contains('"applicationFamily":"BusinessCentral"') then
             Error(ConnectionSuccessfulButUnexpectedMessageReceivedErr, ForBCTenant.TenantId, ForBCTenant.Name);
         Message(ConnectionSuccessfulMsg, ForBCTenant.TenantId, ForBCTenant.Name);
-    end;
-
-    /// <summary>
-    /// Gets the environments for the specified BC tenant.
-    /// </summary>
-    /// <param name="ForBCTenant">Specifies the BC tenant for which the environments are to be retrieved.</param>
-    /// <returns></returns>
-    procedure GetEnvironmentsForTenant(ForBCTenant: Record TKAManagedBCTenant): Text
-    var
-        CallAdminAPIImpl: Codeunit TKACallAdminAPIImpl;
-        ResponseInStream: InStream;
-        ResponseText: Text;
-    begin
-        CallAdminAPIImpl.CallAdminAPI(ForBCTenant, '/applications/BusinessCentral/environments', ResponseInStream);
-        ResponseInStream.ReadText(ResponseText);
-        exit(ResponseText);
     end;
 
     /// <summary>
@@ -39,16 +24,17 @@ codeunit 73270 TKACallAdminAPIImpl
     /// </summary>
     /// <param name="ForBCTenant">Specifies the BC tenant for which the API call is to be made.</param>
     /// <param name="Endpoint">Specifies the API endpoint to be called.</param>
-    /// <param name="ResponseInStream">Specifies the response stream from the API call.</param>
+    /// <returns>Response as a text</returns>
     [InherentPermissions(PermissionObjectType::TableData, Database::TKAAdminCenterAPISetup, 'R')]
-    procedure CallAdminAPI(ForBCTenant: Record TKAManagedBCTenant; Endpoint: Text; var ResponseInStream: InStream)
+    procedure GetFromAdminAPI(ForBCTenant: Record TKAManagedBCTenant; Endpoint: Text): Text
     var
         AdminCenterAPISetup: Record TKAAdminCenterAPISetup;
         HttpRequestMessage: HttpRequestMessage;
         HttpHeaders: HttpHeaders;
         HttpClient: HttpClient;
-
+        ResponseInStream: InStream;
         HttpResponseMessage: HttpResponseMessage;
+        Result: Text;
         AdminAPICallFailedErr: Label 'Admin API call failed.';
     begin
         AdminCenterAPISetup.ReadIsolation(IsolationLevel::ReadCommitted);
@@ -65,6 +51,8 @@ codeunit 73270 TKACallAdminAPIImpl
         if not HttpResponseMessage.IsSuccessStatusCode() then
             ThrowError(AdminAPICallFailedErr, HttpResponseMessage);
         HttpResponseMessage.Content().ReadAs(ResponseInStream);
+        ResponseInStream.ReadText(Result);
+        exit(Result);
     end;
 
     [InherentPermissions(PermissionObjectType::TableData, Database::TKAManagedBCAdministrationApp, 'R')]

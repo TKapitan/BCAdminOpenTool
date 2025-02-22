@@ -98,6 +98,51 @@ table 73273 TKAManagedBCEnvironment
             Caption = 'Delete Reason';
             ToolTip = 'Specifies the reason why the environment was deleted.';
         }
+        field(700; UpdateTargetVersion; Text[20])
+        {
+            Caption = 'Update Target Version';
+            ToolTip = 'Specifies the version of the application that the environment will update to.';
+        }
+        field(710; CanTenantSelectDate; Boolean)
+        {
+            Caption = 'Can Tenant Select Date';
+            ToolTip = 'Indicates if a new update date can be selected.';
+        }
+        field(715; DidTenantSelectDate; Boolean)
+        {
+            Caption = 'Did Tenant Select Date';
+            ToolTip = 'Indicates if the tenant has selected the current date for the update.';
+        }
+        field(720; EarliestSelectableUpgradeDate; DateTime)
+        {
+            Caption = 'Earliest Selectable Upgrade Date';
+            ToolTip = 'Specifies the earliest date that can be chosen for the update.';
+        }
+        field(730; LatestSelectableUpgradeDate; DateTime)
+        {
+            Caption = 'Latest Selectable Upgrade Date';
+            ToolTip = 'Specifies the latest date that can be chosen for the update.';
+        }
+        field(740; UpgradeDate; DateTime)
+        {
+            Caption = 'Upgrade Date';
+            ToolTip = 'The currently selected scheduled date of the update.';
+        }
+        field(750; UpdateStatus; Text[20])
+        {
+            Caption = 'Update Status';
+            ToolTip = 'The current status of the environment''s update.';
+        }
+        field(760; IgnoreUpgradeWindow; Boolean)
+        {
+            Caption = 'Ignore Upgrade Window';
+            ToolTip = 'Indicates if the environment''s update window will be ignored.';
+        }
+        field(770; UpdateIsActive; Boolean)
+        {
+            Caption = 'Update Is Active';
+            ToolTip = 'Indicates if the update is activated and is scheduled to occur.';
+        }
         field(1000; EnvironmentModifiedAt; DateTime)
         {
             Caption = 'Environment Modified At';

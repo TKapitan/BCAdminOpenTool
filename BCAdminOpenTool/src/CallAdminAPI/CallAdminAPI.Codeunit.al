@@ -15,12 +15,32 @@ codeunit 73271 TKACallAdminAPI
     end;
 
     /// <summary>
-    /// Gets the environments for the specified BC tenant.
+    /// Calls the Admin API for the specified BC tenant.
     /// </summary>
-    /// <param name="ForBCTenant">Specifies the BC tenant for which the environments are to be retrieved.</param>
-    /// <returns></returns>
-    procedure GetEnvironmentsForTenant(ForBCTenant: Record TKAManagedBCTenant): Text
+    /// <param name="ForBCTenant">Specifies the BC tenant for which the API call is to be made.</param>
+    /// <param name="Endpoint">Specifies the API endpoint to be called.</param>
+    /// <returns>Response as text.</returns>
+    procedure GetFromAdminAPI(ForBCTenant: Record TKAManagedBCTenant; Endpoint: Text): Text
     begin
-        exit(CallAdminAPIImpl.GetEnvironmentsForTenant(ForBCTenant));
+        exit(CallAdminAPIImpl.GetFromAdminAPI(ForBCTenant, Endpoint));
+    end;
+
+    /// <summary>
+    /// Returns the endpoint for getting all environments.
+    /// </summary>
+    /// <returns>String containing the endpoint for getting all environments.</returns>
+    procedure GetListAllEnvironmentsEndpoint(): Text
+    begin
+        exit('/applications/BusinessCentral/environments');
+    end;
+
+    /// <summary>
+    /// Return the endpoint for getting scheduled update information for an environment.
+    /// </summary>
+    /// <param name="EnvironmentName">The name of the environment for which to get the scheduled update information.</param>
+    /// <returns>String containing the endpoint for getting scheduled update information for an environment.</returns>
+    procedure GetScheduledUpdateForEnvironmentEndpoint(EnvironmentName: Text): Text
+    begin
+        exit('/applications/BusinessCentral/environments/{environmentName}/upgrade'.Replace('{environmentName}', EnvironmentName));
     end;
 }

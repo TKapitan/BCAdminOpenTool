@@ -19,6 +19,11 @@ page 73272 TKAAdminCenterAPISetup
                 field(Scope; Rec.Scope) { }
                 field(APIUrl; Rec.APIUrl) { }
             }
+            group(AdditionalEndpoints)
+            {
+                Caption = 'Additional Endpoints';
+                field(GetScheduledUpdateAPIEnabled; Rec.GetScheduledUpdateAPIEnabled) { }
+            }
         }
     }
 

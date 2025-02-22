@@ -30,6 +30,11 @@ table 73272 TKAAdminCenterAPISetup
             Caption = 'API Url';
             ToolTip = 'Specifies the API URL for the Admin Center API.';
         }
+        field(100; GetScheduledUpdateAPIEnabled; Boolean)
+        {
+            Caption = 'Get Scheduled Update API Enabled';
+            ToolTip = 'Specifies whether the Get Scheduled Update API is enabled.';
+        }
     }
 
     keys
