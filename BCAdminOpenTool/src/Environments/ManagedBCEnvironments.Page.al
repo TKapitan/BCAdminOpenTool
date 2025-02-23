@@ -72,6 +72,23 @@ page 73273 TKAManagedBCEnvironments
     {
         area(Processing)
         {
+            action(RefreshEnvironments)
+            {
+                ApplicationArea = All;
+                Caption = 'Refresh Environments';
+                ToolTip = 'Refresh the list of managed BC environments.';
+                Image = Refresh;
+
+                trigger OnAction()
+                var
+                    ManagedBCEnvironment: Record TKAManagedBCEnvironment;
+                    RunAdminAPIForEnv: Codeunit TKARunAdminAPIForEnv;
+                begin
+                    CurrPage.SetSelectionFilter(ManagedBCEnvironment);
+                    RunAdminAPIForEnv.UpdateSelectedEnvironments(ManagedBCEnvironment);
+                    CurrPage.Update();
+                end;
+            }
             action(ChangeUpdateDate)
             {
                 ApplicationArea = All;
@@ -87,6 +104,7 @@ page 73273 TKAManagedBCEnvironments
                     CurrPage.SetSelectionFilter(ManagedBCEnvironment);
                     ChangeUpdateDate.SetEnvironmentsToUpdate(ManagedBCEnvironment);
                     ChangeUpdateDate.RunModal();
+                    CurrPage.Update();
                 end;
             }
         }

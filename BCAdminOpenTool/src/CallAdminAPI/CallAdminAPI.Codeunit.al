@@ -8,21 +8,21 @@ codeunit 73271 TKACallAdminAPI
     /// <summary>
     /// Verifies the connection to the specified BC tenant.
     /// </summary>
-    /// <param name="ForBCTenant">Specifies the BC tenant to connect to.</param>
-    procedure TestAdminCenterConnection(ForBCTenant: Record TKAManagedBCTenant)
+    /// <param name="ManagedBCTenant">Specifies the BC tenant to connect to.</param>
+    procedure TestAdminCenterConnection(ManagedBCTenant: Record TKAManagedBCTenant)
     begin
-        CallAdminAPIImpl.TestAdminCenterConnection(ForBCTenant);
+        CallAdminAPIImpl.TestAdminCenterConnection(ManagedBCTenant);
     end;
 
     /// <summary>
     /// Calls the Admin API for the specified BC tenant.
     /// </summary>
-    /// <param name="ForBCTenant">Specifies the BC tenant for which the API call is to be made.</param>
+    /// <param name="ManagedBCTenant">Specifies the BC tenant for which the API call is to be made.</param>
     /// <param name="Endpoint">Specifies the API endpoint to be called.</param>
     /// <returns>Response as text.</returns>
-    procedure GetFromAdminAPI(ForBCTenant: Record TKAManagedBCTenant; Endpoint: Text): Text
+    procedure GetFromAdminAPI(ManagedBCTenant: Record TKAManagedBCTenant; Endpoint: Text): Text
     begin
-        exit(CallAdminAPIImpl.GetFromAdminAPI(ForBCTenant, Endpoint));
+        exit(CallAdminAPIImpl.GetFromAdminAPI(ManagedBCTenant, Endpoint));
     end;
 
     /// <summary>
@@ -53,6 +53,16 @@ codeunit 73271 TKACallAdminAPI
     procedure GetListAllEnvironmentsEndpoint(): Text
     begin
         exit('/applications/BusinessCentral/environments');
+    end;
+
+    /// <summary>
+    /// Returns the endpoint for one environment.
+    /// </summary>
+    /// <param name="EnvironmentName">The name of the environment for which to get the endpoint.</param>
+    /// <returns>String containing the endpoint for getting one environment.</returns>
+    procedure GetEnvironmentEndpoint(EnvironmentName: Text): Text
+    begin
+        exit('/applications/BusinessCentral/environments/{environmentName}'.Replace('{environmentName}', EnvironmentName));
     end;
 
     /// <summary>

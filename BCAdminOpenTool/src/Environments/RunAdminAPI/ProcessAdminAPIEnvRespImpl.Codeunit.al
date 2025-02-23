@@ -28,25 +28,23 @@ codeunit 73274 TKAProcessAdminAPIEnvRespImpl
         DeleteDeletedEnvironments(TenantId, ListOfFoundEnvironments);
     end;
 
-    [InherentPermissions(PermissionObjectType::TableData, Database::TKAManagedBCEnvironment, 'RD')]
-    local procedure DeleteDeletedEnvironments(TenantId: Guid; ListOfFoundEnvironments: List of [Text[100]])
+    /// <summary>
+    /// Parses the response from the Admin API for getting information about an environment.
+    /// </summary>
+    /// <param name="Response">The response from the Admin API.</param>
+    /// <param name="TenantId">The ID of the tenant to which the environment belongs.</param>
+    /// <param name="EnvironmentName">The name of the environment.</param>
+    procedure ParseEnvironmentResponse(Response: Text; TenantId: Guid; EnvironmentName: Text[100])
     var
-        ManagedBCEnvironment, ManagedBCEnvironment2 : Record TKAManagedBCEnvironment;
+        JsonResponse: JsonObject;
     begin
-        ManagedBCEnvironment.ReadIsolation(IsolationLevel::ReadCommitted);
-        ManagedBCEnvironment.SetRange(TenantId, TenantId);
-        if ManagedBCEnvironment.FindSet() then
-            repeat
-                if not ListOfFoundEnvironments.Contains(ManagedBCEnvironment.Name) then begin
-                    ManagedBCEnvironment2.GetBySystemId(ManagedBCEnvironment.SystemId);
-                    ManagedBCEnvironment2.Delete(true);
-                end;
-            until ManagedBCEnvironment.Next() < 1;
+        JsonResponse.ReadFrom(Response);
+        ParseEnvironmentResponse(JsonResponse, TenantId, EnvironmentName);
     end;
 
     [InherentPermissions(PermissionObjectType::TableData, Database::TKAManagedBCEnvironment, 'RIM')]
 #pragma warning disable LC0010 // Cyclomatic complexity is caused by the number of fields
-    local procedure ParseEnvironmentResponse(var JsonEnvironment: JsonObject; TenantId: Guid; EnvironmentName: Text[100])
+    procedure ParseEnvironmentResponse(var JsonEnvironment: JsonObject; TenantId: Guid; EnvironmentName: Text[100])
 #pragma warning restore LC0010
     var
         ManagedBCEnvironment: Record TKAManagedBCEnvironment;
@@ -97,6 +95,22 @@ codeunit 73274 TKAProcessAdminAPIEnvRespImpl
         ManagedBCEnvironment.Modify(true);
     end;
 
+    [InherentPermissions(PermissionObjectType::TableData, Database::TKAManagedBCEnvironment, 'RD')]
+    local procedure DeleteDeletedEnvironments(TenantId: Guid; ListOfFoundEnvironments: List of [Text[100]])
+    var
+        ManagedBCEnvironment, ManagedBCEnvironment2 : Record TKAManagedBCEnvironment;
+    begin
+        ManagedBCEnvironment.ReadIsolation(IsolationLevel::ReadCommitted);
+        ManagedBCEnvironment.SetRange(TenantId, TenantId);
+        if ManagedBCEnvironment.FindSet() then
+            repeat
+                if not ListOfFoundEnvironments.Contains(ManagedBCEnvironment.Name) then begin
+                    ManagedBCEnvironment2.GetBySystemId(ManagedBCEnvironment.SystemId);
+                    ManagedBCEnvironment2.Delete(true);
+                end;
+            until ManagedBCEnvironment.Next() < 1;
+    end;
+
     #endregion Environments
     #region Scheduled Update
 
@@ -106,7 +120,7 @@ codeunit 73274 TKAProcessAdminAPIEnvRespImpl
     /// <param name="Response">The response from the Admin API.</param>
     /// <param name="ManagedBCEnvironment">The managed BC environment for which to parse the response.</param>
     [InherentPermissions(PermissionObjectType::TableData, Database::TKAManagedBCEnvironment, 'M')]
-    procedure ParseGetScheduledUpdateResponse(Response: Text; ManagedBCEnvironment: Record TKAManagedBCEnvironment)
+    procedure ParseGetScheduledUpdateResponse(Response: Text; var ManagedBCEnvironment: Record TKAManagedBCEnvironment)
     var
         JsonResponse: JsonObject;
         JsonTokenValue: JsonToken;
@@ -115,7 +129,6 @@ codeunit 73274 TKAProcessAdminAPIEnvRespImpl
             ClearScheduledUpdateFields(ManagedBCEnvironment);
             exit;
         end;
-        Message(Response);
         JsonResponse.ReadFrom(Response);
         JsonResponse.Get('targetVersion', JsonTokenValue);
         ManagedBCEnvironment.Validate(UpdateTargetVersion, CopyStr(JsonTokenValue.AsValue().AsText(), 1, MaxStrLen(ManagedBCEnvironment.UpdateTargetVersion)));

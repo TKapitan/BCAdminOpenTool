@@ -164,4 +164,14 @@ table 73273 TKAManagedBCEnvironment
         fieldgroup(DropDown; TenantId, Name) { }
         fieldgroup(Brick; TenantId, Name) { }
     }
+
+    /// <summary>
+    /// Get the Managed BC Tenant record for the Managed BC Environment.
+    /// </summary>
+    /// <returns>The Managed BC Tenant record.</returns>
+    [InherentPermissions(PermissionObjectType::TableData, Database::TKAManagedBCTenant, 'R')]
+    procedure GetManagedBCTenant() ManagedBCTenant: Record TKAManagedBCTenant
+    begin
+        ManagedBCTenant.Get(Rec.TenantId);
+    end;
 }

@@ -7,33 +7,33 @@ codeunit 73270 TKACallAdminAPIImpl
     /// <summary>
     /// Verifies the connection to the specified BC tenant.
     /// </summary>
-    /// <param name="ForBCTenant">Specifies the BC tenant to connect to.</param>
-    procedure TestAdminCenterConnection(ForBCTenant: Record TKAManagedBCTenant)
+    /// <param name="ManagedBCTenant">Specifies the BC tenant to connect to.</param>
+    procedure TestAdminCenterConnection(ManagedBCTenant: Record TKAManagedBCTenant)
     var
         CallAdminAPI: Codeunit TKACallAdminAPI;
         ResponseText: Text;
         ConnectionSuccessfulButUnexpectedMessageReceivedErr: Label 'Connection to tenant %1 (%2) was successful, but an unexpected message was received.', Comment = '%1 - TenantId, %2 - Name';
         ConnectionSuccessfulMsg: Label 'Connection to tenant %1 (%2) was successful.', Comment = '%1 - TenantId, %2 - Name';
     begin
-        ResponseText := GetFromAdminAPI(ForBCTenant, CallAdminAPI.GetListAllEnvironmentsEndpoint());
+        ResponseText := GetFromAdminAPI(ManagedBCTenant, CallAdminAPI.GetListAllEnvironmentsEndpoint());
         if not ResponseText.Contains('"applicationFamily":"BusinessCentral"') then
-            Error(ConnectionSuccessfulButUnexpectedMessageReceivedErr, ForBCTenant.TenantId, ForBCTenant.Name);
-        Message(ConnectionSuccessfulMsg, ForBCTenant.TenantId, ForBCTenant.Name);
+            Error(ConnectionSuccessfulButUnexpectedMessageReceivedErr, ManagedBCTenant.TenantId, ManagedBCTenant.Name);
+        Message(ConnectionSuccessfulMsg, ManagedBCTenant.TenantId, ManagedBCTenant.Name);
     end;
 
     /// <summary>
     /// Calls the GET method of the Admin API for the specified BC tenant and API endpoint.
     /// </summary>
-    /// <param name="ForBCTenant">Specifies the BC tenant for which the API call is to be made.</param>
+    /// <param name="ManagedBCTenant">Specifies the BC tenant for which the API call is to be made.</param>
     /// <param name="Endpoint">Specifies the API endpoint to be called.</param>
     /// <returns>Response as a text</returns>
-    procedure GetFromAdminAPI(ForBCTenant: Record TKAManagedBCTenant; Endpoint: Text): Text
+    procedure GetFromAdminAPI(ManagedBCTenant: Record TKAManagedBCTenant; Endpoint: Text): Text
     var
         HttpRequestMessage: HttpRequestMessage;
         HttpHeaders: HttpHeaders;
     begin
         HttpRequestMessage.GetHeaders(HttpHeaders);
-        HttpHeaders.Add('Authorization', GetBearerToken(ForBCTenant.TenantId, ForBCTenant.ClientId));
+        HttpHeaders.Add('Authorization', GetBearerToken(ManagedBCTenant.TenantId, ManagedBCTenant.ClientId));
 
         HttpRequestMessage.SetRequestUri(GetBaseAPIUrl() + Endpoint);
         HttpRequestMessage.Method('GET');

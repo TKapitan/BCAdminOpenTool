@@ -94,6 +94,50 @@ page 73274 TKAManagedBCEnvironmentCard
         }
     }
 
+    actions
+    {
+        area(Processing)
+        {
+            action(RefreshEnvironments)
+            {
+                ApplicationArea = All;
+                Caption = 'Refresh Environments';
+                ToolTip = 'Refresh the list of managed BC environments.';
+                Image = Refresh;
+
+                trigger OnAction()
+                var
+                    ManagedBCEnvironment: Record TKAManagedBCEnvironment;
+                    RunAdminAPIForEnv: Codeunit TKARunAdminAPIForEnv;
+                begin
+                    ManagedBCEnvironment := Rec;
+                    ManagedBCEnvironment.SetRecFilter();
+                    RunAdminAPIForEnv.UpdateSelectedEnvironments(ManagedBCEnvironment);
+                    CurrPage.Update();
+                end;
+            }
+            action(ChangeUpdateDate)
+            {
+                ApplicationArea = All;
+                Caption = 'Change Update Date';
+                ToolTip = 'Change the update date for the selected environments.';
+                Image = ChangeLog;
+
+                trigger OnAction()
+                var
+                    ManagedBCEnvironment: Record TKAManagedBCEnvironment;
+                    ChangeUpdateDate: Report TKAChangeUpdateDate;
+                begin
+                    ManagedBCEnvironment := Rec;
+                    ManagedBCEnvironment.SetRecFilter();
+                    ChangeUpdateDate.SetEnvironmentsToUpdate(ManagedBCEnvironment);
+                    ChangeUpdateDate.RunModal();
+                    CurrPage.Update();
+                end;
+            }
+        }
+    }
+
     var
         OpenEnvironmentLbl: Label 'Open Environment';
 }

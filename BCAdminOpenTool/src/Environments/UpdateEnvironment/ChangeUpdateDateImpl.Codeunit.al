@@ -30,10 +30,10 @@ codeunit 73275 TKAChangeUpdateDateImpl
     local procedure ProcessChange(var ManagedBCEnvironment: Record TKAManagedBCEnvironment; ChangeUpdateDate: Boolean; NewUpdateDate: Date; ChangeIgnoreUpgradeWindow: Boolean; NewIgnoreUpgradeWindow: Boolean)
     var
         CallAdminAPI: Codeunit TKACallAdminAPI;
+        RunAdminAPIForEnv: Codeunit TKARunAdminAPIForEnv;
         RequestBodyJsonObject: JsonObject;
         Endpoint, Response : Text;
     begin
-        Endpoint := CallAdminAPI.GetScheduledUpdateForEnvironmentEndpoint(ManagedBCEnvironment.Name);
         if ManagedBCEnvironment.FindSet() then
             repeat
                 Clear(RequestBodyJsonObject);
@@ -44,7 +44,9 @@ codeunit 73275 TKAChangeUpdateDateImpl
 
                 RequestBodyJsonObject.Add('runOn', Format(NewUpdateDate, 0, 9) + 'T00:00:00Z');
                 RequestBodyJsonObject.Add('ignoreUpgradeWindow', NewIgnoreUpgradeWindow);
+                Endpoint := CallAdminAPI.GetScheduledUpdateForEnvironmentEndpoint(ManagedBCEnvironment.Name);
                 Response := CallAdminAPI.PutToAdminAPI(ManagedBCEnvironment, Endpoint, RequestBodyJsonObject);
             until ManagedBCEnvironment.Next() < 1;
+        RunAdminAPIForEnv.UpdateSelectedEnvironments(ManagedBCEnvironment);
     end;
 }

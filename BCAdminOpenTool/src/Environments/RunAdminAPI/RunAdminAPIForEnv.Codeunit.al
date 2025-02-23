@@ -8,9 +8,18 @@ codeunit 73272 TKARunAdminAPIForEnv
     /// <summary>
     /// Create or update environments for a tenant.
     /// </summary>
-    /// <param name="ForBCTenant">The tenant for which to create or update environments.</param>
-    procedure CreateUpdateEnvironmentsForTenant(var ForBCTenant: Record TKAManagedBCTenant)
+    /// <param name="ManagedBCTenant">The tenant for which to create or update environments.</param>
+    procedure CreateUpdateEnvironmentsForTenant(var ManagedBCTenant: Record TKAManagedBCTenant)
     begin
-        RunAdminAPIForEnvImpl.CreateUpdateEnvironmentsForTenant(ForBCTenant);
+        RunAdminAPIForEnvImpl.CreateUpdateEnvironmentsForTenant(ManagedBCTenant);
+    end;
+
+    /// <summary>
+    /// Update selected environments.
+    /// </summary>
+    /// <param name="ManagedBCEnvironment">The environments to update.</param>
+    procedure UpdateSelectedEnvironments(var ManagedBCEnvironment: Record TKAManagedBCEnvironment)
+    begin
+        RunAdminAPIForEnvImpl.UpdateSelectedEnvironments(ManagedBCEnvironment);
     end;
 }
