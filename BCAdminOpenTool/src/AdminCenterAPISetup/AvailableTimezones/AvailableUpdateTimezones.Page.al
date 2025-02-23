@@ -1,28 +1,22 @@
-page 73272 TKAAdminCenterAPISetup
+page 73275 TKAAvailableUpdateTimezones
 {
     ApplicationArea = All;
-    PageType = Card;
-    SourceTable = TKAAdminCenterAPISetup;
-    Caption = 'Admin Center API Setup';
-    InsertAllowed = false;
-    DeleteAllowed = false;
+    Caption = 'Available Update Timezones';
+    PageType = List;
+    SourceTable = TKAAvailableUpdateTimezone;
     UsageCategory = Administration;
 
     layout
     {
         area(Content)
         {
-            group(General)
+            repeater(General)
             {
-                Caption = 'General';
-                field(AuthUrl; Rec.AuthUrl) { }
-                field(Scope; Rec.Scope) { }
-                field(APIUrl; Rec.APIUrl) { }
-            }
-            group(AdditionalEndpoints)
-            {
-                Caption = 'Additional Endpoints';
-                field(GetScheduledUpdateAPIEnabled; Rec.GetScheduledUpdateAPIEnabled) { }
+                field(Name; Rec.Name) { }
+                field(DisplayName; Rec.DisplayName) { }
+                field(CurrentUtcOffset; Rec.CurrentUtcOffset) { }
+                field(SupportsDaylightSavingTime; Rec.SupportsDaylightSavingTime) { }
+                field(IsCurrentlyDaylightSavingTime; Rec.IsCurrentlyDaylightSavingTime) { }
             }
         }
     }
@@ -43,13 +37,10 @@ page 73272 TKAAdminCenterAPISetup
                     RunAdminAPIForTimezones: Codeunit TKARunAdminAPIForTimezones;
                 begin
                     RunAdminAPIForTimezones.CreateUpdateAvailableUpdateTimezones();
+                    CurrPage.Update();
                 end;
             }
         }
     }
 
-    trigger OnOpenPage()
-    begin
-        Rec.InsertIfNotExists();
-    end;
 }

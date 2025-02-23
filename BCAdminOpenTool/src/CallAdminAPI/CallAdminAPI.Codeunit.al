@@ -38,6 +38,15 @@ codeunit 73271 TKACallAdminAPI
     end;
 
     /// <summary>
+    /// Returns the endpoint for getting all available timezones.
+    /// </summary>
+    /// <returns>String containing the endpoint for getting all available timezones.</returns>
+    procedure GetAvailableTimezonesEndpoint(): Text
+    begin
+        exit('/applications/settings/timezones');
+    end;
+
+    /// <summary>
     /// Returns the endpoint for getting all environments.
     /// </summary>
     /// <returns>String containing the endpoint for getting all environments.</returns>

@@ -6,5 +6,6 @@ permissionset 73270 TKABCAdminRead
         tabledata TKAManagedBCTenant = R,
         tabledata TKAManagedBCEnvironment = R,
         tabledata TKAManagedBCAdministrationApp = R,
+        tabledata TKAAvailableUpdateTimezone = R,
         tabledata TKAAdminCenterAPISetup = R;
 }

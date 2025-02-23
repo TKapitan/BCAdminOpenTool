@@ -19,11 +19,11 @@ codeunit 73273 TKARunAdminAPIForEnvImpl
         ForBCTenant.Validate(EnvironmentsModifiedAt, CurrentDateTime());
         ForBCTenant.Modify(true);
 
-        ProcessAdditionalEndpoints(ForBCTenant);
+        ProcessAdditionalEndpointsForEnvironmentSync(ForBCTenant);
     end;
 
     [InherentPermissions(PermissionObjectType::TableData, Database::TKAManagedBCEnvironment, 'R')]
-    local procedure ProcessAdditionalEndpoints(ManagedBCTenant: Record TKAManagedBCTenant)
+    local procedure ProcessAdditionalEndpointsForEnvironmentSync(ManagedBCTenant: Record TKAManagedBCTenant)
     var
         ManagedBCEnvironment: Record TKAManagedBCEnvironment;
     begin
