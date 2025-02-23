@@ -54,6 +54,8 @@ page 73274 TKAManagedBCEnvironmentCard
                 field(PlatformVersion; Rec.PlatformVersion) { }
                 field(UpdateIsActive; Rec.UpdateIsActive) { }
                 field(UpdateTargetVersion; Rec.UpdateTargetVersion) { }
+                field(UpgradeDate; Rec.UpgradeDate) { }
+                field(UpdateStatus; Rec.UpdateStatus) { }
                 field(CanTenantSelectDate; Rec.CanTenantSelectDate)
                 {
                     Importance = Additional;
@@ -70,9 +72,12 @@ page 73274 TKAManagedBCEnvironmentCard
                 {
                     Importance = Additional;
                 }
-                field(UpgradeDate; Rec.UpgradeDate) { }
-                field(UpdateStatus; Rec.UpdateStatus) { }
                 field(IgnoreUpgradeWindow; Rec.IgnoreUpgradeWindow) { }
+                field(PreferredStartTime; Rec.PreferredStartTime) { }
+                field(PreferredEndTime; Rec.PreferredEndTime) { }
+                field(TimeZoneId; Rec.TimeZoneId) { }
+                field(PreferredStartTimeUtc; Rec.PreferredStartTimeUtc) { }
+                field(PreferredEndTimeUtc; Rec.PreferredEndTimeUtc) { }
                 field(AppSourceAppsUpdateCadence; Rec.AppSourceAppsUpdateCadence) { }
             }
             group(StatusDetails)

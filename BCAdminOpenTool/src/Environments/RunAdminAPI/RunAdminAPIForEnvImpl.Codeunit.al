@@ -71,12 +71,16 @@ codeunit 73273 TKARunAdminAPIForEnvImpl
         Response: Text;
     begin
         AdminCenterAPISetup.ReadIsolation(IsolationLevel::ReadUncommitted);
-        AdminCenterAPISetup.SetLoadFields(GetScheduledUpdateAPIEnabled);
+        AdminCenterAPISetup.SetLoadFields(GetScheduledUpdateAPIEnabled, GetUpdateSettingsAPIEnabled);
         AdminCenterAPISetup.Get();
-        if not AdminCenterAPISetup.GetScheduledUpdateAPIEnabled then
-            exit;
 
-        Response := CallAdminAPI.GetFromAdminAPI(ManagedBCEnvironment.GetManagedBCTenant(), CallAdminAPI.GetScheduledUpdateForEnvironmentEndpoint(ManagedBCEnvironment.Name));
-        ProcessAdminAPIEnvRespImpl.ParseGetScheduledUpdateResponse(Response, ManagedBCEnvironment);
+        if AdminCenterAPISetup.GetScheduledUpdateAPIEnabled then begin
+            Response := CallAdminAPI.GetFromAdminAPI(ManagedBCEnvironment.GetManagedBCTenant(), CallAdminAPI.GetScheduledUpdateForEnvironmentEndpoint(ManagedBCEnvironment.Name));
+            ProcessAdminAPIEnvRespImpl.ParseGetScheduledUpdateResponse(Response, ManagedBCEnvironment);
+        end;
+        if AdminCenterAPISetup.GetUpdateSettingsAPIEnabled then begin
+            Response := CallAdminAPI.GetFromAdminAPI(ManagedBCEnvironment.GetManagedBCTenant(), CallAdminAPI.GetUpdateSettingsForEnvironmentEndpoint(ManagedBCEnvironment.Name));
+            ProcessAdminAPIEnvRespImpl.ParseUpdateSettingsResponse(Response, ManagedBCEnvironment);
+        end;
     end;
 }

@@ -35,6 +35,11 @@ table 73272 TKAAdminCenterAPISetup
             Caption = 'Get Scheduled Update API Enabled';
             ToolTip = 'Specifies whether the Get Scheduled Update API is enabled.';
         }
+        field(105; GetUpdateSettingsAPIEnabled; Boolean)
+        {
+            Caption = 'Get Update Settings API Enabled';
+            ToolTip = 'Specifies whether the Get Update Settings API is enabled.';
+        }
     }
 
     keys

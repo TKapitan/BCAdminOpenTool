@@ -23,6 +23,7 @@ page 73272 TKAAdminCenterAPISetup
             {
                 Caption = 'Additional Endpoints';
                 field(GetScheduledUpdateAPIEnabled; Rec.GetScheduledUpdateAPIEnabled) { }
+                field(GetUpdateSettingsAPIEnabled; Rec.GetUpdateSettingsAPIEnabled) { }
             }
         }
     }

@@ -33,6 +33,18 @@ page 73273 TKAManagedBCEnvironments
                 field(UpdateIsActive; Rec.UpdateIsActive) { }
                 field(UpdateTargetVersion; Rec.UpdateTargetVersion) { }
                 field(UpgradeDate; Rec.UpgradeDate) { }
+                field(PreferredStartTime; Rec.PreferredStartTime)
+                {
+                    Visible = false;
+                }
+                field(PreferredEndTime; Rec.PreferredEndTime)
+                {
+                    Visible = false;
+                }
+                field(TimeZoneId; Rec.TimeZoneId)
+                {
+                    Visible = false;
+                }
                 field(Status; Rec.Status) { }
                 field(AppSourceAppsUpdateCadence; Rec.AppSourceAppsUpdateCadence) { }
                 field(LocationName; Rec.LocationName) { }

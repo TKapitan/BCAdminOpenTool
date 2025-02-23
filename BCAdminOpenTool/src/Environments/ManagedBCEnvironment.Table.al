@@ -143,6 +143,32 @@ table 73273 TKAManagedBCEnvironment
             Caption = 'Update Is Active';
             ToolTip = 'Indicates if the update is activated and is scheduled to occur.';
         }
+        field(780; PreferredStartTime; Text[50])
+        {
+            Caption = 'Preferred Start Time';
+            ToolTip = 'Start of environment update window in 24h format (HH:mm).';
+        }
+        field(781; PreferredEndTime; Text[50])
+        {
+            Caption = 'Preferred End Time';
+            ToolTip = 'End of environment update window in 24h format (HH:mm).';
+        }
+        field(785; PreferredStartTimeUtc; Text[50])
+        {
+            Caption = 'Preferred Start Time UTC';
+            ToolTip = 'Start of environment update window in 24h format (HH:mm).';
+        }
+        field(786; PreferredEndTimeUtc; Text[50])
+        {
+            Caption = 'Preferred End Time UTC';
+            ToolTip = 'End of environment update window in 24h format (HH:mm).';
+        }
+        field(790; TimeZoneId; Text[100])
+        {
+            Caption = 'Time Zone Id';
+            TableRelation = TKAAvailableUpdateTimezone.Name;
+            ToolTip = 'Windows time zone identifier. Supported by API version 2.13 and later only.';
+        }
         field(1000; EnvironmentModifiedAt; DateTime)
         {
             Caption = 'Environment Modified At';

@@ -112,6 +112,53 @@ codeunit 73274 TKAProcessAdminAPIEnvRespImpl
     end;
 
     #endregion Environments
+    #region Update Settings
+
+    /// <summary>
+    /// Parses the response from the Admin API for updating scheduled update information for an environment.
+    /// </summary>
+    /// <param name="Response">The response from the Admin API.</param>
+    /// <param name="ManagedBCEnvironment">The managed BC environment for which to parse the response.</param>
+    [InherentPermissions(PermissionObjectType::TableData, Database::TKAManagedBCEnvironment, 'M')]
+    procedure ParseUpdateSettingsResponse(Response: Text; var ManagedBCEnvironment: Record TKAManagedBCEnvironment)
+    var
+        JsonResponse: JsonObject;
+        JsonTokenValue: JsonToken;
+    begin
+        if Response = '' then begin
+            ClearUpdateSettingsFields(ManagedBCEnvironment);
+            exit;
+        end;
+        JsonResponse.ReadFrom(Response);
+        JsonResponse.Get('preferredStartTime', JsonTokenValue);
+        ManagedBCEnvironment.Validate(PreferredStartTime, CopyStr(JsonTokenValue.AsValue().AsText(), 1, MaxStrLen(ManagedBCEnvironment.PreferredStartTime)));
+        JsonResponse.Get('preferredEndTime', JsonTokenValue);
+        ManagedBCEnvironment.Validate(PreferredEndTime, CopyStr(JsonTokenValue.AsValue().AsText(), 1, MaxStrLen(ManagedBCEnvironment.PreferredEndTime)));
+        JsonResponse.Get('timeZoneId', JsonTokenValue);
+        ManagedBCEnvironment.Validate(TimeZoneId, CopyStr(JsonTokenValue.AsValue().AsText(), 1, MaxStrLen(ManagedBCEnvironment.TimeZoneId)));
+        JsonResponse.Get('preferredStartTimeUtc', JsonTokenValue);
+        ManagedBCEnvironment.Validate(PreferredStartTimeUtc, CopyStr(JsonTokenValue.AsValue().AsText(), 1, MaxStrLen(ManagedBCEnvironment.PreferredStartTimeUtc)));
+        JsonResponse.Get('preferredEndTimeUtc', JsonTokenValue);
+        ManagedBCEnvironment.Validate(PreferredEndTimeUtc, CopyStr(JsonTokenValue.AsValue().AsText(), 1, MaxStrLen(ManagedBCEnvironment.PreferredEndTimeUtc)));
+        ManagedBCEnvironment.Modify(true);
+    end;
+
+    [InherentPermissions(PermissionObjectType::TableData, Database::TKAManagedBCEnvironment, 'M')]
+    local procedure ClearUpdateSettingsFields(ManagedBCEnvironment: Record TKAManagedBCEnvironment)
+    begin
+        ManagedBCEnvironment.Validate(UpdateIsActive, false);
+        ManagedBCEnvironment.Validate(UpdateTargetVersion, '');
+        ManagedBCEnvironment.Validate(CanTenantSelectDate, false);
+        ManagedBCEnvironment.Validate(DidTenantSelectDate, false);
+        ManagedBCEnvironment.Validate(EarliestSelectableUpgradeDate, 0D);
+        ManagedBCEnvironment.Validate(LatestSelectableUpgradeDate, 0D);
+        ManagedBCEnvironment.Validate(UpgradeDate, 0D);
+        ManagedBCEnvironment.Validate(UpdateStatus, '');
+        ManagedBCEnvironment.Validate(IgnoreUpgradeWindow, false);
+        ManagedBCEnvironment.Modify(true);
+    end;
+
+    #endregion Update Settings
     #region Scheduled Update
 
     /// <summary>

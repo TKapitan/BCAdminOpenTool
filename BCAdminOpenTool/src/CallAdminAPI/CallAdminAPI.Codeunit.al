@@ -74,4 +74,14 @@ codeunit 73271 TKACallAdminAPI
     begin
         exit('/applications/BusinessCentral/environments/{environmentName}/upgrade'.Replace('{environmentName}', EnvironmentName));
     end;
+
+    /// <summary>
+    /// Return the endpoint for getting update settings for an environment.
+    /// </summary>
+    /// <param name="EnvironmentName">The name of the environment for which to get the update settings.</param>
+    /// <returns>String containing the endpoint for getting update settings for an environment.</returns>
+    procedure GetUpdateSettingsForEnvironmentEndpoint(EnvironmentName: Text): Text
+    begin
+        exit('/applications/BusinessCentral/environments/{environmentName}/settings/upgrade'.Replace('{environmentName}', EnvironmentName));
+    end;
 }
