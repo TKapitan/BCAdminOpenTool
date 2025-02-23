@@ -12,6 +12,7 @@ codeunit 73273 TKARunAdminAPIForEnvImpl
         CallAdminAPI: Codeunit TKACallAdminAPI;
         ProcessAdminAPIEnvRespImpl: Codeunit TKAProcessAdminAPIEnvRespImpl;
         Response: Text;
+        CompletedSuccessfullyMsg: Label 'Environments have been successfully updated.';
     begin
         Response := CallAdminAPI.GetFromAdminAPI(ForBCTenant, CallAdminAPI.GetListAllEnvironmentsEndpoint());
         ProcessAdminAPIEnvRespImpl.ParseGetEnvironmentsResponse(Response);
@@ -20,6 +21,7 @@ codeunit 73273 TKARunAdminAPIForEnvImpl
         ForBCTenant.Modify(true);
 
         ProcessAdditionalEndpointsForEnvironmentSync(ForBCTenant);
+        Message(CompletedSuccessfullyMsg);
     end;
 
     [InherentPermissions(PermissionObjectType::TableData, Database::TKAManagedBCEnvironment, 'R')]
