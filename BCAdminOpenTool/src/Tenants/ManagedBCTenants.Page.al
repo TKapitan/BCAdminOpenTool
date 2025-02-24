@@ -30,11 +30,11 @@ page 73271 TKAManagedBCTenants
     {
         area(Processing)
         {
-            action(RefreshEnvironments)
+            action(CreateUpdateTenantsEnvironments)
             {
                 ApplicationArea = All;
-                Caption = 'Refresh Tenants';
-                ToolTip = 'Refresh the list of managed BC tenants. At least one tenant for every app must be created manually in order to use tenant''s API.';
+                Caption = 'Create/Update Tenants & Environments';
+                ToolTip = 'Create or update the tenants and environments for all client IDs that has at least one valid tenant configured in this table.';
                 Image = Refresh;
 
                 trigger OnAction()
@@ -48,9 +48,9 @@ page 73271 TKAManagedBCTenants
             action(UpdateEnvironments)
             {
                 ApplicationArea = All;
-                Caption = 'Update Environments';
+                Caption = 'Create/Update Environments';
                 Image = UpdateDescription;
-                ToolTip = 'Allows to update the environments for the tenant using the specified client ID.';
+                ToolTip = 'Create or update the environments for the tenant.';
 
                 trigger OnAction()
                 var
@@ -84,6 +84,20 @@ page 73271 TKAManagedBCTenants
                 ToolTip = 'Navigates to the environments for the tenant.';
                 RunObject = page TKAManagedBCEnvironments;
                 RunPageLink = TenantId = field(TenantId);
+            }
+        }
+        area(Promoted)
+        {
+            group(Category_Process)
+            {
+                actionref(CreateUpdateTenantsEnvironments_Promoted; CreateUpdateTenantsEnvironments) { }
+                actionref(UpdateEnvironments_Promoted; UpdateEnvironments) { }
+                actionref(TestConnection_Promoted; TestConnection) { }
+            }
+            group(Category_Category4)
+            {
+                Caption = 'Navigation';
+                actionref(Environments_Promoted; Environments) { }
             }
         }
     }

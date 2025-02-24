@@ -103,11 +103,11 @@ page 73274 TKAManagedBCEnvironmentCard
     {
         area(Processing)
         {
-            action(RefreshEnvironments)
+            action(UpdateEnvironments)
             {
                 ApplicationArea = All;
-                Caption = 'Refresh Environments';
-                ToolTip = 'Refresh the list of managed BC environments.';
+                Caption = 'Update Environments';
+                ToolTip = 'Refresh the managed BC environment from admin portal.';
                 Image = Refresh;
 
                 trigger OnAction()
@@ -121,11 +121,30 @@ page 73274 TKAManagedBCEnvironmentCard
                     CurrPage.Update();
                 end;
             }
+            action(ChangeUpdateSettings)
+            {
+                ApplicationArea = All;
+                Caption = 'Change Update Settings';
+                ToolTip = 'Change the update settings for the selected environment.';
+                Image = SetPriorities;
+
+                trigger OnAction()
+                var
+                    ManagedBCEnvironment: Record TKAManagedBCEnvironment;
+                    ChangeUpdateSettings: Report TKAChangeUpdateSettings;
+                begin
+                    ManagedBCEnvironment := Rec;
+                    ManagedBCEnvironment.SetRecFilter();
+                    ChangeUpdateSettings.SetEnvironmentsToUpdate(ManagedBCEnvironment);
+                    ChangeUpdateSettings.RunModal();
+                    CurrPage.Update();
+                end;
+            }
             action(ChangeUpdateDate)
             {
                 ApplicationArea = All;
                 Caption = 'Change Update Date';
-                ToolTip = 'Change the update date for the selected environments.';
+                ToolTip = 'Change the update date for the selected environment.';
                 Image = ChangeLog;
 
                 trigger OnAction()
@@ -139,6 +158,19 @@ page 73274 TKAManagedBCEnvironmentCard
                     ChangeUpdateDate.RunModal();
                     CurrPage.Update();
                 end;
+            }
+        }
+        area(Promoted)
+        {
+            group(Category_Process)
+            {
+                actionref(UpdateEnvironments_Promoted; UpdateEnvironments) { }
+            }
+            group(Category_Category5)
+            {
+                Caption = 'Change';
+                actionref(ChangeUpdateSettings_Promoted; ChangeUpdateSettings) { }
+                actionref(ChangeUpdateDate_Promoted; ChangeUpdateDate) { }
             }
         }
     }
