@@ -30,6 +30,21 @@ page 73271 TKAManagedBCTenants
     {
         area(Processing)
         {
+            action(RefreshEnvironments)
+            {
+                ApplicationArea = All;
+                Caption = 'Refresh Tenants';
+                ToolTip = 'Refresh the list of managed BC tenants. At least one tenant for every app must be created manually in order to use tenant''s API.';
+                Image = Refresh;
+
+                trigger OnAction()
+                var
+                    GetTenants: Codeunit TKAGetTenants;
+                begin
+                    GetTenants.CreateUpdateManageableTenants();
+                    CurrPage.Update();
+                end;
+            }
             action(UpdateEnvironments)
             {
                 ApplicationArea = All;

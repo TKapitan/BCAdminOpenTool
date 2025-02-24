@@ -1,4 +1,4 @@
-codeunit 73278 TKAProcessGetTmzResponseImpl
+codeunit 73278 TKAProcessGetTimezonesRespImpl
 {
     Access = Internal;
 
