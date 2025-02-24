@@ -1,9 +1,9 @@
-codeunit 73272 TKARunAdminAPIForEnv
+codeunit 73272 TKAGetEnvironments
 {
     Access = Public;
 
     var
-        RunAdminAPIForEnvImpl: Codeunit TKARunAdminAPIForEnvImpl;
+        GetEnvironmentsImpl: Codeunit TKAGetEnvironmentsImpl;
 
     /// <summary>
     /// Create or update environments for a tenant.
@@ -11,7 +11,7 @@ codeunit 73272 TKARunAdminAPIForEnv
     /// <param name="ManagedBCTenant">The tenant for which to create or update environments.</param>
     procedure CreateUpdateEnvironmentsForTenant(var ManagedBCTenant: Record TKAManagedBCTenant)
     begin
-        RunAdminAPIForEnvImpl.CreateUpdateEnvironmentsForTenant(ManagedBCTenant);
+        GetEnvironmentsImpl.CreateUpdateEnvironmentsForTenant(ManagedBCTenant);
     end;
 
     /// <summary>
@@ -20,6 +20,6 @@ codeunit 73272 TKARunAdminAPIForEnv
     /// <param name="ManagedBCEnvironment">The environments to update.</param>
     procedure UpdateSelectedEnvironments(var ManagedBCEnvironment: Record TKAManagedBCEnvironment)
     begin
-        RunAdminAPIForEnvImpl.UpdateSelectedEnvironments(ManagedBCEnvironment);
+        GetEnvironmentsImpl.UpdateSelectedEnvironments(ManagedBCEnvironment);
     end;
 }

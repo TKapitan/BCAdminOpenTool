@@ -94,10 +94,10 @@ page 73273 TKAManagedBCEnvironments
                 trigger OnAction()
                 var
                     ManagedBCEnvironment: Record TKAManagedBCEnvironment;
-                    RunAdminAPIForEnv: Codeunit TKARunAdminAPIForEnv;
+                    GetEnvironments: Codeunit TKAGetEnvironments;
                 begin
                     CurrPage.SetSelectionFilter(ManagedBCEnvironment);
-                    RunAdminAPIForEnv.UpdateSelectedEnvironments(ManagedBCEnvironment);
+                    GetEnvironments.UpdateSelectedEnvironments(ManagedBCEnvironment);
                     CurrPage.Update();
                 end;
             }

@@ -41,9 +41,9 @@ page 73272 TKAAdminCenterAPISetup
 
                 trigger OnAction()
                 var
-                    RunAdminAPIForTimezones: Codeunit TKARunAdminAPIForTimezones;
+                    GetTimezones: Codeunit TKAGetTimezones;
                 begin
-                    RunAdminAPIForTimezones.CreateUpdateAvailableUpdateTimezones();
+                    GetTimezones.CreateUpdateAvailableUpdateTimezones();
                 end;
             }
         }

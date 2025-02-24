@@ -39,9 +39,9 @@ page 73271 TKAManagedBCTenants
 
                 trigger OnAction()
                 var
-                    RunAdminAPIForEnv: Codeunit TKARunAdminAPIForEnv;
+                    GetEnvironments: Codeunit TKAGetEnvironments;
                 begin
-                    RunAdminAPIForEnv.CreateUpdateEnvironmentsForTenant(Rec);
+                    GetEnvironments.CreateUpdateEnvironmentsForTenant(Rec);
                 end;
             }
             action(TestConnection)

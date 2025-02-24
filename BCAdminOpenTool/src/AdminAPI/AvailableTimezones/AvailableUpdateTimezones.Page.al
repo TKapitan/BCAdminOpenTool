@@ -34,9 +34,9 @@ page 73275 TKAAvailableUpdateTimezones
 
                 trigger OnAction()
                 var
-                    RunAdminAPIForTimezones: Codeunit TKARunAdminAPIForTimezones;
+                    GetTimezones: Codeunit TKAGetTimezones;
                 begin
-                    RunAdminAPIForTimezones.CreateUpdateAvailableUpdateTimezones();
+                    GetTimezones.CreateUpdateAvailableUpdateTimezones();
                     CurrPage.Update();
                 end;
             }

@@ -1,4 +1,4 @@
-codeunit 73274 TKAProcessAdminAPIEnvRespImpl
+codeunit 73274 TKAProcessGetEnvResponseImpl
 {
     Access = Internal;
 

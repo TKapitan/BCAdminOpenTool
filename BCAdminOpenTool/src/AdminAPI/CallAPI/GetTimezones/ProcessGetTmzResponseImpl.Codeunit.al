@@ -1,4 +1,4 @@
-codeunit 73278 TKAProcessAdminAPITmzRespImpl
+codeunit 73278 TKAProcessGetTmzResponseImpl
 {
     Access = Internal;
 

@@ -38,6 +38,15 @@ codeunit 73271 TKACallAdminAPI
     end;
 
     /// <summary>
+    /// Returns the endpoint for getting all manageable tenants.
+    /// </summary>
+    /// <returns>String containing the endpoint for getting all manageable tenants.</returns>
+    procedure GetManagedBCTenantsEndpoint(): Text
+    begin
+        exit('/authorizedAadApps/manageableTenants');
+    end;
+
+    /// <summary>
     /// Returns the endpoint for getting all available timezones.
     /// </summary>
     /// <returns>String containing the endpoint for getting all available timezones.</returns>

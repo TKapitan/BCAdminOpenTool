@@ -1,4 +1,4 @@
-codeunit 73277 TKARunAdminAPIForTimezonesImpl
+codeunit 73277 TKAGetTimezonesImpl
 {
     Access = Internal;
 
@@ -10,7 +10,7 @@ codeunit 73277 TKARunAdminAPIForTimezonesImpl
     var
         ManagedBCTenant: Record TKAManagedBCTenant;
         CallAdminAPI: Codeunit TKACallAdminAPI;
-        ProcessAdminAPITmzRespImpl: Codeunit TKAProcessAdminAPITmzRespImpl;
+        ProcessGetTmzResponseImpl: Codeunit TKAProcessGetTmzResponseImpl;
         Response: Text;
         CompletedSuccessfullyMsg: Label 'Available timezones have been successfully updated.';
     begin
@@ -18,7 +18,7 @@ codeunit 73277 TKARunAdminAPIForTimezonesImpl
         ManagedBCTenant.FindFirst();
 
         Response := CallAdminAPI.GetFromAdminAPI(ManagedBCTenant, CallAdminAPI.GetAvailableTimezonesEndpoint());
-        ProcessAdminAPITmzRespImpl.ParseGetAvailableUpdateTimezonesResponse(Response);
+        ProcessGetTmzResponseImpl.ParseGetAvailableUpdateTimezonesResponse(Response);
         Message(CompletedSuccessfullyMsg);
     end;
 }

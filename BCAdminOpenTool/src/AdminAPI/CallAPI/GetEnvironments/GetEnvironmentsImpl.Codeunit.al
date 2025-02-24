@@ -1,4 +1,4 @@
-codeunit 73273 TKARunAdminAPIForEnvImpl
+codeunit 73273 TKAGetEnvironmentsImpl
 {
     Access = Internal;
 
@@ -10,12 +10,12 @@ codeunit 73273 TKARunAdminAPIForEnvImpl
     procedure CreateUpdateEnvironmentsForTenant(var ManagedBCTenant: Record TKAManagedBCTenant)
     var
         CallAdminAPI: Codeunit TKACallAdminAPI;
-        ProcessAdminAPIEnvRespImpl: Codeunit TKAProcessAdminAPIEnvRespImpl;
+        ProcessGetEnvResponseImpl: Codeunit TKAProcessGetEnvResponseImpl;
         Response: Text;
         CompletedSuccessfullyMsg: Label 'Environments have been successfully updated.';
     begin
         Response := CallAdminAPI.GetFromAdminAPI(ManagedBCTenant, CallAdminAPI.GetListAllEnvironmentsEndpoint());
-        ProcessAdminAPIEnvRespImpl.ParseGetEnvironmentsResponse(Response);
+        ProcessGetEnvResponseImpl.ParseGetEnvironmentsResponse(Response);
 
         ManagedBCTenant.Validate(EnvironmentsModifiedAt, CurrentDateTime());
         ManagedBCTenant.Modify(true);
@@ -33,14 +33,14 @@ codeunit 73273 TKARunAdminAPIForEnvImpl
     var
         ManagedBCEnvironment2: Record TKAManagedBCEnvironment;
         CallAdminAPI: Codeunit TKACallAdminAPI;
-        ProcessAdminAPIEnvRespImpl: Codeunit TKAProcessAdminAPIEnvRespImpl;
+        ProcessGetEnvResponseImpl: Codeunit TKAProcessGetEnvResponseImpl;
         Response: Text;
         CompletedSuccessfullyMsg: Label 'Environments have been successfully updated.';
     begin
         if ManagedBCEnvironment.FindSet() then
             repeat
                 Response := CallAdminAPI.GetFromAdminAPI(ManagedBCEnvironment.GetManagedBCTenant(), CallAdminAPI.GetEnvironmentEndpoint(ManagedBCEnvironment.Name));
-                ProcessAdminAPIEnvRespImpl.ParseEnvironmentResponse(Response, ManagedBCEnvironment.TenantId, ManagedBCEnvironment.Name);
+                ProcessGetEnvResponseImpl.ParseEnvironmentResponse(Response, ManagedBCEnvironment.TenantId, ManagedBCEnvironment.Name);
 
                 ManagedBCEnvironment2.GetBySystemId(ManagedBCEnvironment.SystemId);
                 ProcessAdditionalEndpointsForEnvironmentSync(ManagedBCEnvironment2);
@@ -67,7 +67,7 @@ codeunit 73273 TKARunAdminAPIForEnvImpl
     var
         AdminCenterAPISetup: Record TKAAdminCenterAPISetup;
         CallAdminAPI: Codeunit TKACallAdminAPI;
-        ProcessAdminAPIEnvRespImpl: Codeunit TKAProcessAdminAPIEnvRespImpl;
+        ProcessGetEnvResponseImpl: Codeunit TKAProcessGetEnvResponseImpl;
         Response: Text;
     begin
         AdminCenterAPISetup.ReadIsolation(IsolationLevel::ReadUncommitted);
@@ -76,11 +76,11 @@ codeunit 73273 TKARunAdminAPIForEnvImpl
 
         if AdminCenterAPISetup.GetScheduledUpdateAPIEnabled then begin
             Response := CallAdminAPI.GetFromAdminAPI(ManagedBCEnvironment.GetManagedBCTenant(), CallAdminAPI.GetScheduledUpdateForEnvironmentEndpoint(ManagedBCEnvironment.Name));
-            ProcessAdminAPIEnvRespImpl.ParseGetScheduledUpdateResponse(Response, ManagedBCEnvironment);
+            ProcessGetEnvResponseImpl.ParseGetScheduledUpdateResponse(Response, ManagedBCEnvironment);
         end;
         if AdminCenterAPISetup.GetUpdateSettingsAPIEnabled then begin
             Response := CallAdminAPI.GetFromAdminAPI(ManagedBCEnvironment.GetManagedBCTenant(), CallAdminAPI.GetUpdateSettingsForEnvironmentEndpoint(ManagedBCEnvironment.Name));
-            ProcessAdminAPIEnvRespImpl.ParseUpdateSettingsResponse(Response, ManagedBCEnvironment);
+            ProcessGetEnvResponseImpl.ParseUpdateSettingsResponse(Response, ManagedBCEnvironment);
         end;
     end;
 }
