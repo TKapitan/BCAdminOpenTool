@@ -99,9 +99,8 @@ codeunit 73270 TKACallAdminAPIImpl
     var
         ManagedBCAdministrationApp: Record TKAManagedBCAdministrationApp;
         AdminCenterAPISetup: Record TKAAdminCenterAPISetup;
-        OAuth2: Codeunit OAuth2;
+        OAuth2WithMultitenantImpl: Codeunit TKAOAuth2WithMultitenantImpl;
         AccessToken: SecretText;
-        AuthFailedErr: Label 'Failed to acquire token.';
     begin
         ManagedBCAdministrationApp.ReadIsolation(IsolationLevel::ReadCommitted);
         ManagedBCAdministrationApp.Get(ClientId);
@@ -111,37 +110,14 @@ codeunit 73270 TKACallAdminAPIImpl
         AdminCenterAPISetup.Get();
 
         ClearLastError();
-        if not OAuth2.AcquireTokenWithClientCredentials(
-            Format(ManagedBCAdministrationApp.ClientId, 0, 4),
+        OAuth2WithMultitenantImpl.FetchBearerTokenImpl(
+            ManagedBCAdministrationApp.ClientId,
             ManagedBCAdministrationApp.GetClientSecretAsSecretText(),
+            TenantId,
             AdminCenterAPISetup.AuthUrl.Replace('%tenantid%', Format(TenantId, 0, 4)),
-            '', // RedirectUri
-            'https://api.businesscentral.dynamics.com/.default',
             AccessToken
-        ) then
-            ThrowError(AuthFailedErr);
-
+        );
         exit(SecretStrSubstNo('Bearer %1', AccessToken));
-    end;
-
-    local procedure ThrowError(ErrorText: Text)
-    var
-        LastErrorText: Text;
-        NewErrorInfo: ErrorInfo;
-        CustomDimensions: Dictionary of [Text, Text];
-        ErrorInclLastErrorDetailsErr: Label '%1\\Additional Details: %2', Comment = '%1 - Error message specified by the caller function, %2 - Error message from the response';
-    begin
-        NewErrorInfo := ErrorInfo.Create();
-        LastErrorText := GetLastErrorText();
-        if LastErrorText <> '' then begin
-            NewErrorInfo.Message := StrSubstNo(ErrorInclLastErrorDetailsErr, ErrorText, LastErrorText);
-            CustomDimensions.Add('ErrorMessage', LastErrorText);
-            CustomDimensions.Add('ErrorCallStack', GetLastErrorCallStack());
-            CustomDimensions.Add('ErrorCode', GetLastErrorCode());
-            NewErrorInfo.CustomDimensions(CustomDimensions);
-        end else
-            NewErrorInfo.Message := ErrorText;
-        Error(NewErrorInfo);
     end;
 
     local procedure ThrowError(ErrorText: Text; HttpResponseMessage: HttpResponseMessage)
