@@ -72,7 +72,7 @@ codeunit 73282 TKAOAuth2WithMultitenantImpl
     end;
 
     [NonDebuggable]
-    local procedure GetOAuth2TokenRequestAuthentication(ClientId: Text; ClientSecret: SecretText): SecretText
+    local procedure GetOAuth2TokenRequestAuthentication(ClientId: Guid; ClientSecret: SecretText): SecretText
     var
         TokenRequestBodyStructureTok: Label '&client_id=%1&client_secret=%2', Locked = true;
     begin
