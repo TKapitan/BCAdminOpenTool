@@ -119,6 +119,24 @@ page 73273 TKAManagedBCEnvironments
                     CurrPage.Update();
                 end;
             }
+            action(ChangeUpdateSettings)
+            {
+                ApplicationArea = All;
+                Caption = 'Change Update Settings';
+                ToolTip = 'Change the update settings for the selected environments.';
+                Image = SetPriorities;
+
+                trigger OnAction()
+                var
+                    ManagedBCEnvironment: Record TKAManagedBCEnvironment;
+                    ChangeUpdateSettings: Report TKAChangeUpdateSettings;
+                begin
+                    CurrPage.SetSelectionFilter(ManagedBCEnvironment);
+                    ChangeUpdateSettings.SetEnvironmentsToUpdate(ManagedBCEnvironment);
+                    ChangeUpdateSettings.RunModal();
+                    CurrPage.Update();
+                end;
+            }
         }
     }
 
