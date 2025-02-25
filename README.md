@@ -50,6 +50,8 @@ The **Client Secret** is the key that allows your app to access the Business Cen
 
 This page allows you to manage your Business Central tenants. You can input details such as Tenant ID, Name, Group Code, and Client ID for each tenant.
 
+![Managed BC Tenants](./Resources/Docu/ManagedBCTenants.png)
+
 ### Tenant ID
 The **Tenant ID** is the ID of the tenant you want to connect to. This is a unique identifier for each tenant within Microsoft stack.
 
@@ -81,6 +83,8 @@ This action verifies that the combination of Tenant ID and Client ID works corre
 # Managed BC Environments
 
 This page allows you to manage the environments associated with your Business Central tenants. It includes fields for the environment name, tenant name, and various other details obtained from multiple API endpoints.
+
+![Managed BC Environments](./Resources/Docu/ManagedBCEnvironments.png)
 
 ### Name
 The **Name** field displays the name of the environment as retrieved from the API.
@@ -126,6 +130,8 @@ The additional fields on the **Managed BC Environments** page provide comprehens
 - **Update Is Active**: Indicates if the update is activated and is scheduled to occur.
 
 **Note**: Some of the fields on this page are hidden by default, and some fields are available only on the Managed BC Environment Card.
+
+![Managed BC Environment Details](./Resources/Docu/EnvironmentDetail.png)
 
 **Note**: The list is filtered by default to hide soft deleted environments.
 
