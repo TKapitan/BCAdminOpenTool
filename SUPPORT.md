@@ -1,11 +1,15 @@
 # Support
 
-## How to file issues and get help
+Thank you for using and contributing to our project! Here are some ways you can get support:
 
-This GitHub repo is auto-generated from https://github.com/microsoft/AL-Go. Issues, bug tracking and feature requests should be done there.
+## Getting Help
 
-Please follow the documentation [here](https://github.com/microsoft/AL-Go/blob/main/Scenarios/Contribute.md) if you want to contribute to AL-Go for GitHub.
+### Documentation
+- Check out our documentation for detailed information on how to use the project.
 
-## Microsoft Support Policy
+### Issues
+- If you encounter any issues, please open an issue on GitHub. Provide as much detail as possible to help us understand and resolve the problem.
 
-Support for this **PROJECT or PRODUCT** is limited to the resources listed above.
+## Contributing
+
+We welcome contributions from everyone1
