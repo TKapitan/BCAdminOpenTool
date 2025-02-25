@@ -26,6 +26,14 @@ table 73273 TKAManagedBCEnvironment
             CalcFormula = lookup(TKAManagedBCTenant.Name where(TenantId = field(TenantId)));
             ToolTip = 'Specifies the name of the tenant.';
         }
+        field(4; TenantGroupCode; Code[20])
+        {
+            Caption = 'Tenant Group Code';
+            Editable = false;
+            FieldClass = FlowField;
+            CalcFormula = lookup(TKAManagedBCTenant.GroupCode where(TenantId = field(TenantId)));
+            ToolTip = 'Specifies the group code for the tenant.';
+        }
         field(5; Type; Text[20])
         {
             Caption = 'Type';

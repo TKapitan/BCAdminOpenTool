@@ -18,6 +18,12 @@ table 73270 TKAManagedBCTenant
             Caption = 'Name';
             ToolTip = 'Specifies the name of the tenant.';
         }
+        field(7; GroupCode; Code[20])
+        {
+            Caption = 'Group Code';
+            TableRelation = TKAManagedBCTenantGroup."Code";
+            ToolTip = 'Specifies the group code for the tenant.';
+        }
         field(10; ClientId; Guid)
         {
             Caption = 'Client ID';

@@ -22,6 +22,10 @@ page 73273 TKAManagedBCEnvironments
                 }
                 field(Name; Rec.Name) { }
                 field(TenantName; Rec.TenantName) { }
+                field(TenantGroupCode; Rec.TenantGroupCode)
+                {
+                    Visible = false;
+                }
                 field(Type; Rec."Type") { }
                 field(RingName; Rec.RingName)
                 {
@@ -48,7 +52,10 @@ page 73273 TKAManagedBCEnvironments
                 field(Status; Rec.Status) { }
                 field(AppSourceAppsUpdateCadence; Rec.AppSourceAppsUpdateCadence) { }
                 field(LocationName; Rec.LocationName) { }
-                field(GeoName; Rec.GeoName) { }
+                field(GeoName; Rec.GeoName)
+                {
+                    Visible = false;
+                }
                 field(ApplicationInsightsKey; Rec.ApplicationInsightsKey)
                 {
                     Visible = false;
@@ -158,4 +165,22 @@ page 73273 TKAManagedBCEnvironments
 
     var
         OpenEnvironmentLbl: Label 'Open Environment';
+
+    trigger OnOpenPage()
+    begin
+        SetVisibleBCTenantGroupFilter();
+    end;
+
+    local procedure SetVisibleBCTenantGroupFilter()
+    var
+        UserSetup: Record "User Setup";
+    begin
+        UserSetup.ReadIsolation(IsolationLevel::ReadCommitted);
+        UserSetup.SetLoadFields(TKAVisibleBCTenantGroupCode);
+        if not UserSetup.Get(UserId()) then
+            exit;
+        if UserSetup.TKAVisibleBCTenantGroupCode = '' then
+            exit;
+        Rec.SetRange(TenantGroupCode, UserSetup.TKAVisibleBCTenantGroupCode);
+    end;
 }

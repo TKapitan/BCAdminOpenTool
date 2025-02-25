@@ -7,5 +7,6 @@ permissionset 73272 TKABCAdminAdmin
         TKABCAdminEdit;
     Permissions =
         tabledata TKAAdminCenterAPISetup = M,
+        tabledata TKAManagedBCTenantGroup = IMD,
         tabledata TKAAvailableUpdateTimezone = IMD;
 }
