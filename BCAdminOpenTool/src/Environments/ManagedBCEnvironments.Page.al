@@ -167,7 +167,10 @@ page 73273 TKAManagedBCEnvironments
         OpenEnvironmentLbl: Label 'Open Environment';
 
     trigger OnOpenPage()
+    var
+        SoftDeletedStatusTok: Label 'SoftDeleted', Locked = true;
     begin
+        Rec.SetFilter(Status, '<>%1', SoftDeletedStatusTok);
         SetVisibleBCTenantGroupFilter();
     end;
 
