@@ -40,6 +40,22 @@ table 73272 TKAAdminCenterAPISetup
             Caption = 'Get Update Settings API Enabled';
             ToolTip = 'Specifies whether the Get Update Settings API is enabled.';
         }
+        field(110; GetInstalledAppsEnabled; Boolean)
+        {
+            Caption = 'Get Installed Apps API Enabled';
+            ToolTip = 'Specifies whether the Get Installed Apps API is enabled.';
+        }
+        field(300; OurPublisherName; Text[100])
+        {
+            Caption = 'Our Publisher Name';
+            ToolTip = 'Specifies the publisher name for our apps.';
+        }
+        field(305; ExcludeHiddedApps; Boolean)
+        {
+            Caption = 'Exclude Hidded Apps';
+            ToolTip = 'Specifies whether to exclude hidden apps from the list of installed apps. Hidden apps are apps with name starting with "_Exclude".';
+        }
+
     }
 
     keys
@@ -69,11 +85,22 @@ table 73272 TKAAdminCenterAPISetup
     /// Insert the record if it does not exist, otherwise get the record.
     /// </summary>
     procedure InsertIfNotExists()
+    var
+        AuthUrlTok: Label 'https://login.microsoftonline.com/%tenantid%/oauth2/v2.0/token', Locked = true;
+        ScopeTok: Label 'https://api.businesscentral.dynamics.com/.default', Locked = true;
+        APIBaseUrlTok: Label 'https://api.businesscentral.dynamics.com/admin/v2.24', Locked = true;
     begin
-        Reset();
-        if not Get() then begin
-            Init();
-            Insert(true);
+        Rec.Reset();
+        if not Rec.Get() then begin
+            Rec.Init();
+            Rec.Validate(AuthUrl, AuthUrlTok);
+            Rec.Validate(Scope, ScopeTok);
+            Rec.Validate(APIUrl, APIBaseUrlTok);
+            Rec.Validate(ExcludeHiddedApps, true);
+            Rec.Validate(GetScheduledUpdateAPIEnabled, true);
+            Rec.Validate(GetUpdateSettingsAPIEnabled, true);
+            Rec.Validate(GetInstalledAppsEnabled, true);
+            Rec.Insert(true);
         end;
     end;
 }

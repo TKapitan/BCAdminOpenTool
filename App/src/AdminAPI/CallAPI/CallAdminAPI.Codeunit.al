@@ -93,4 +93,14 @@ codeunit 73271 TKACallAdminAPI
     begin
         exit('/applications/BusinessCentral/environments/{environmentName}/settings/upgrade'.Replace('{environmentName}', EnvironmentName));
     end;
+
+    /// <summary>
+    /// Returns the endpoint for getting installed apps for an environment.
+    /// </summary>
+    /// <param name="EnvironmentName">The name of the environment for which to get the installed apps.</param>
+    /// <returns>String containing the endpoint for getting installed apps for an environment.</returns>
+    procedure GetInstalledAppsForEnvironmentEndpoint(EnvironmentName: Text): Text
+    begin
+        exit('/applications/BusinessCentral/environments/{environmentName}/apps'.Replace('{environmentName}', EnvironmentName));
+    end;
 }

@@ -160,17 +160,33 @@ page 73274 TKAManagedBCEnvironmentCard
                 end;
             }
         }
+        area(Navigation)
+        {
+            action(OpenManagedBCApps)
+            {
+                Caption = 'Apps';
+                ApplicationArea = All;
+                ToolTip = 'View and manage apps for this environment.';
+                Image = SendApprovalRequest;
+                RunObject = page TKAManagedBCEnvironmentApps;
+                RunPageLink = TenantId = field(TenantId), EnvironmentName = field(Name);
+            }
+        }
         area(Promoted)
         {
             group(Category_Process)
             {
                 actionref(UpdateEnvironments_Promoted; UpdateEnvironments) { }
-            }
-            group(Category_Category5)
-            {
-                Caption = 'Change';
-                actionref(ChangeUpdateSettings_Promoted; ChangeUpdateSettings) { }
-                actionref(ChangeUpdateDate_Promoted; ChangeUpdateDate) { }
+
+                group(Change)
+                {
+                    Caption = 'Change';
+                    Image = Change;
+
+                    actionref(ChangeUpdateSettings_Promoted; ChangeUpdateSettings) { }
+                    actionref(ChangeUpdateDate_Promoted; ChangeUpdateDate) { }
+                }
+                actionref(OpenManagedBCApps_Promoted; OpenManagedBCApps) { }
             }
         }
     }

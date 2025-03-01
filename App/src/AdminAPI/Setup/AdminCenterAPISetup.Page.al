@@ -19,11 +19,18 @@ page 73272 TKAAdminCenterAPISetup
                 field(Scope; Rec.Scope) { }
                 field(APIUrl; Rec.APIUrl) { }
             }
+            group(Apps)
+            {
+                Caption = 'Apps';
+                field(OurPublisherName; Rec.OurPublisherName) { }
+                field(ExcludeHiddedApps; Rec.ExcludeHiddedApps) { }
+            }
             group(AdditionalEndpoints)
             {
                 Caption = 'Additional Endpoints';
                 field(GetScheduledUpdateAPIEnabled; Rec.GetScheduledUpdateAPIEnabled) { }
                 field(GetUpdateSettingsAPIEnabled; Rec.GetUpdateSettingsAPIEnabled) { }
+                field(GetInstalledAppsEnabled; Rec.GetInstalledAppsEnabled) { }
             }
         }
     }

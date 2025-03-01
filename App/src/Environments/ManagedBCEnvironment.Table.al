@@ -199,6 +199,16 @@ table 73273 TKAManagedBCEnvironment
         fieldgroup(Brick; TenantId, Name) { }
     }
 
+    trigger OnDelete()
+    var
+        ManagedBCEnvironmentApp: Record TKAManagedBCEnvironmentApp;
+    begin
+        ManagedBCEnvironmentApp.ReadIsolation(IsolationLevel::ReadUncommitted);
+        ManagedBCEnvironmentApp.SetRange(TenantId, TenantId);
+        ManagedBCEnvironmentApp.SetRange(Name, Name);
+        ManagedBCEnvironmentApp.DeleteAll(true);
+    end;
+
     /// <summary>
     /// Get the Managed BC Tenant record for the Managed BC Environment.
     /// </summary>

@@ -72,6 +72,48 @@ page 73273 TKAManagedBCEnvironments
                 {
                     Visible = false;
                 }
+                field(NoOfApps; NoOfApps)
+                {
+                    Caption = 'No. of Apps';
+                    Editable = false;
+                    ToolTip = 'Specifies the number of apps installed for this environment. Only apps installed from AppSource are counted.';
+
+                    trigger OnDrillDown()
+                    var
+                        ManagedBCEnvironmentApp: Record TKAManagedBCEnvironmentApp;
+                    begin
+                        SetFilterEnvironmentApps(ManagedBCEnvironmentApp);
+                        OpenFilteredEnvironmentApps(ManagedBCEnvironmentApp);
+                    end;
+                }
+                field(NoOfOurApps; NoOfOurApps)
+                {
+                    Caption = 'No. of Our Apps';
+                    Editable = false;
+                    ToolTip = 'Specifies the number of apps published by us for this environment. Only apps installed from AppSource are counted.';
+
+                    trigger OnDrillDown()
+                    var
+                        ManagedBCEnvironmentApp: Record TKAManagedBCEnvironmentApp;
+                    begin
+                        SetFilterOurApps(ManagedBCEnvironmentApp);
+                        OpenFilteredEnvironmentApps(ManagedBCEnvironmentApp);
+                    end;
+                }
+                field(NoOfThirdPartyApps; NoOfThirdPartiesApps)
+                {
+                    Caption = 'No. of Third-Party Apps';
+                    Editable = false;
+                    ToolTip = 'Specifies the number of apps published by third parties for this environment. Only apps installed from AppSource are counted.';
+
+                    trigger OnDrillDown()
+                    var
+                        ManagedBCEnvironmentApp: Record TKAManagedBCEnvironmentApp;
+                    begin
+                        SetFilterThirdPartyApps(ManagedBCEnvironmentApp);
+                        OpenFilteredEnvironmentApps(ManagedBCEnvironmentApp);
+                    end;
+                }
                 field(OpenEnvironmentField; OpenEnvironmentLbl)
                 {
                     Caption = 'Web Client';
@@ -145,6 +187,18 @@ page 73273 TKAManagedBCEnvironments
                 end;
             }
         }
+        area(Navigation)
+        {
+            action(OpenManagedBCApps)
+            {
+                Caption = 'Apps';
+                ApplicationArea = All;
+                ToolTip = 'View and manage apps for this environment.';
+                Image = SendApprovalRequest;
+                RunObject = page TKAManagedBCEnvironmentApps;
+                RunPageLink = TenantId = field(TenantId), EnvironmentName = field(Name);
+            }
+        }
         area(Promoted)
         {
             group(Category_Process)
@@ -159,12 +213,10 @@ page 73273 TKAManagedBCEnvironments
                     actionref(ChangeUpdateSettings_Promoted; ChangeUpdateSettings) { }
                     actionref(ChangeUpdateDate_Promoted; ChangeUpdateDate) { }
                 }
+                actionref(OpenManagedBCApps_Promoted; OpenManagedBCApps) { }
             }
         }
     }
-
-    var
-        OpenEnvironmentLbl: Label 'Open Environment';
 
     trigger OnOpenPage()
     var
@@ -173,6 +225,16 @@ page 73273 TKAManagedBCEnvironments
         Rec.SetFilter(Status, '<>%1', SoftDeletedStatusTok);
         SetVisibleBCTenantGroupFilter();
     end;
+
+    trigger OnAfterGetRecord()
+    begin
+        CalcNoOfOurThirdPartyApps();
+    end;
+
+    var
+        OpenEnvironmentLbl: Label 'Open Environment';
+        NoOfApps, NoOfOurApps, NoOfThirdPartiesApps : Integer;
+
 
     local procedure SetVisibleBCTenantGroupFilter()
     var
@@ -185,5 +247,62 @@ page 73273 TKAManagedBCEnvironments
         if UserSetup.TKAVisibleBCTenantGroupCode = '' then
             exit;
         Rec.SetRange(TenantGroupCode, UserSetup.TKAVisibleBCTenantGroupCode);
+    end;
+
+    local procedure CalcNoOfOurThirdPartyApps(): Text
+    var
+        ManagedBCEnvironmentApp: Record TKAManagedBCEnvironmentApp;
+    begin
+        SetFilterEnvironmentApps(ManagedBCEnvironmentApp);
+        NoOfApps := ManagedBCEnvironmentApp.Count();
+        SetFilterOurApps(ManagedBCEnvironmentApp);
+        NoOfOurApps := ManagedBCEnvironmentApp.Count();
+        SetFilterThirdPartyApps(ManagedBCEnvironmentApp);
+        NoOfThirdPartiesApps := ManagedBCEnvironmentApp.Count();
+    end;
+
+    local procedure SetFilterEnvironmentApps(var ManagedBCEnvironmentApp: Record TKAManagedBCEnvironmentApp)
+    var
+        AdminCenterAPISetup: Record TKAAdminCenterAPISetup;
+    begin
+        Clear(ManagedBCEnvironmentApp);
+        AdminCenterAPISetup.ReadIsolation(IsolationLevel::ReadUncommitted);
+        AdminCenterAPISetup.SetLoadFields(ExcludeHiddedApps);
+        AdminCenterAPISetup.Get();
+
+        ManagedBCEnvironmentApp.ReadIsolation(IsolationLevel::ReadUncommitted);
+        ManagedBCEnvironmentApp.SetRange(TenantId, Rec.TenantId);
+        ManagedBCEnvironmentApp.SetRange(EnvironmentName, Rec.Name);
+        if AdminCenterAPISetup.ExcludeHiddedApps then
+            ManagedBCEnvironmentApp.SetRange(Hidden, false);
+    end;
+
+    local procedure SetFilterOurApps(var ManagedBCEnvironmentApp: Record TKAManagedBCEnvironmentApp)
+    var
+        AdminCenterAPISetup: Record TKAAdminCenterAPISetup;
+    begin
+        Clear(ManagedBCEnvironmentApp);
+        AdminCenterAPISetup.ReadIsolation(IsolationLevel::ReadUncommitted);
+        AdminCenterAPISetup.SetLoadFields(OurPublisherName);
+        AdminCenterAPISetup.Get();
+
+        SetFilterEnvironmentApps(ManagedBCEnvironmentApp);
+        ManagedBCEnvironmentApp.SetRange(Publisher, AdminCenterAPISetup.OurPublisherName);
+    end;
+
+    local procedure SetFilterThirdPartyApps(var ManagedBCEnvironmentApp: Record TKAManagedBCEnvironmentApp)
+    var
+        MicrosoftPublisherTok: Label 'Microsoft', Locked = true;
+    begin
+        Clear(ManagedBCEnvironmentApp);
+        SetFilterOurApps(ManagedBCEnvironmentApp);
+        ManagedBCEnvironmentApp.SetFilter(Publisher, '<>%1&<>%2', ManagedBCEnvironmentApp.GetFilter(Publisher), MicrosoftPublisherTok);
+    end;
+
+    local procedure OpenFilteredEnvironmentApps(var ManagedBCEnvironmentApp: Record TKAManagedBCEnvironmentApp)
+    var
+        PageManagement: Codeunit "Page Management";
+    begin
+        PageManagement.PageRun(ManagedBCEnvironmentApp);
     end;
 }
