@@ -71,7 +71,7 @@ codeunit 73273 TKAGetEnvironmentsImpl
         Response: Text;
     begin
         AdminCenterAPISetup.ReadIsolation(IsolationLevel::ReadUncommitted);
-        AdminCenterAPISetup.SetLoadFields(GetScheduledUpdateAPIEnabled, GetUpdateSettingsAPIEnabled);
+        AdminCenterAPISetup.SetLoadFields(GetScheduledUpdateAPIEnabled, GetUpdateSettingsAPIEnabled, GetInstalledAppsEnabled);
         AdminCenterAPISetup.Get();
 
         if AdminCenterAPISetup.GetScheduledUpdateAPIEnabled then begin
@@ -81,6 +81,10 @@ codeunit 73273 TKAGetEnvironmentsImpl
         if AdminCenterAPISetup.GetUpdateSettingsAPIEnabled then begin
             Response := CallAdminAPI.GetFromAdminAPI(ManagedBCEnvironment.GetManagedBCTenant(), CallAdminAPI.GetUpdateSettingsForEnvironmentEndpoint(ManagedBCEnvironment.Name));
             ProcessGetEnvResponseImpl.ParseUpdateSettingsResponse(Response, ManagedBCEnvironment);
+        end;
+        if AdminCenterAPISetup.GetInstalledAppsEnabled then begin
+            Response := CallAdminAPI.GetFromAdminAPI(ManagedBCEnvironment.GetManagedBCTenant(), CallAdminAPI.GetInstalledAppsForEnvironmentEndpoint(ManagedBCEnvironment.Name));
+            ProcessGetEnvResponseImpl.ParseInstalledAppsResponse(Response, ManagedBCEnvironment);
         end;
     end;
 }

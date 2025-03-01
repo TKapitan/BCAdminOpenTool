@@ -214,6 +214,108 @@ codeunit 73274 TKAProcessGetEnvResponseImpl
     end;
 
     #endregion Scheduled Update
+    #region Installed Apps
+
+    /// <summary>
+    /// Parses the response from the Admin API for getting installed apps information for an environment.
+    /// </summary>
+    /// <param name="Response">The response from the Admin API.</param>
+    /// <param name="ManagedBCEnvironment">The managed BC environment for which to parse the response.</param>
+    procedure ParseInstalledAppsResponse(Response: Text; var ManagedBCEnvironment: Record TKAManagedBCEnvironment)
+    var
+        JsonResponse, JsonApp : JsonObject;
+        JsonTokenValue, JsonTokenApp : JsonToken;
+        JsonApps: JsonArray;
+        ListOfFoundApps: List of [Guid];
+        InstalledOn: DateTime;
+        AppId: Guid;
+    begin
+        if HasManagedBCEnvironmentApps(ManagedBCEnvironment.TenantId, ManagedBCEnvironment.Name) then
+            InstalledOn := CurrentDateTime();
+
+        JsonResponse.ReadFrom(Response);
+        JsonResponse.Get('value', JsonTokenValue);
+        JsonApps := JsonTokenValue.AsArray();
+        foreach JsonTokenApp in JsonApps do begin
+            JsonApp := JsonTokenApp.AsObject();
+            ParseAppResponse(JsonApp, ManagedBCEnvironment.TenantId, ManagedBCEnvironment.Name, AppId, InstalledOn);
+            ListOfFoundApps.Add(AppId);
+        end;
+        DeleteDeletedApps(ManagedBCEnvironment.TenantId, ManagedBCEnvironment.Name, ListOfFoundApps);
+    end;
+
+    [InherentPermissions(PermissionObjectType::TableData, Database::TKAManagedBCEnvironmentApp, 'RIM')]
+    local procedure ParseAppResponse(var JsonApp: JsonObject; TenantId: Guid; EnvironmentName: Text[100]; var AppId: Guid; InstalledOn: DateTime)
+    var
+        ManagedBCEnvironmentApp: Record TKAManagedBCEnvironmentApp;
+        JsonTokenValue: JsonToken;
+    begin
+        JsonApp.Get('id', JsonTokenValue);
+        Evaluate(AppId, JsonTokenValue.AsValue().AsText());
+
+        if not ManagedBCEnvironmentApp.Get(TenantId, EnvironmentName, AppId) then begin
+            ManagedBCEnvironmentApp.Init();
+            ManagedBCEnvironmentApp.Validate(TenantId, TenantId);
+            ManagedBCEnvironmentApp.Validate(EnvironmentName, EnvironmentName);
+            ManagedBCEnvironmentApp.Validate(ID, AppId);
+            ManagedBCEnvironmentApp.Insert(true);
+        end;
+
+        JsonApp.Get('name', JsonTokenValue);
+        ManagedBCEnvironmentApp.Validate(Name, CopyStr(JsonTokenValue.AsValue().AsText(), 1, MaxStrLen(ManagedBCEnvironmentApp.Name)));
+        JsonApp.Get('publisher', JsonTokenValue);
+        ManagedBCEnvironmentApp.Validate(Publisher, CopyStr(JsonTokenValue.AsValue().AsText(), 1, MaxStrLen(ManagedBCEnvironmentApp.Publisher)));
+        JsonApp.Get('version', JsonTokenValue);
+        ManagedBCEnvironmentApp.Validate(Version, CopyStr(JsonTokenValue.AsValue().AsText(), 1, MaxStrLen(ManagedBCEnvironmentApp.Version)));
+        JsonApp.Get('state', JsonTokenValue);
+        ManagedBCEnvironmentApp.Validate(State, CopyStr(JsonTokenValue.AsValue().AsText(), 1, MaxStrLen(ManagedBCEnvironmentApp.State)));
+
+        if JsonApp.Get('lastOperationId', JsonTokenValue) then begin
+            Evaluate(AppId, JsonTokenValue.AsValue().AsText());
+            ManagedBCEnvironmentApp.Validate(LastOperationId, AppId);
+        end;
+        if JsonApp.Get('lastUpdateAttemptResult', JsonTokenValue) then
+            ManagedBCEnvironmentApp.Validate(LastUpdateAttemptResult, CopyStr(JsonTokenValue.AsValue().AsText(), 1, MaxStrLen(ManagedBCEnvironmentApp.LastUpdateAttemptResult)));
+        ManagedBCEnvironmentApp.Validate(InstalledOn, InstalledOn);
+        ManagedBCEnvironmentApp.Validate(Hidden, ShouldAppBeSetAsHidden(ManagedBCEnvironmentApp));
+        ManagedBCEnvironmentApp.Modify(true);
+    end;
+
+    [InherentPermissions(PermissionObjectType::TableData, Database::TKAManagedBCEnvironmentApp, 'RD')]
+    local procedure DeleteDeletedApps(TenantId: Guid; EnvironmentName: Text[100]; ListOfFoundApps: List of [Guid])
+    var
+        ManagedBCEnvironmentApp, ManagedBCEnvironmentApp2 : Record TKAManagedBCEnvironmentApp;
+    begin
+        ManagedBCEnvironmentApp.ReadIsolation(IsolationLevel::ReadCommitted);
+        ManagedBCEnvironmentApp.SetRange(TenantId, TenantId);
+        ManagedBCEnvironmentApp.SetRange(EnvironmentName, EnvironmentName);
+        if ManagedBCEnvironmentApp.FindSet() then
+            repeat
+                if not ListOfFoundApps.Contains(ManagedBCEnvironmentApp.ID) then begin
+                    ManagedBCEnvironmentApp2.GetBySystemId(ManagedBCEnvironmentApp.SystemId);
+                    ManagedBCEnvironmentApp2.Delete(true);
+                end;
+            until ManagedBCEnvironmentApp.Next() < 1;
+    end;
+
+    local procedure HasManagedBCEnvironmentApps(TenantId: Guid; EnvironmentName: Text[100]): Boolean
+    var
+        ManagedBCEnvironmentApp: Record TKAManagedBCEnvironmentApp;
+    begin
+        ManagedBCEnvironmentApp.ReadIsolation(IsolationLevel::ReadUncommitted);
+        ManagedBCEnvironmentApp.SetRange(TenantId, TenantId);
+        ManagedBCEnvironmentApp.SetRange(EnvironmentName, EnvironmentName);
+        exit(not ManagedBCEnvironmentApp.IsEmpty());
+    end;
+
+    local procedure ShouldAppBeSetAsHidden(ManagedBCEnvironmentApp: Record TKAManagedBCEnvironmentApp): Boolean
+    var
+        HiddenAppsPrefixTok: Label '_Exclude', Locked = true;
+    begin
+        exit(ManagedBCEnvironmentApp.Name.StartsWith(HiddenAppsPrefixTok));
+    end;
+
+    #endregion Installed Apps
     #region Helpers
 
     local procedure GetJsonTokenAsDateTime(var JsonTokenValue: JsonToken): DateTime
