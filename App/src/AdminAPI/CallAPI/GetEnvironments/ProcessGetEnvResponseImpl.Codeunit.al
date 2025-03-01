@@ -144,7 +144,7 @@ codeunit 73274 TKAProcessGetEnvResponseImpl
     end;
 
     [InherentPermissions(PermissionObjectType::TableData, Database::TKAManagedBCEnvironment, 'M')]
-    local procedure ClearUpdateSettingsFields(ManagedBCEnvironment: Record TKAManagedBCEnvironment)
+    local procedure ClearUpdateSettingsFields(var ManagedBCEnvironment: Record TKAManagedBCEnvironment)
     begin
         ManagedBCEnvironment.Validate(UpdateIsActive, false);
         ManagedBCEnvironment.Validate(UpdateTargetVersion, '');
@@ -199,7 +199,7 @@ codeunit 73274 TKAProcessGetEnvResponseImpl
     end;
 
     [InherentPermissions(PermissionObjectType::TableData, Database::TKAManagedBCEnvironment, 'M')]
-    local procedure ClearScheduledUpdateFields(ManagedBCEnvironment: Record TKAManagedBCEnvironment)
+    local procedure ClearScheduledUpdateFields(var ManagedBCEnvironment: Record TKAManagedBCEnvironment)
     begin
         ManagedBCEnvironment.Validate(UpdateIsActive, false);
         ManagedBCEnvironment.Validate(UpdateTargetVersion, '');
