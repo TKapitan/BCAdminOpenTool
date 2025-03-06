@@ -26,6 +26,18 @@ codeunit 73271 TKACallAdminAPI
     end;
 
     /// <summary>
+    /// Calls the Admin API for the specified BC tenant.
+    /// </summary>
+    /// <param name="ManagedBCTenant">Specifies the BC tenant for which the API call is to be made.</param>
+    /// <param name="Endpoint">Specifies the API endpoint to be called.</param>
+    /// <param name="NotFound">Specifies whether the endpoint was not found.</param>
+    /// <returns>Response as text.</returns>
+    procedure GetFromAdminAPI(ManagedBCTenant: Record TKAManagedBCTenant; Endpoint: Text; var NotFound: Boolean): Text
+    begin
+        exit(CallAdminAPIImpl.GetFromAdminAPI(ManagedBCTenant, Endpoint, NotFound));
+    end;
+
+    /// <summary>
     /// Calls the PUT method of the Admin API for the specified BC tenant and API endpoint.
     /// </summary>
     /// <param name="ManagedBCEnvironment">Specifies the managed BC environment for which the API call is to be made.</param>

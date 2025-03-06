@@ -26,8 +26,42 @@ codeunit 73270 TKACallAdminAPIImpl
     /// </summary>
     /// <param name="ManagedBCTenant">Specifies the BC tenant for which the API call is to be made.</param>
     /// <param name="Endpoint">Specifies the API endpoint to be called.</param>
-    /// <returns>Response as a text</returns>
+    /// <returns>Response as text.</returns>
     procedure GetFromAdminAPI(ManagedBCTenant: Record TKAManagedBCTenant; Endpoint: Text): Text
+    var
+        HttpResponseMessage: HttpResponseMessage;
+        NotFound: Boolean;
+        Result: Text;
+    begin
+        Result := GetFromAdminAPI(ManagedBCTenant, Endpoint, HttpResponseMessage, NotFound);
+        if NotFound then
+            ThrowError(HttpResponseMessage);
+        exit(Result);
+    end;
+
+    /// <summary>
+    /// Calls the GET method of the Admin API for the specified BC tenant and API endpoint.
+    /// </summary>
+    /// <param name="ManagedBCTenant">Specifies the BC tenant for which the API call is to be made.</param>
+    /// <param name="Endpoint">Specifies the API endpoint to be called.</param>
+    /// <param name="NotFound">Specifies whether the API endpoint or record was not found.</param>
+    /// <returns>Response as a text</returns>
+    procedure GetFromAdminAPI(ManagedBCTenant: Record TKAManagedBCTenant; Endpoint: Text; var NotFound: Boolean): Text
+    var
+        HttpResponseMessage: HttpResponseMessage;
+    begin
+        exit(GetFromAdminAPI(ManagedBCTenant, Endpoint, HttpResponseMessage, NotFound));
+    end;
+
+    /// <summary>
+    /// Calls the GET method of the Admin API for the specified BC tenant and API endpoint.
+    /// </summary>
+    /// <param name="ManagedBCTenant">Specifies the BC tenant for which the API call is to be made.</param>
+    /// <param name="Endpoint">Specifies the API endpoint to be called.</param>
+    /// <param name="HttpResponseMessage">Specifies the HttpResponseMessage object to be used for the API call.</param>
+    /// <param name="NotFound">Specifies whether the API endpoint or record was not found.</param>
+    /// <returns>Response as a text</returns>
+    procedure GetFromAdminAPI(ManagedBCTenant: Record TKAManagedBCTenant; Endpoint: Text; var HttpResponseMessage: HttpResponseMessage; var NotFound: Boolean): Text
     var
         HttpRequestMessage: HttpRequestMessage;
         HttpHeaders: HttpHeaders;
@@ -37,7 +71,7 @@ codeunit 73270 TKACallAdminAPIImpl
 
         HttpRequestMessage.SetRequestUri(GetBaseAPIUrl() + Endpoint);
         HttpRequestMessage.Method('GET');
-        exit(SendAPIRequest(HttpRequestMessage));
+        exit(SendAPIRequest(HttpRequestMessage, HttpResponseMessage, NotFound));
     end;
 
     /// <summary>
@@ -79,15 +113,31 @@ codeunit 73270 TKACallAdminAPIImpl
 
     local procedure SendAPIRequest(var HttpRequestMessage: HttpRequestMessage): Text
     var
+        HttpResponseMessage: HttpResponseMessage;
+        NotFound: Boolean;
+        Result: Text;
+    begin
+        Result := SendAPIRequest(HttpRequestMessage, HttpResponseMessage, NotFound);
+        if NotFound then
+            ThrowError(HttpResponseMessage);
+        exit(Result);
+    end;
+
+    local procedure SendAPIRequest(var HttpRequestMessage: HttpRequestMessage; var HttpResponseMessage: HttpResponseMessage; var NotFound: Boolean): Text
+    var
         HttpClient: HttpClient;
         ResponseInStream: InStream;
-        HttpResponseMessage: HttpResponseMessage;
         Result: Text;
-        AdminAPICallFailedErr: Label 'Admin API call failed.';
     begin
+        NotFound := false;
         HttpClient.Send(HttpRequestMessage, HttpResponseMessage);
-        if not HttpResponseMessage.IsSuccessStatusCode() then
-            ThrowError(AdminAPICallFailedErr, HttpResponseMessage);
+        if not HttpResponseMessage.IsSuccessStatusCode() then begin
+            if HttpResponseMessage.HttpStatusCode() = 404 then begin
+                NotFound := true;
+                exit;
+            end;
+            ThrowError(HttpResponseMessage);
+        end;
         HttpResponseMessage.Content().ReadAs(ResponseInStream);
         ResponseInStream.ReadText(Result);
         exit(Result);
@@ -120,16 +170,17 @@ codeunit 73270 TKACallAdminAPIImpl
         exit(SecretStrSubstNo('Bearer %1', AccessToken));
     end;
 
-    local procedure ThrowError(ErrorText: Text; HttpResponseMessage: HttpResponseMessage)
+    local procedure ThrowError(HttpResponseMessage: HttpResponseMessage)
     var
         NewErrorInfo: ErrorInfo;
         CustomDimensions: Dictionary of [Text, Text];
+        AdminAPICallFailedErr: Label 'Admin API call failed.';
         ErrorInclHttpResponseDetailsErr: Label '%1\\HttpStatusCode: %2\ReasonPhrase: %3', Comment = '%1 - Error message specified by the caller function, %2 - HttpStatusCode from the response, %3 - ReasonPhrase from the response';
     begin
         if HttpResponseMessage.IsSuccessStatusCode() then
             exit;
         NewErrorInfo := ErrorInfo.Create();
-        NewErrorInfo.Message := StrSubstNo(ErrorInclHttpResponseDetailsErr, ErrorText, HttpResponseMessage.HttpStatusCode, HttpResponseMessage.ReasonPhrase);
+        NewErrorInfo.Message := StrSubstNo(ErrorInclHttpResponseDetailsErr, AdminAPICallFailedErr, HttpResponseMessage.HttpStatusCode, HttpResponseMessage.ReasonPhrase);
         CustomDimensions.Add('HttpStatusCode', Format(HttpResponseMessage.HttpStatusCode));
         CustomDimensions.Add('ReasonPhrase', HttpResponseMessage.ReasonPhrase);
         NewErrorInfo.CustomDimensions(CustomDimensions);

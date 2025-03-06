@@ -44,7 +44,7 @@ codeunit 73274 TKAProcessGetEnvResponseImpl
 
     [InherentPermissions(PermissionObjectType::TableData, Database::TKAManagedBCEnvironment, 'RIM')]
 #pragma warning disable LC0010 // Cyclomatic complexity is caused by the number of fields
-    procedure ParseEnvironmentResponse(var JsonEnvironment: JsonObject; TenantId: Guid; EnvironmentName: Text[100])
+    procedure ParseEnvironmentResponse(var JsonEnvironment: JsonObject; var TenantId: Guid; var EnvironmentName: Text[100])
 #pragma warning restore LC0010
     var
         ManagedBCEnvironment: Record TKAManagedBCEnvironment;
@@ -95,20 +95,24 @@ codeunit 73274 TKAProcessGetEnvResponseImpl
         ManagedBCEnvironment.Modify(true);
     end;
 
-    [InherentPermissions(PermissionObjectType::TableData, Database::TKAManagedBCEnvironment, 'RD')]
+    [InherentPermissions(PermissionObjectType::TableData, Database::TKAManagedBCEnvironment, 'R')]
     local procedure DeleteDeletedEnvironments(TenantId: Guid; ListOfFoundEnvironments: List of [Text[100]])
     var
-        ManagedBCEnvironment, ManagedBCEnvironment2 : Record TKAManagedBCEnvironment;
+        ManagedBCEnvironment: Record TKAManagedBCEnvironment;
     begin
         ManagedBCEnvironment.ReadIsolation(IsolationLevel::ReadCommitted);
         ManagedBCEnvironment.SetRange(TenantId, TenantId);
         if ManagedBCEnvironment.FindSet() then
             repeat
-                if not ListOfFoundEnvironments.Contains(ManagedBCEnvironment.Name) then begin
-                    ManagedBCEnvironment2.GetBySystemId(ManagedBCEnvironment.SystemId);
-                    ManagedBCEnvironment2.Delete(true);
-                end;
+                if not ListOfFoundEnvironments.Contains(ManagedBCEnvironment.Name) then
+                    DeleteEnvironment(ManagedBCEnvironment);
             until ManagedBCEnvironment.Next() < 1;
+    end;
+
+    [InherentPermissions(PermissionObjectType::TableData, Database::TKAManagedBCEnvironment, 'D')]
+    procedure DeleteEnvironment(ManagedBCEnvironment: Record TKAManagedBCEnvironment)
+    begin
+        ManagedBCEnvironment.Delete(true);
     end;
 
     #endregion Environments
