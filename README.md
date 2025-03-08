@@ -27,6 +27,8 @@ The tool also includes the **Available Update Timezones** page, which lists all 
   - [Update Environments](#update-environments)
   - [Change Update Date](#change-update-date)
   - [Change Update Settings](#change-update-settings)
+  - [Install Apps](#install-apps)
+- [AppSource Offerings](#appsource-offerings)
 - [Available Update Timezones](#available-update-timezones)
   - [Get Available Timezones](#get-available-timezones)
 - [Admin Center API Setup](#admin-center-api-setup)
@@ -149,6 +151,31 @@ This action allows you to change the scheduled update date for selected environm
 
 ### Change Update Settings
 This action allows you to change the preferred start time, end time, and time zone for the selected environments. All values must be specified. The time zone must be selected from the available time zones (which will be described later).
+
+### Install Apps
+This action allows you to install AppSource apps to selected environments. You can choose multiple environments, and the action will display a request page with installation options.
+
+#### Request Page Options
+- **Use Environment Update Window**: Specifies whether to respect the environment's update window when installing apps. When enabled, apps will only be installed during the configured update window.
+- **Install/Update Needed Dependencies**: Determines whether to automatically install or update any required dependencies for the selected apps.
+
+The page also includes a subform where you can select which apps to install from the available AppSource offerings.
+
+After the installation process completes, you'll receive a summary showing:
+- Number of successfully installed apps
+- Number of apps skipped (already installed in the environment)
+- Number of apps not found (either not available in AppSource or not compatible with environment's localization) including details (tenant, environment, app, version and localization)
+- Number of apps that couldn't be installed due to missing dependencies including details (tenant, environment and information about missing dependencies). You can install dependencies automatically by enabling option **Install/Update Needed Dependencies** on the request page.
+
+# AppSource Offerings
+
+This page displays a list of AppSource offerings, providing information about available apps in the AppSource marketplace. This page is managed manually and defines apps available for other processes (such as list of apps available to install to environments.)
+
+### AppId
+The **AppId** field displays the unique identifier of the AppSource app. The app must be available in the AppSource.
+
+### Name
+The **Name** field shows the name of the AppSource app as it appears in the marketplace.
 
 # Available Update Timezones
 
