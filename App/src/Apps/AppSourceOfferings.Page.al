@@ -1,7 +1,7 @@
 page 73278 TKAAppSourceOfferings
 {
     ApplicationArea = All;
-    Caption = 'Our AppSource Apps';
+    Caption = 'AppSource Offerings';
     PageType = List;
     SourceTable = TKAAppSourceOffering;
     UsageCategory = Lists;

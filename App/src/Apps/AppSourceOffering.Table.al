@@ -1,6 +1,6 @@
 table 73277 TKAAppSourceOffering
 {
-    Caption = 'App Source Offering';
+    Caption = 'AppSource Offering';
     DataClassification = CustomerContent;
     DrillDownPageId = TKAAppSourceOfferings;
     LookupPageId = TKAAppSourceOfferings;
