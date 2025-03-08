@@ -57,7 +57,7 @@ page 73271 TKAManagedBCTenants
                 var
                     GetEnvironments: Codeunit TKAGetEnvironments;
                 begin
-                    GetEnvironments.CreateUpdateEnvironmentsForTenant(Rec);
+                    GetEnvironments.CreateUpdateEnvironmentsForTenant(Rec, false);
                 end;
             }
             action(TestConnection)

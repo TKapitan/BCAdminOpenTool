@@ -41,7 +41,7 @@ codeunit 73283 TKAChangeUpdateSettingsImpl
                 if not CallAdminAPI.PutToAdminAPI(ManagedBCEnvironment, Endpoint, RequestBodyJsonObject, HttpResponseMessage) then
                     CallAdminAPI.ThrowError(HttpResponseMessage);
             until ManagedBCEnvironment.Next() < 1;
-        GetEnvironments.UpdateSelectedEnvironments(ManagedBCEnvironment);
+        GetEnvironments.UpdateSelectedEnvironments(ManagedBCEnvironment, false);
     end;
 
     local procedure FormatTwoDigits(Digits: Integer): Text[2]

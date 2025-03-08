@@ -9,17 +9,19 @@ codeunit 73272 TKAGetEnvironments
     /// Create or update environments for a tenant.
     /// </summary>
     /// <param name="ManagedBCTenant">The tenant for which to create or update environments.</param>
-    procedure CreateUpdateEnvironmentsForTenant(var ManagedBCTenant: Record TKAManagedBCTenant)
+    /// <param name="HideDialog">Specifies whether to hide any dialog.</param>
+    procedure CreateUpdateEnvironmentsForTenant(var ManagedBCTenant: Record TKAManagedBCTenant; HideDialog: Boolean)
     begin
-        GetEnvironmentsImpl.CreateUpdateEnvironmentsForTenant(ManagedBCTenant);
+        GetEnvironmentsImpl.CreateUpdateEnvironmentsForTenant(ManagedBCTenant, HideDialog);
     end;
 
     /// <summary>
     /// Update selected environments.
     /// </summary>
     /// <param name="ManagedBCEnvironment">The environments to update.</param>
-    procedure UpdateSelectedEnvironments(var ManagedBCEnvironment: Record TKAManagedBCEnvironment)
+    /// <param name="HideDialog">Specifies whether to hide any dialog.</param>
+    procedure UpdateSelectedEnvironments(var ManagedBCEnvironment: Record TKAManagedBCEnvironment; HideDialog: Boolean)
     begin
-        GetEnvironmentsImpl.UpdateSelectedEnvironments(ManagedBCEnvironment);
+        GetEnvironmentsImpl.UpdateSelectedEnvironments(ManagedBCEnvironment, HideDialog);
     end;
 }
