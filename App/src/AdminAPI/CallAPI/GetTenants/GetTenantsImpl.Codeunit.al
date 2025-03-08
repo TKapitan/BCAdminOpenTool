@@ -23,7 +23,7 @@ codeunit 73280 TKAGetTenantsImpl
                 ManagedBCTenant.SetRange(ClientId, ManagedBCAdministrationApp.ClientId);
                 if ManagedBCTenant.FindFirst() then begin
                     Response := CallAdminAPI.GetFromAdminAPI(ManagedBCTenant, CallAdminAPI.GetManagedBCTenantsEndpoint());
-                    ProcessGetTenantsRespImpl.ParseGetManageableTenantsResponse(Response, ManagedBCAdministrationApp);
+                    ProcessGetTenantsRespImpl.ParseGetManageableTenantsResponse(Response, ManagedBCAdministrationApp, true);
                 end else
                     Message(AtLeastOneTenantMustBeCreatedManuallyMsg, ManagedBCAdministrationApp.TableCaption(), ManagedBCAdministrationApp.Name);
             until ManagedBCAdministrationApp.Next() < 1;

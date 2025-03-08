@@ -117,7 +117,7 @@ page 73274 TKAManagedBCEnvironmentCard
                 begin
                     ManagedBCEnvironment := Rec;
                     ManagedBCEnvironment.SetRecFilter();
-                    GetEnvironments.UpdateSelectedEnvironments(ManagedBCEnvironment);
+                    GetEnvironments.UpdateSelectedEnvironments(ManagedBCEnvironment, false);
                     CurrPage.Update();
                 end;
             }

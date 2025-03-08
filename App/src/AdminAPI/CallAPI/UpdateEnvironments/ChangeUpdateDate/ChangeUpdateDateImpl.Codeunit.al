@@ -49,6 +49,6 @@ codeunit 73275 TKAChangeUpdateDateImpl
                 if not CallAdminAPI.PutToAdminAPI(ManagedBCEnvironment, Endpoint, RequestBodyJsonObject, HttpResponseMessage) then
                     CallAdminAPI.ThrowError(HttpResponseMessage);
             until ManagedBCEnvironment.Next() < 1;
-        GetEnvironments.UpdateSelectedEnvironments(ManagedBCEnvironment);
+        GetEnvironments.UpdateSelectedEnvironments(ManagedBCEnvironment, false);
     end;
 }

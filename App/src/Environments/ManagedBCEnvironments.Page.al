@@ -146,7 +146,7 @@ page 73273 TKAManagedBCEnvironments
                     GetEnvironments: Codeunit TKAGetEnvironments;
                 begin
                     CurrPage.SetSelectionFilter(ManagedBCEnvironment);
-                    GetEnvironments.UpdateSelectedEnvironments(ManagedBCEnvironment);
+                    GetEnvironments.UpdateSelectedEnvironments(ManagedBCEnvironment, false);
                     CurrPage.Update();
                 end;
             }

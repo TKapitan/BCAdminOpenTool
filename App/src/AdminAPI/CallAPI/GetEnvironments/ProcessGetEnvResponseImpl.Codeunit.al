@@ -262,6 +262,7 @@ codeunit 73274 TKAProcessGetEnvResponseImpl
             ManagedBCEnvironmentApp.Validate(TenantId, TenantId);
             ManagedBCEnvironmentApp.Validate(EnvironmentName, EnvironmentName);
             ManagedBCEnvironmentApp.Validate(ID, AppId);
+            ManagedBCEnvironmentApp.Validate(InstalledOn, InstalledOn);
             ManagedBCEnvironmentApp.Insert(true);
         end;
 
@@ -280,7 +281,6 @@ codeunit 73274 TKAProcessGetEnvResponseImpl
         end;
         if JsonApp.Get('lastUpdateAttemptResult', JsonTokenValue) then
             ManagedBCEnvironmentApp.Validate(LastUpdateAttemptResult, CopyStr(JsonTokenValue.AsValue().AsText(), 1, MaxStrLen(ManagedBCEnvironmentApp.LastUpdateAttemptResult)));
-        ManagedBCEnvironmentApp.Validate(InstalledOn, InstalledOn);
         ManagedBCEnvironmentApp.Validate(Hidden, ShouldAppBeSetAsHidden(ManagedBCEnvironmentApp));
         ManagedBCEnvironmentApp.Modify(true);
     end;
