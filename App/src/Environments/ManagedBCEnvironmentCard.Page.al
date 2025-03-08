@@ -159,6 +159,25 @@ page 73274 TKAManagedBCEnvironmentCard
                     CurrPage.Update();
                 end;
             }
+            action(InstallApps)
+            {
+                ApplicationArea = All;
+                Caption = 'Install App';
+                ToolTip = 'Install an app for the selected environments.';
+                Image = Installments;
+
+                trigger OnAction()
+                var
+                    ManagedBCEnvironment: Record TKAManagedBCEnvironment;
+                    InstallApps: Report TKAInstallApps;
+                begin
+                    ManagedBCEnvironment := Rec;
+                    ManagedBCEnvironment.SetRecFilter();
+                    InstallApps.SetEnvironments(ManagedBCEnvironment);
+                    InstallApps.RunModal();
+                    CurrPage.Update();
+                end;
+            }
         }
         area(Navigation)
         {
@@ -185,6 +204,7 @@ page 73274 TKAManagedBCEnvironmentCard
 
                     actionref(ChangeUpdateSettings_Promoted; ChangeUpdateSettings) { }
                     actionref(ChangeUpdateDate_Promoted; ChangeUpdateDate) { }
+                    actionref(InstallApps_Promoted; InstallApps) { }
                 }
                 actionref(OpenManagedBCApps_Promoted; OpenManagedBCApps) { }
             }

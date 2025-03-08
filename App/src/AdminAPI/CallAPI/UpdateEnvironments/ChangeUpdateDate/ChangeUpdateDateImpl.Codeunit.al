@@ -31,8 +31,9 @@ codeunit 73275 TKAChangeUpdateDateImpl
     var
         CallAdminAPI: Codeunit TKACallAdminAPI;
         GetEnvironments: Codeunit TKAGetEnvironments;
+        HttpResponseMessage: HttpResponseMessage;
         RequestBodyJsonObject: JsonObject;
-        Endpoint, Response : Text;
+        Endpoint: Text;
     begin
         if ManagedBCEnvironment.FindSet() then
             repeat
@@ -45,7 +46,8 @@ codeunit 73275 TKAChangeUpdateDateImpl
                 RequestBodyJsonObject.Add('runOn', Format(NewUpdateDate, 0, 9) + 'T00:00:00Z');
                 RequestBodyJsonObject.Add('ignoreUpgradeWindow', NewIgnoreUpgradeWindow);
                 Endpoint := CallAdminAPI.GetScheduledUpdateForEnvironmentEndpoint(ManagedBCEnvironment.Name);
-                Response := CallAdminAPI.PutToAdminAPI(ManagedBCEnvironment, Endpoint, RequestBodyJsonObject);
+                if not CallAdminAPI.PutToAdminAPI(ManagedBCEnvironment, Endpoint, RequestBodyJsonObject, HttpResponseMessage) then
+                    CallAdminAPI.ThrowError(HttpResponseMessage);
             until ManagedBCEnvironment.Next() < 1;
         GetEnvironments.UpdateSelectedEnvironments(ManagedBCEnvironment);
     end;
