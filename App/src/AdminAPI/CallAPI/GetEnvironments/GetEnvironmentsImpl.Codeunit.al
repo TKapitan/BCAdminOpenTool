@@ -34,16 +34,24 @@ codeunit 73273 TKAGetEnvironmentsImpl
         ManagedBCEnvironment2: Record TKAManagedBCEnvironment;
         CallAdminAPI: Codeunit TKACallAdminAPI;
         ProcessGetEnvResponseImpl: Codeunit TKAProcessGetEnvResponseImpl;
+        HttpResponseMessage: HttpResponseMessage;
         Response: Text;
         CompletedSuccessfullyMsg: Label 'Environments have been successfully updated.';
     begin
         if ManagedBCEnvironment.FindSet() then
             repeat
-                Response := CallAdminAPI.GetFromAdminAPI(ManagedBCEnvironment.GetManagedBCTenant(), CallAdminAPI.GetEnvironmentEndpoint(ManagedBCEnvironment.Name));
-                ProcessGetEnvResponseImpl.ParseEnvironmentResponse(Response, ManagedBCEnvironment.TenantId, ManagedBCEnvironment.Name);
+                if not CallAdminAPI.GetFromAdminAPI(ManagedBCEnvironment.GetManagedBCTenant(), CallAdminAPI.GetEnvironmentEndpoint(ManagedBCEnvironment.Name), HttpResponseMessage) then begin
+                    if HttpResponseMessage.HttpStatusCode() = 404 then
+                        ProcessGetEnvResponseImpl.DeleteEnvironment(ManagedBCEnvironment)
+                    else
+                        CallAdminAPI.ThrowError(HttpResponseMessage);
+                end else begin
+                    HttpResponseMessage.Content().ReadAs(Response);
+                    ProcessGetEnvResponseImpl.ParseEnvironmentResponse(Response, ManagedBCEnvironment.TenantId, ManagedBCEnvironment.Name);
 
-                ManagedBCEnvironment2.GetBySystemId(ManagedBCEnvironment.SystemId);
-                ProcessAdditionalEndpointsForEnvironmentSync(ManagedBCEnvironment2);
+                    ManagedBCEnvironment2.GetBySystemId(ManagedBCEnvironment.SystemId);
+                    ProcessAdditionalEndpointsForEnvironmentSync(ManagedBCEnvironment2);
+                end;
             until ManagedBCEnvironment.Next() < 1;
 
         Message(CompletedSuccessfullyMsg);

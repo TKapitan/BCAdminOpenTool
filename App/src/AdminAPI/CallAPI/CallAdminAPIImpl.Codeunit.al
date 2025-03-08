@@ -26,8 +26,26 @@ codeunit 73270 TKACallAdminAPIImpl
     /// </summary>
     /// <param name="ManagedBCTenant">Specifies the BC tenant for which the API call is to be made.</param>
     /// <param name="Endpoint">Specifies the API endpoint to be called.</param>
-    /// <returns>Response as a text</returns>
+    /// <returns>Response as text.</returns>
     procedure GetFromAdminAPI(ManagedBCTenant: Record TKAManagedBCTenant; Endpoint: Text): Text
+    var
+        HttpResponseMessage: HttpResponseMessage;
+        Result: Text;
+    begin
+        if not GetFromAdminAPI(ManagedBCTenant, Endpoint, HttpResponseMessage) then
+            ThrowError(HttpResponseMessage);
+        HttpResponseMessage.Content().ReadAs(Result);
+        exit(Result);
+    end;
+
+    /// <summary>
+    /// Calls the GET method of the Admin API for the specified BC tenant and API endpoint.
+    /// </summary>
+    /// <param name="ManagedBCTenant">Specifies the BC tenant for which the API call is to be made.</param>
+    /// <param name="Endpoint">Specifies the API endpoint to be called.</param>
+    /// <param name="HttpResponseMessage">Specifies the HttpResponseMessage object to be used for the API call.</param>
+    /// <returns>True if the API call was successful; otherwise, false.</returns>
+    procedure GetFromAdminAPI(ManagedBCTenant: Record TKAManagedBCTenant; Endpoint: Text; var HttpResponseMessage: HttpResponseMessage): Boolean
     var
         HttpRequestMessage: HttpRequestMessage;
         HttpHeaders: HttpHeaders;
@@ -37,31 +55,27 @@ codeunit 73270 TKACallAdminAPIImpl
 
         HttpRequestMessage.SetRequestUri(GetBaseAPIUrl() + Endpoint);
         HttpRequestMessage.Method('GET');
-        exit(SendAPIRequest(HttpRequestMessage));
+        exit(SendAPIRequest(HttpRequestMessage, HttpResponseMessage));
     end;
 
     /// <summary>
-    /// Calls the PUT method of the Admin API for the specified BC tenant and API endpoint.
+    /// Calls the Http Method of the Admin API for the specified BC tenant and API endpoint.
     /// </summary>
+    /// <param name="Method">Specifies the Http Method to be used for the API call.</param>
     /// <param name="ManagedBCEnvironment">Specifies the managed BC environment for which the API call is to be made.</param>
     /// <param name="Endpoint">Specifies the API endpoint to be called.</param>
     /// <param name="RequestBody">Specifies the request body as a JsonObject</param>
-    /// <returns>Response as a text</returns>
-    [InherentPermissions(PermissionObjectType::TableData, Database::TKAManagedBCTenant, 'R')]
-    procedure PutToAdminAPI(ManagedBCEnvironment: Record TKAManagedBCEnvironment; Endpoint: Text; RequestBody: JsonObject): Text
+    /// <param name="HttpResponseMessage">Specifies the HttpResponseMessage object to be used for the API call.</param>
+    /// <returns>True if the API call was successful; otherwise, false.</returns>
+    procedure WriteToAdminAPI(Method: Enum "Http Method"; ManagedBCEnvironment: Record TKAManagedBCEnvironment; Endpoint: Text; RequestBody: JsonObject; var HttpResponseMessage: HttpResponseMessage): Boolean
     var
-        ManagedBCTenant: Record TKAManagedBCTenant;
         HttpRequestMessage: HttpRequestMessage;
         HttpContent: HttpContent;
         HttpRequestHeaders, HttpContextHeaders : HttpHeaders;
         RequestBodyAsText: Text;
     begin
-        ManagedBCTenant.ReadIsolation(IsolationLevel::ReadCommitted);
-        ManagedBCTenant.SetLoadFields(ClientId);
-        ManagedBCTenant.Get(ManagedBCEnvironment.TenantId);
-
         HttpRequestMessage.GetHeaders(HttpRequestHeaders);
-        HttpRequestHeaders.Add('Authorization', GetBearerToken(ManagedBCEnvironment.TenantId, ManagedBCTenant.ClientId));
+        HttpRequestHeaders.Add('Authorization', GetBearerToken(ManagedBCEnvironment.TenantId, ManagedBCEnvironment.GetManagedBCTenant().ClientId));
 
         RequestBody.WriteTo(RequestBodyAsText);
         HttpContent.WriteFrom(RequestBodyAsText);
@@ -70,27 +84,58 @@ codeunit 73270 TKACallAdminAPIImpl
         HttpRequestMessage.Content(HttpContent);
 
         HttpRequestMessage.SetRequestUri(GetBaseAPIUrl() + Endpoint);
-        HttpRequestMessage.Method('PUT');
-        exit(SendAPIRequest(HttpRequestMessage));
+        HttpRequestMessage.Method(Format(Method));
+        exit(SendAPIRequest(HttpRequestMessage, HttpResponseMessage));
+    end;
+
+    procedure ThrowError(HttpResponseMessage: HttpResponseMessage)
+    var
+        NewErrorInfo: ErrorInfo;
+        CustomDimensions: Dictionary of [Text, Text];
+        ResponseInStream: InStream;
+        ResponseAsText: Text;
+        AdminAPICallFailedErr: Label 'Admin API call failed.';
+        ErrorInclHttpResponseDetailsErr: Label '%1\\HttpStatusCode: %2\ReasonPhrase: %3\Details: %4', Comment = '%1 - Error message specified by the caller function, %2 - HttpStatusCode from the response, %3 - ReasonPhrase from the response, %4 - Response content';
+    begin
+        if HttpResponseMessage.IsSuccessStatusCode() then
+            exit;
+
+        HttpResponseMessage.Content().ReadAs(ResponseInStream);
+        ResponseInStream.ReadText(ResponseAsText);
+
+        NewErrorInfo := ErrorInfo.Create();
+        NewErrorInfo.Message := StrSubstNo(ErrorInclHttpResponseDetailsErr, AdminAPICallFailedErr, HttpResponseMessage.HttpStatusCode, HttpResponseMessage.ReasonPhrase, ResponseAsText);
+        CustomDimensions.Add('HttpStatusCode', Format(HttpResponseMessage.HttpStatusCode));
+        CustomDimensions.Add('ReasonPhrase', HttpResponseMessage.ReasonPhrase);
+        NewErrorInfo.CustomDimensions(CustomDimensions);
+        Error(NewErrorInfo);
+    end;
+
+    procedure GetErrorDetailsFromHttpResponseMessage(var HttpResponseMessage: HttpResponseMessage): Text
+    var
+        Response: Text;
+        ResponseJson: JsonObject;
+        ErrorMessageJsonToken: JsonToken;
+    begin
+        HttpResponseMessage.Content().ReadAs(Response);
+        if Response = '' then
+            exit('');
+        ResponseJson.ReadFrom(Response);
+        ResponseJson.Get('message', ErrorMessageJsonToken);
+        exit(ErrorMessageJsonToken.AsValue().AsText());
     end;
 
     #endregion Internal Procedures
     #region Local Procedures
 
-    local procedure SendAPIRequest(var HttpRequestMessage: HttpRequestMessage): Text
+    local procedure SendAPIRequest(var HttpRequestMessage: HttpRequestMessage; var HttpResponseMessage: HttpResponseMessage): Boolean
     var
         HttpClient: HttpClient;
-        ResponseInStream: InStream;
-        HttpResponseMessage: HttpResponseMessage;
-        Result: Text;
-        AdminAPICallFailedErr: Label 'Admin API call failed.';
     begin
         HttpClient.Send(HttpRequestMessage, HttpResponseMessage);
         if not HttpResponseMessage.IsSuccessStatusCode() then
-            ThrowError(AdminAPICallFailedErr, HttpResponseMessage);
-        HttpResponseMessage.Content().ReadAs(ResponseInStream);
-        ResponseInStream.ReadText(Result);
-        exit(Result);
+            exit(false);
+        exit(true);
     end;
 
     [InherentPermissions(PermissionObjectType::TableData, Database::TKAManagedBCAdministrationApp, 'R')]
@@ -118,22 +163,6 @@ codeunit 73270 TKACallAdminAPIImpl
             AccessToken
         );
         exit(SecretStrSubstNo('Bearer %1', AccessToken));
-    end;
-
-    local procedure ThrowError(ErrorText: Text; HttpResponseMessage: HttpResponseMessage)
-    var
-        NewErrorInfo: ErrorInfo;
-        CustomDimensions: Dictionary of [Text, Text];
-        ErrorInclHttpResponseDetailsErr: Label '%1\\HttpStatusCode: %2\ReasonPhrase: %3', Comment = '%1 - Error message specified by the caller function, %2 - HttpStatusCode from the response, %3 - ReasonPhrase from the response';
-    begin
-        if HttpResponseMessage.IsSuccessStatusCode() then
-            exit;
-        NewErrorInfo := ErrorInfo.Create();
-        NewErrorInfo.Message := StrSubstNo(ErrorInclHttpResponseDetailsErr, ErrorText, HttpResponseMessage.HttpStatusCode, HttpResponseMessage.ReasonPhrase);
-        CustomDimensions.Add('HttpStatusCode', Format(HttpResponseMessage.HttpStatusCode));
-        CustomDimensions.Add('ReasonPhrase', HttpResponseMessage.ReasonPhrase);
-        NewErrorInfo.CustomDimensions(CustomDimensions);
-        Error(NewErrorInfo);
     end;
 
     [InherentPermissions(PermissionObjectType::TableData, Database::TKAAdminCenterAPISetup, 'R')]

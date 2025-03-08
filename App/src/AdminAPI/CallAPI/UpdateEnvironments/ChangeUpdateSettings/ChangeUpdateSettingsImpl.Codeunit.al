@@ -26,8 +26,9 @@ codeunit 73283 TKAChangeUpdateSettingsImpl
     var
         CallAdminAPI: Codeunit TKACallAdminAPI;
         GetEnvironments: Codeunit TKAGetEnvironments;
+        HttpResponseMessage: HttpResponseMessage;
         RequestBodyJsonObject: JsonObject;
-        Endpoint, Response : Text;
+        Endpoint: Text;
         TimeFormatTok: Label '%1:%2', Locked = true;
     begin
         if ManagedBCEnvironment.FindSet() then
@@ -37,7 +38,8 @@ codeunit 73283 TKAChangeUpdateSettingsImpl
                 RequestBodyJsonObject.Add('preferredEndTime', StrSubstNo(TimeFormatTok, FormatTwoDigits(NewPreferredEndTime.Hour()), FormatTwoDigits(NewPreferredEndTime.Minute())));
                 RequestBodyJsonObject.Add('timeZoneId', NewTimeZoneId);
                 Endpoint := CallAdminAPI.GetUpdateSettingsForEnvironmentEndpoint(ManagedBCEnvironment.Name);
-                Response := CallAdminAPI.PutToAdminAPI(ManagedBCEnvironment, Endpoint, RequestBodyJsonObject);
+                if not CallAdminAPI.PutToAdminAPI(ManagedBCEnvironment, Endpoint, RequestBodyJsonObject, HttpResponseMessage) then
+                    CallAdminAPI.ThrowError(HttpResponseMessage);
             until ManagedBCEnvironment.Next() < 1;
         GetEnvironments.UpdateSelectedEnvironments(ManagedBCEnvironment);
     end;
