@@ -24,8 +24,10 @@ codeunit 73274 TKAProcessGetEnvResponseImpl
             JsonEnvironment := JsonTokenEnvironment.AsObject();
             ParseEnvironmentResponse(JsonEnvironment, TenantId, EnvironmentName);
             ListOfFoundEnvironments.Add(EnvironmentName);
+            Commit(); // One environment processed
         end;
         DeleteDeletedEnvironments(TenantId, ListOfFoundEnvironments);
+        Commit(); // All environments processed and deleted ones removed
     end;
 
     /// <summary>

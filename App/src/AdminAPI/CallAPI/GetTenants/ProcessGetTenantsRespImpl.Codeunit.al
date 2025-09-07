@@ -22,6 +22,7 @@ codeunit 73281 TKAProcessGetTenantsRespImpl
         foreach JsonTokenTenant in JsonTenants do begin
             JsonTenant := JsonTokenTenant.AsObject();
             ParseManageableTenantsResponse(JsonTenant, ManagedBCAdministrationApp, HideDialog);
+            Commit(); // One tenant processed
         end;
     end;
 
