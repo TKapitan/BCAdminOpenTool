@@ -34,6 +34,7 @@ page 73271 TKAManagedBCTenants
             action(CreateUpdateTenantsEnvironments)
             {
                 ApplicationArea = All;
+                AccessByPermission = tabledata TKAManagedBCTenant = IM;
                 Caption = 'Create/Update Tenants & Environments';
                 ToolTip = 'Create or update the tenants and environments for all client IDs that has at least one valid tenant configured in this table.';
                 Image = Refresh;
@@ -49,6 +50,7 @@ page 73271 TKAManagedBCTenants
             action(UpdateEnvironments)
             {
                 ApplicationArea = All;
+                AccessByPermission = tabledata TKAManagedBCEnvironment = IMD;
                 Caption = 'Create/Update Environments';
                 Image = UpdateDescription;
                 ToolTip = 'Create or update the environments for the tenant.';
@@ -80,6 +82,7 @@ page 73271 TKAManagedBCTenants
             action(Environments)
             {
                 ApplicationArea = All;
+                AccessByPermission = tabledata TKAManagedBCEnvironment = R;
                 Caption = 'Environments';
                 Image = ShowList;
                 ToolTip = 'Navigates to the environments for the tenant.';

@@ -1,4 +1,4 @@
-permissionset 73271 TKABCAdminEdit
+permissionset 73271 TKABCAdminEditApps
 {
     Assignable = true;
     Caption = 'BC Admin Edit', MaxLength = 30;
@@ -6,7 +6,5 @@ permissionset 73271 TKABCAdminEdit
         TKABCAdminRead;
     Permissions =
         tabledata TKAAppSourceOffering = IMD,
-        tabledata TKAWhitelistedThirdPartyApp = IMD,
-        tabledata TKAManagedBCTenant = IMD,
-        tabledata TKAManagedBCAdministrationApp = IMD;
+        tabledata TKAWhitelistedThirdPartyApp = IMD;
 }
