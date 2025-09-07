@@ -15,7 +15,7 @@ page 73272 TKAAdminCenterAPISetup
             group(General)
             {
                 Caption = 'General';
-                field(AuthUrl; Rec.AuthUrl) { }
+                field(TokenUrl; Rec.TokenUrl) { }
                 field(Scope; Rec.Scope) { }
                 field(APIUrl; Rec.APIUrl) { }
             }

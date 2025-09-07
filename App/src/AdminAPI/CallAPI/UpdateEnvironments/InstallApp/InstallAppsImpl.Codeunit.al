@@ -30,7 +30,7 @@ codeunit 73284 TKAInstallAppsImpl
     local procedure InstallAppInEnvironment(var ManagedBCEnvironment: Record TKAManagedBCEnvironment; var InstallAppsBuffer: Record TKAInstallAppsBuffer temporary; UseEnvironmentUpdateWindow: Boolean; InstallUpdateNeededDependencies: Boolean)
     var
         CallAdminAPI: Codeunit TKACallAdminAPI;
-        HttpResponseMessage: HttpResponseMessage;
+        HttpResponseMessage: Codeunit "Http Response Message";
         RequestBodyJsonObject: JsonObject;
         Endpoint: Text;
     begin
@@ -48,7 +48,7 @@ codeunit 73284 TKAInstallAppsImpl
         ProcessErrorResponse(ManagedBCEnvironment, CallAdminAPI, HttpResponseMessage);
     end;
 
-    local procedure ProcessErrorResponse(ManagedBCEnvironment: Record TKAManagedBCEnvironment; var CallAdminAPI: Codeunit TKACallAdminAPI; var HttpResponseMessage: HttpResponseMessage)
+    local procedure ProcessErrorResponse(ManagedBCEnvironment: Record TKAManagedBCEnvironment; var CallAdminAPI: Codeunit TKACallAdminAPI; var HttpResponseMessage: Codeunit "Http Response Message")
     var
         ErrorMessage: Text;
         AppAlreadyInstalledResponseErrorTok: Label 'Entity validation failed: App is already installed.', Locked = true;
@@ -56,16 +56,16 @@ codeunit 73284 TKAInstallAppsImpl
         MissingDependenciesResponseErrorTok: Label 'requires the following apps to be installed or updated as dependencies, please either allow automatic dependency installation/update or do the operation manually', Locked = true;
     begin
         ErrorMessage := CallAdminAPI.GetErrorDetailsFromHttpResponseMessage(HttpResponseMessage);
-        if (HttpResponseMessage.HttpStatusCode = 400) and (ErrorMessage.Contains(AppAlreadyInstalledResponseErrorTok)) then begin
+        if (HttpResponseMessage.GetHttpStatusCode() = 400) and (ErrorMessage.Contains(AppAlreadyInstalledResponseErrorTok)) then begin
             NoOfSkippedApps += 1;
             exit;
         end;
-        if (HttpResponseMessage.HttpStatusCode = 400) and (ErrorMessage.Contains(AppNotFoundResponseErrorTok)) then begin
+        if (HttpResponseMessage.GetHttpStatusCode() = 400) and (ErrorMessage.Contains(AppNotFoundResponseErrorTok)) then begin
             LogNotFoundApp(ManagedBCEnvironment, ErrorMessage);
             NoOfNotFoundApps += 1;
             exit;
         end;
-        if (HttpResponseMessage.HttpStatusCode = 400) and (ErrorMessage.Contains(MissingDependenciesResponseErrorTok)) then begin
+        if (HttpResponseMessage.GetHttpStatusCode() = 400) and (ErrorMessage.Contains(MissingDependenciesResponseErrorTok)) then begin
             LogMissingDependencies(ManagedBCEnvironment, HttpResponseMessage);
             NoMissingDependencies += 1;
             exit;
@@ -100,15 +100,13 @@ codeunit 73284 TKAInstallAppsImpl
         NotFoundAppsDetailsTextBuilder.AppendLine()
     end;
 
-    local procedure LogMissingDependencies(ManagedBCEnvironment: Record TKAManagedBCEnvironment; HttpResponseMessage: HttpResponseMessage)
+    local procedure LogMissingDependencies(ManagedBCEnvironment: Record TKAManagedBCEnvironment; HttpResponseMessage: Codeunit "Http Response Message")
     var
-        Response: Text;
         ResponseJson, MissingDependencyJson : JsonObject;
         ErrorDataJsonToken, MissingDependenciesJsonToken, MissingDependencyJsonToken, MissingDependencyDetailJsonToken : JsonToken;
         ActionTypeTok: Label ' - Action Type: %1', Locked = true;
     begin
-        HttpResponseMessage.Content().ReadAs(Response);
-        ResponseJson.ReadFrom(Response);
+        ResponseJson := HttpResponseMessage.GetContent().AsJson().AsObject();
         ResponseJson.Get('data', ErrorDataJsonToken);
         ErrorDataJsonToken.AsObject().Get('requirements', MissingDependenciesJsonToken);
         foreach MissingDependencyJsonToken in MissingDependenciesJsonToken.AsArray() do begin

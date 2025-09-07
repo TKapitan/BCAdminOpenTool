@@ -17,12 +17,15 @@ table 73271 TKAManagedBCAdministrationApp
             Caption = 'Name';
             ToolTip = 'Specifies the name of the app.';
         }
-        field(20; ClientSecretID; Guid)
+        field(15; Certificate; Guid)
         {
+            Caption = 'Certificate';
             AllowInCustomizations = Never;
-            Caption = 'Client Secret';
-            DataClassification = SystemMetadata;
-            Editable = false;
+        }
+        field(16; CertificatePassword; Guid)
+        {
+            Caption = 'Certificate';
+            AllowInCustomizations = Never;
         }
     }
 
@@ -45,50 +48,101 @@ table 73271 TKAManagedBCAdministrationApp
     trigger OnDelete()
     begin
         TestNotUsed();
-        ClearIsolatedField(Rec.ClientSecretID);
+        ClearIsolatedField(Rec.Certificate);
+        ClearIsolatedField(Rec.CertificatePassword);
     end;
 
     #endregion Triggers
     #region "Global Procedures"
 
     /// <summary>
-    /// Save the client secret to isolated storage and generate ClientSecretID if it is not set.
+    /// Sets the certificate password in isolated storage and saves a reference to it in the table.
     /// </summary>
-    /// <param name="NewClientSecret">New client secret to store to isolated storage</param>
-    procedure SetClientSecret(NewClientSecret: SecretText)
+    /// <param name="Password">The certificate password as SecretText. If an empty SecretText is passed, the existing password (if any) is removed.</param>
+    procedure SetCertificatePassword(Password: SecretText)
     var
-        SecretSet: Boolean;
-        NonTemporaryOnlyErr: Label 'SetSecret with SecretText parameter can be called only for non-temporary records and for authentications not marked as temporary.';
+        SavingCertErr: Label 'Could not save the certificate password.';
     begin
-        if Rec.IsTemporary() then
-            Error(NonTemporaryOnlyErr);
+        ClearIsolatedField(Rec.CertificatePassword);
 
-        if NewClientSecret.IsEmpty() then begin
-            ClearIsolatedField(Rec.ClientSecretID);
+        if Password.IsEmpty() then
             exit;
-        end;
 
-        if IsNullGuid(Rec.ClientSecretID) then
-            Rec.ClientSecretID := CreateGuid();
+        Rec.CertificatePassword := CreateGuid();
+        Rec.Modify(true);
 
-        SecretSet := false;
-        if EncryptionKeyExists() then
-            SecretSet := IsolatedStorage.SetEncrypted(Rec.ClientSecretID, NewClientSecret, DataScope::Company);
-        if not SecretSet then
-            IsolatedStorage.Set(Rec.ClientSecretID, NewClientSecret, DataScope::Company);
+        if not IsolatedStorage.Set(Rec.CertificatePassword, Password, DataScope::Company) then
+            Error(SavingCertErr);
     end;
 
     /// <summary>
-    /// Get the client secret from isolated storage as secret text.
+    /// Creates a new self-signed certificate for the app and saves it in isolated storage.
     /// </summary>
-    /// <returns>Client secret as secret text</returns>
-    [NonDebuggable]
-    procedure GetClientSecretAsSecretText() Value: SecretText
+    procedure CreateCertificate()
+    var
+        EntraCertificateMgt: Codeunit TKAEntraCertificateMgt;
     begin
-        if IsNullGuid(Rec.ClientSecretID) then
-            exit;
-        if not IsolatedStorage.Get(Rec.ClientSecretID, DataScope::Company, Value) then
-            Clear(Value);
+        EntraCertificateMgt.CreateSelfSignedCertificate(Rec);
+        Rec.Modify(false);
+    end;
+
+    /// <summary>
+    /// Sets the certificate in isolated storage and saves a reference to it in the table.
+    /// </summary>
+    /// <param name="Value">The certificate as Text in Base64 format.</param>
+    procedure SetCertificate(Value: Text)
+    var
+        SavingCertErr: Label 'Could not save the certificate.';
+    begin
+#pragma warning disable LC0043 // Not a secret
+        if not IsolatedStorage.Set(Rec.Certificate, Value, DataScope::Company) then
+#pragma warning restore LC0043
+            Error(SavingCertErr);
+    end;
+
+    /// <summary>
+    /// Downloads the certificate (public) in CER format.
+    /// </summary>
+    procedure DownloadCertificate()
+    var
+        TempBlob: Codeunit "Temp Blob";
+        InStream: InStream;
+        OutStream: OutStream;
+        Filename, CertificateAsText : Text;
+        CertFileFilterTxt: Label 'Certificate File(*.cer)|*.cer';
+        ExportCertificateFileDialogTxt: Label 'Choose the location where you want to save the certificate file.';
+    begin
+        GetCertificate(CertificateAsText);
+
+        TempBlob.CreateOutStream(OutStream);
+        OutStream.WriteText(CertificateAsText);
+        TempBlob.CreateInStream(InStream);
+        Filename := Name + '.cer';
+        if not DownloadFromStream(InStream, ExportCertificateFileDialogTxt, '', CertFileFilterTxt, Filename) then
+            if GetLastErrorText() <> '' then
+#pragma warning disable LC0048 // Show last error
+                Error(GetLastErrorText());
+#pragma warning restore LC0048
+    end;
+
+    /// <summary>
+    /// Returns an OAuth2ClientApplication codeunit initialized with the data from the record.
+    /// </summary>
+    /// <returns>The initialized OAuth2ClientApplication codeunit.</returns>
+    procedure GetOAuth2ClientApplication() OAuth2ClientApplication: Codeunit TKAOAuthClientApplication
+    var
+        OAuthCertificate: Codeunit TKAOAuthCertificate;
+        CertificateAsText: Text;
+        CertificatePasswordAsSecretText: SecretText;
+    begin
+        Rec.TestField(ClientId);
+
+        GetCertificate(CertificateAsText, CertificatePasswordAsSecretText);
+        OAuthCertificate.SetCertificate(CertificateAsText);
+        OAuthCertificate.SetPrivateKey(CertificatePasswordAsSecretText);
+
+        OAuth2ClientApplication.SetClientId(Format(Rec.ClientId, 0, 4));
+        OAuth2ClientApplication.SetCertificate(OAuthCertificate)
     end;
 
     #endregion "Global Procedures"
@@ -113,6 +167,39 @@ table 73271 TKAManagedBCAdministrationApp
                 IsolatedStorage.Delete(IsolatedGuid, DataScope::Company);
             Clear(IsolatedGuid);
         end;
+    end;
+
+    local procedure GetCertificate(var OutCertificate: Text)
+    var
+        OutCertificatePassword: SecretText;
+    begin
+        GetCertificate(OutCertificate, OutCertificatePassword);
+    end;
+
+    local procedure GetCertificate(var OutCertificate: Text; var OutCertificatePassword: SecretText)
+    var
+        Base64StringAsText: Text;
+        Password: SecretText;
+        ReadingCertErr: Label 'Could not get the certificate.';
+        ReadingCertPwdErr: Label 'Could not get the certificate password.';
+    begin
+        if IsNullGuid(Rec.Certificate) then
+            exit;
+#pragma warning disable LC0043 // Not a secret
+        if not IsolatedStorage.Get(Rec.Certificate, DataScope::Company, Base64StringAsText) then
+#pragma warning restore LC0043
+            Error(ReadingCertErr);
+
+        if IsNullGuid(Rec."CertificatePassword") then begin
+            OutCertificate := Base64StringAsText;
+            Clear(OutCertificatePassword);
+            exit;
+        end;
+
+        if not IsolatedStorage.Get(Rec."CertificatePassword", DataScope::Company, Password) then
+            Error(ReadingCertPwdErr);
+        OutCertificate := Base64StringAsText;
+        OutCertificatePassword := Password;
     end;
 
     #endregion "Local Procedures"

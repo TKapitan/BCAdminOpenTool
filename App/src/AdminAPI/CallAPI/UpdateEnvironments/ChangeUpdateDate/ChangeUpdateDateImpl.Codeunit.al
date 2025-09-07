@@ -31,7 +31,7 @@ codeunit 73275 TKAChangeUpdateDateImpl
     var
         CallAdminAPI: Codeunit TKACallAdminAPI;
         GetEnvironments: Codeunit TKAGetEnvironments;
-        HttpResponseMessage: HttpResponseMessage;
+        HttpResponseMessage: Codeunit "Http Response Message";
         RequestBodyJsonObject: JsonObject;
         Endpoint: Text;
     begin

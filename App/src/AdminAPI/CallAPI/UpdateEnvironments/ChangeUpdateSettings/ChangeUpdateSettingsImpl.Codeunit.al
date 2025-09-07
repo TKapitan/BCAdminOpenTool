@@ -26,7 +26,7 @@ codeunit 73283 TKAChangeUpdateSettingsImpl
     var
         CallAdminAPI: Codeunit TKACallAdminAPI;
         GetEnvironments: Codeunit TKAGetEnvironments;
-        HttpResponseMessage: HttpResponseMessage;
+        HttpResponseMessage: Codeunit "Http Response Message";
         RequestBodyJsonObject: JsonObject;
         Endpoint: Text;
         TimeFormatTok: Label '%1:%2', Locked = true;
