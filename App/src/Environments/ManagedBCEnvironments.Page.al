@@ -100,7 +100,7 @@ page 73273 TKAManagedBCEnvironments
                         OpenFilteredEnvironmentApps(ManagedBCEnvironmentApp);
                     end;
                 }
-                field(NoOfThirdPartyApps; NoOfThirdPartiesApps)
+                field(NoOfThirdPartyApps; NoOfThirdPartyApps)
                 {
                     Caption = 'No. of Third-Party Apps';
                     Editable = false;
@@ -111,6 +111,21 @@ page 73273 TKAManagedBCEnvironments
                         ManagedBCEnvironmentApp: Record TKAManagedBCEnvironmentApp;
                     begin
                         SetFilterThirdPartyApps(ManagedBCEnvironmentApp);
+                        OpenFilteredEnvironmentApps(ManagedBCEnvironmentApp);
+                    end;
+                }
+                field(NoOfThirdPartyAppsExclWhitelisted; NoOfThirdPartyAppsExclWhitelisted)
+                {
+                    Caption = 'No. of Third-Party Apps excl. Whitelisted';
+                    Editable = false;
+                    ToolTip = 'Specifies the number of apps published by third parties excluding whitelisted apps for this environment. Only apps installed from AppSource are counted.';
+                    StyleExpr = NoOfThirdPartyAppsExclWhitelistedStyle;
+
+                    trigger OnDrillDown()
+                    var
+                        ManagedBCEnvironmentApp: Record TKAManagedBCEnvironmentApp;
+                    begin
+                        SetFilterThirdPartyAppsExclWhitelisted(ManagedBCEnvironmentApp);
                         OpenFilteredEnvironmentApps(ManagedBCEnvironmentApp);
                     end;
                 }
@@ -252,7 +267,8 @@ page 73273 TKAManagedBCEnvironments
 
     var
         OpenEnvironmentLbl: Label 'Open Environment';
-        NoOfApps, NoOfOurApps, NoOfThirdPartiesApps : Integer;
+        NoOfThirdPartyAppsExclWhitelistedStyle: Text;
+        NoOfApps, NoOfOurApps, NoOfThirdPartyApps, NoOfThirdPartyAppsExclWhitelisted : Integer;
 
 
     local procedure SetVisibleBCTenantGroupFilter()
@@ -277,7 +293,13 @@ page 73273 TKAManagedBCEnvironments
         SetFilterOurApps(ManagedBCEnvironmentApp);
         NoOfOurApps := ManagedBCEnvironmentApp.Count();
         SetFilterThirdPartyApps(ManagedBCEnvironmentApp);
-        NoOfThirdPartiesApps := ManagedBCEnvironmentApp.Count();
+        NoOfThirdPartyApps := ManagedBCEnvironmentApp.Count();
+        SetFilterThirdPartyAppsExclWhitelisted(ManagedBCEnvironmentApp);
+        NoOfThirdPartyAppsExclWhitelisted := ManagedBCEnvironmentApp.Count();
+
+        NoOfThirdPartyAppsExclWhitelistedStyle := Format(PageStyle::None);
+        if NoOfThirdPartyAppsExclWhitelisted <> 0 then
+            NoOfThirdPartyAppsExclWhitelistedStyle := Format(PageStyle::Unfavorable);
     end;
 
     local procedure SetFilterEnvironmentApps(var ManagedBCEnvironmentApp: Record TKAManagedBCEnvironmentApp)
@@ -316,6 +338,12 @@ page 73273 TKAManagedBCEnvironments
         Clear(ManagedBCEnvironmentApp);
         SetFilterOurApps(ManagedBCEnvironmentApp);
         ManagedBCEnvironmentApp.SetFilter(Publisher, '<>%1&<>%2', ManagedBCEnvironmentApp.GetFilter(Publisher), MicrosoftPublisherTok);
+    end;
+
+    local procedure SetFilterThirdPartyAppsExclWhitelisted(var ManagedBCEnvironmentApp: Record TKAManagedBCEnvironmentApp)
+    begin
+        SetFilterThirdPartyApps(ManagedBCEnvironmentApp);
+        ManagedBCEnvironmentApp.SetRange(WhitelistedThirdPartyApp, false);
     end;
 
     local procedure OpenFilteredEnvironmentApps(var ManagedBCEnvironmentApp: Record TKAManagedBCEnvironmentApp)

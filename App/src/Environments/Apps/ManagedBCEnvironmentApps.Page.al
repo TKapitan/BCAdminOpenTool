@@ -26,6 +26,7 @@ page 73277 TKAManagedBCEnvironmentApps
                 field(Publisher; Rec.Publisher) { }
                 field(Version; Rec."Version") { }
                 field(State; Rec.State) { }
+                field(WhitelistedThirdPartyApp; Rec.WhitelistedThirdPartyApp) { }
                 field(InstalledOn; Rec.InstalledOn) { }
                 field(LastOperationId; Rec.LastOperationId)
                 {
