@@ -1,4 +1,4 @@
-codeunit 73292 TKAMicrosofEntraIDImpl
+codeunit 73292 TKAMicrosoftEntraIDImpl
 {
     Access = Internal;
 

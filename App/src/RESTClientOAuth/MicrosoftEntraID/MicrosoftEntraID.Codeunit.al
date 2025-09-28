@@ -1,7 +1,7 @@
 codeunit 73289 TKAMicrosoftEntraID
 {
     var
-        MicrosoftEntraIDImpl: Codeunit TKAMicrosofEntraIDImpl;
+        MicrosoftEntraIDImpl: Codeunit TKAMicrosoftEntraIDImpl;
 
     /// <summary>
     /// Initializes the codeunit with data from the provided ManagedBCTenant record.
