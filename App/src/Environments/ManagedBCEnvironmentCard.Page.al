@@ -106,6 +106,7 @@ page 73274 TKAManagedBCEnvironmentCard
             action(UpdateEnvironments)
             {
                 ApplicationArea = All;
+                AccessByPermission = tabledata TKAManagedBCEnvironment = IMD;
                 Caption = 'Update Environments';
                 ToolTip = 'Refresh the managed BC environment from admin portal.';
                 Image = Refresh;
@@ -124,6 +125,7 @@ page 73274 TKAManagedBCEnvironmentCard
             action(ChangeUpdateSettings)
             {
                 ApplicationArea = All;
+                AccessByPermission = tabledata TKAManagedBCEnvironment = IMD;
                 Caption = 'Change Update Settings';
                 ToolTip = 'Change the update settings for the selected environment.';
                 Image = SetPriorities;
@@ -143,6 +145,7 @@ page 73274 TKAManagedBCEnvironmentCard
             action(ChangeUpdateDate)
             {
                 ApplicationArea = All;
+                AccessByPermission = tabledata TKAManagedBCEnvironment = IMD;
                 Caption = 'Change Update Date';
                 ToolTip = 'Change the update date for the selected environment.';
                 Image = ChangeLog;
@@ -162,6 +165,7 @@ page 73274 TKAManagedBCEnvironmentCard
             action(InstallApps)
             {
                 ApplicationArea = All;
+                AccessByPermission = tabledata TKAManagedBCEnvironment = IMD;
                 Caption = 'Install App';
                 ToolTip = 'Install an app for the selected environments.';
                 Image = Installments;

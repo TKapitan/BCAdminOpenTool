@@ -12,11 +12,13 @@ table 73273 TKAManagedBCEnvironment
             Caption = 'Tenant ID';
             DataClassification = OrganizationIdentifiableInformation;
             ToolTip = 'Specifies the tenant ID for the tenant.';
+            NotBlank = true;
         }
         field(2; Name; Text[100])
         {
             Caption = 'Name';
             ToolTip = 'Specifies the name of the tenant.';
+            NotBlank = true;
         }
         field(3; TenantName; Text[100])
         {

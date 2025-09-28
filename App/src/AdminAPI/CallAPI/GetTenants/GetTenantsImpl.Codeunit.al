@@ -26,6 +26,7 @@ codeunit 73280 TKAGetTenantsImpl
                     ProcessGetTenantsRespImpl.ParseGetManageableTenantsResponse(Response, ManagedBCAdministrationApp, true);
                 end else
                     Message(AtLeastOneTenantMustBeCreatedManuallyMsg, ManagedBCAdministrationApp.TableCaption(), ManagedBCAdministrationApp.Name);
+                Commit(); // One BC Admin app processed
             until ManagedBCAdministrationApp.Next() < 1;
         Message(CompletedSuccessfullyMsg);
     end;

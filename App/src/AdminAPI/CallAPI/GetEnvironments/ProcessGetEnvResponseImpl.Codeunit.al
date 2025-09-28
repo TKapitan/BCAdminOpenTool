@@ -24,8 +24,10 @@ codeunit 73274 TKAProcessGetEnvResponseImpl
             JsonEnvironment := JsonTokenEnvironment.AsObject();
             ParseEnvironmentResponse(JsonEnvironment, TenantId, EnvironmentName);
             ListOfFoundEnvironments.Add(EnvironmentName);
+            Commit(); // One environment processed
         end;
         DeleteDeletedEnvironments(TenantId, ListOfFoundEnvironments);
+        Commit(); // All environments processed and deleted ones removed
     end;
 
     /// <summary>
@@ -327,7 +329,7 @@ codeunit 73274 TKAProcessGetEnvResponseImpl
         TempDateTime: DateTime;
     begin
         TempDateTime := JsonTokenValue.AsValue().AsDateTime();
-        if TempDateTime.Date.Year = 1753 then // Fix for error 'Cannot write the value 01/01/1753 10:00 AM to the field...
+        if TempDateTime.Date().Year() = 1753 then // Fix for error 'Cannot write the value 01/01/1753 10:00 AM to the field...
             exit(0DT);
         exit(TempDateTime);
     end;

@@ -4,7 +4,8 @@ permissionset 73272 TKABCAdminAdmin
     Caption = 'BC Admin Admin', MaxLength = 30;
     IncludedPermissionSets =
         TKABCAdminRead,
-        TKABCAdminEdit;
+        TKABCAdminManageEnvs,
+        TKABCAdminEditApps;
     Permissions =
         tabledata TKAAdminCenterAPISetup = M,
         tabledata TKAManagedBCTenantGroup = IMD,

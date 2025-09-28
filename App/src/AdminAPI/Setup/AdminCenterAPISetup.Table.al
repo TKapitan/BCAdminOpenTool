@@ -15,10 +15,10 @@ table 73272 TKAAdminCenterAPISetup
             Caption = 'Primary Key';
             NotBlank = false;
         }
-        field(10; AuthUrl; Text[500])
+        field(10; TokenUrl; Text[500])
         {
-            Caption = 'Authentication Url';
-            ToolTip = 'Specifies the authentication URL for the Admin Center API.';
+            Caption = 'Token Url';
+            ToolTip = 'Specifies the Token URL for the Admin Center API.';
         }
         field(20; Scope; Text[2048])
         {
@@ -77,23 +77,24 @@ table 73272 TKAAdminCenterAPISetup
     begin
         if RecordHasBeenRead then
             exit;
-        Rec.Get();
+        Rec.InsertIfNotExists();
         RecordHasBeenRead := true;
     end;
 
     /// <summary>
     /// Insert the record if it does not exist, otherwise get the record.
     /// </summary>
+    [InherentPermissions(PermissionObjectType::TableData, Database::TKAAdminCenterAPISetup, 'RI')]
     procedure InsertIfNotExists()
     var
-        AuthUrlTok: Label 'https://login.microsoftonline.com/%tenantid%/oauth2/v2.0/token', Locked = true;
+        TokenUrlTok: Label 'https://login.microsoftonline.com/%tenantid%/oauth2/v2.0/token', Locked = true;
         ScopeTok: Label 'https://api.businesscentral.dynamics.com/.default', Locked = true;
         APIBaseUrlTok: Label 'https://api.businesscentral.dynamics.com/admin/v2.24', Locked = true;
     begin
         Rec.Reset();
         if not Rec.Get() then begin
             Rec.Init();
-            Rec.Validate(AuthUrl, AuthUrlTok);
+            Rec.Validate(TokenUrl, TokenUrlTok);
             Rec.Validate(Scope, ScopeTok);
             Rec.Validate(APIUrl, APIBaseUrlTok);
             Rec.Validate(ExcludeHiddedApps, true);

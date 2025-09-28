@@ -32,7 +32,7 @@ codeunit 73271 TKACallAdminAPI
     /// <param name="Endpoint">Specifies the API endpoint to be called.</param>
     /// <param name="HttpResponseMessage">Specifies the HttpResponseMessage object to be used for the API call.</param>
     /// <returns>Response as text.</returns>
-    procedure GetFromAdminAPI(ManagedBCTenant: Record TKAManagedBCTenant; Endpoint: Text; var HttpResponseMessage: HttpResponseMessage): Boolean
+    procedure GetFromAdminAPI(ManagedBCTenant: Record TKAManagedBCTenant; Endpoint: Text; var HttpResponseMessage: Codeunit "Http Response Message"): Boolean
     begin
         exit(CallAdminAPIImpl.GetFromAdminAPI(ManagedBCTenant, Endpoint, HttpResponseMessage));
     end;
@@ -45,7 +45,7 @@ codeunit 73271 TKACallAdminAPI
     /// <param name="RequestBody">Specifies the request body as a JsonObject</param>
     /// <param name="HttpResponseMessage">Specifies the HttpResponseMessage object to be used for the API call.</param>
     /// <returns>True if the API call was successful; otherwise, false.</returns>
-    procedure PostToAdminAPI(ManagedBCEnvironment: Record TKAManagedBCEnvironment; Endpoint: Text; RequestBody: JsonObject; var HttpResponseMessage: HttpResponseMessage): Boolean
+    procedure PostToAdminAPI(ManagedBCEnvironment: Record TKAManagedBCEnvironment; Endpoint: Text; RequestBody: JsonObject; var HttpResponseMessage: Codeunit "Http Response Message"): Boolean
     begin
         exit(CallAdminAPIImpl.WriteToAdminAPI(Enum::"Http Method"::POST, ManagedBCEnvironment, Endpoint, RequestBody, HttpResponseMessage));
     end;
@@ -58,7 +58,7 @@ codeunit 73271 TKACallAdminAPI
     /// <param name="RequestBody">Specifies the request body as a JsonObject</param>
     /// <param name="HttpResponseMessage">Specifies the HttpResponseMessage object to be used for the API call.</param>
     /// <returns>True if the API call was successful; otherwise, false.</returns>
-    procedure PutToAdminAPI(ManagedBCEnvironment: Record TKAManagedBCEnvironment; Endpoint: Text; RequestBody: JsonObject; var HttpResponseMessage: HttpResponseMessage): Boolean
+    procedure PutToAdminAPI(ManagedBCEnvironment: Record TKAManagedBCEnvironment; Endpoint: Text; RequestBody: JsonObject; var HttpResponseMessage: Codeunit "Http Response Message"): Boolean
     begin
         exit(CallAdminAPIImpl.WriteToAdminAPI(Enum::"Http Method"::PUT, ManagedBCEnvironment, Endpoint, RequestBody, HttpResponseMessage));
     end;
@@ -67,7 +67,7 @@ codeunit 73271 TKACallAdminAPI
     /// Throws an error based on the HttpResponseMessage.
     /// </summary>
     /// <param name="HttpResponseMessage">Specifies the HttpResponseMessage object that contains the error details.</param>
-    procedure ThrowError(HttpResponseMessage: HttpResponseMessage)
+    procedure ThrowError(HttpResponseMessage: Codeunit "Http Response Message")
     begin
         CallAdminAPIImpl.ThrowError(HttpResponseMessage);
     end;
@@ -77,7 +77,7 @@ codeunit 73271 TKACallAdminAPI
     /// </summary>
     /// <param name="HttpResponseMessage">Specifies the HttpResponseMessage object that contains the error details.</param>
     /// <returns>String containing the error details.</returns>
-    procedure GetErrorDetailsFromHttpResponseMessage(var HttpResponseMessage: HttpResponseMessage): Text
+    procedure GetErrorDetailsFromHttpResponseMessage(var HttpResponseMessage: Codeunit "Http Response Message"): Text
     begin
         exit(CallAdminAPIImpl.GetErrorDetailsFromHttpResponseMessage(HttpResponseMessage));
     end;
