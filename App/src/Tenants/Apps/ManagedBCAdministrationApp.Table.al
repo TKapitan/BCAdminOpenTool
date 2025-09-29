@@ -81,9 +81,12 @@ table 73271 TKAManagedBCAdministrationApp
     procedure CreateCertificate()
     var
         EntraCertificateMgt: Codeunit TKAEntraCertificateMgt;
+        CertificateCreatedMsg: Label 'A new self-signed certificate has been created for the app.';
     begin
         EntraCertificateMgt.CreateSelfSignedCertificate(Rec);
         Rec.Modify(false);
+
+        Message(CertificateCreatedMsg);
     end;
 
     /// <summary>
@@ -94,6 +97,13 @@ table 73271 TKAManagedBCAdministrationApp
     var
         SavingCertErr: Label 'Could not save the certificate.';
     begin
+        ClearIsolatedField(Rec.Certificate);
+        if Value = '' then
+            exit;
+
+        Rec.Certificate := CreateGuid();
+        Rec.Modify(true);
+
 #pragma warning disable LC0043 // Not a secret
         if not IsolatedStorage.Set(Rec.Certificate, Value, DataScope::Company) then
 #pragma warning restore LC0043
@@ -111,6 +121,7 @@ table 73271 TKAManagedBCAdministrationApp
         Filename, CertificateAsText : Text;
         CertFileFilterTxt: Label 'Certificate File(*.cer)|*.cer';
         ExportCertificateFileDialogTxt: Label 'Choose the location where you want to save the certificate file.';
+        CertificateCannotBeDownloadedErr: Label 'The certificate cannot be downloaded.\\Additional detials: %1', Comment = '%1 - error message';
     begin
         GetCertificate(CertificateAsText);
 
@@ -119,9 +130,8 @@ table 73271 TKAManagedBCAdministrationApp
         TempBlob.CreateInStream(InStream);
         Filename := Name + '.cer';
         if not DownloadFromStream(InStream, ExportCertificateFileDialogTxt, '', CertFileFilterTxt, Filename) then
-            if GetLastErrorText() <> '' then
 #pragma warning disable LC0048 // Show last error
-                Error(GetLastErrorText());
+            Error(CertificateCannotBeDownloadedErr, GetLastErrorText());
 #pragma warning restore LC0048
     end;
 
