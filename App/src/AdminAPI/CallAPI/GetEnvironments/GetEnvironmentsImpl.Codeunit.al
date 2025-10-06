@@ -15,6 +15,8 @@ codeunit 73273 TKAGetEnvironmentsImpl
         Response: Text;
         CompletedSuccessfullyMsg: Label 'Environments have been successfully updated.';
     begin
+        if not ManagedBCTenant.IsTenantGroupActive() then
+            exit;
         Response := CallAdminAPI.GetFromAdminAPI(ManagedBCTenant, CallAdminAPI.GetListAllEnvironmentsEndpoint());
         ProcessGetEnvResponseImpl.ParseGetEnvironmentsResponse(Response);
 
@@ -43,6 +45,8 @@ codeunit 73273 TKAGetEnvironmentsImpl
     begin
         ManagedBCEnvironment.FindSet();
         repeat
+            if not ManagedBCEnvironment.IsTenantGroupActive() then
+                continue;
             Clear(ProcessGetEnvResponseImpl);
             if not CallAdminAPI.GetFromAdminAPI(ManagedBCEnvironment.GetManagedBCTenant(), CallAdminAPI.GetEnvironmentEndpoint(ManagedBCEnvironment.Name), HttpResponseMessage) then
                 ProcessEnvironmentErrorResponse(ManagedBCEnvironment, HttpResponseMessage)
@@ -75,6 +79,8 @@ codeunit 73273 TKAGetEnvironmentsImpl
     var
         ManagedBCEnvironment: Record TKAManagedBCEnvironment;
     begin
+        if not ManagedBCTenant.IsTenantGroupActive() then
+            exit;
         ManagedBCEnvironment.ReadIsolation(IsolationLevel::ReadCommitted);
         ManagedBCEnvironment.SetRange(TenantId, ManagedBCTenant.TenantId);
         if ManagedBCEnvironment.FindSet() then
@@ -91,6 +97,8 @@ codeunit 73273 TKAGetEnvironmentsImpl
         ProcessGetEnvResponseImpl: Codeunit TKAProcessGetEnvResponseImpl;
         Response: Text;
     begin
+        if not ManagedBCEnvironment.IsTenantGroupActive() then
+            exit;
         AdminCenterAPISetup.ReadIsolation(IsolationLevel::ReadUncommitted);
         AdminCenterAPISetup.SetLoadFields(GetScheduledUpdateAPIEnabled, GetUpdateSettingsAPIEnabled, GetInstalledAppsEnabled);
         AdminCenterAPISetup.Get();

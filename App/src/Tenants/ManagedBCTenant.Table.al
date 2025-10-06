@@ -71,4 +71,19 @@ table 73270 TKAManagedBCTenant
         ManagedBCEnvironment.SetRange(TenantId, Rec.TenantId);
         ManagedBCEnvironment.DeleteAll(true);
     end;
+
+    /// <summary>
+    /// Check if the tenant's group is active.
+    /// </summary>
+    /// <returns>True if the tenant's group is active or if no group is assigned; otherwise, false.</returns>
+    [InherentPermissions(PermissionObjectType::TableData, Database::TKAManagedBCTenantGroup, 'R')]
+    procedure IsTenantGroupActive(): Boolean
+    var
+        ManagedBCTenantGroup: Record TKAManagedBCTenantGroup;
+    begin
+        if Rec.GroupCode = '' then
+            exit(true);
+        ManagedBCTenantGroup.Get(Rec.GroupCode);
+        exit(ManagedBCTenantGroup.Status = ManagedBCTenantGroup.Status::Active);
+    end;
 }
