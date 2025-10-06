@@ -30,6 +30,12 @@ table 73270 TKAManagedBCTenant
             TableRelation = TKAManagedBCAdministrationApp.ClientId;
             ToolTip = 'Specifies the client ID for the tenant.';
         }
+        field(50; CustomerNo; Code[20])
+        {
+            Caption = 'Customer No.';
+            TableRelation = Customer."No.";
+            ToolTip = 'Specifies the customer number associated with the tenant. This link can be used to identify the customer in the system and link tenant information to customer records.';
+        }
         field(1000; EnvironmentsModifiedAt; DateTime)
         {
             Caption = 'Environments Modified At';

@@ -18,6 +18,7 @@ page 73271 TKAManagedBCTenants
                 }
                 field(Name; Rec.Name) { }
                 field(GroupCode; Rec.GroupCode) { }
+                field(CustomerNo; Rec.CustomerNo) { }
                 field(ClientId; Rec.ClientId)
                 {
                     ShowMandatory = true;
