@@ -220,4 +220,14 @@ table 73273 TKAManagedBCEnvironment
     begin
         ManagedBCTenant.Get(Rec.TenantId);
     end;
+
+    /// <summary>
+    /// Check if the tenant's group is active.
+    /// </summary>
+    /// <returns>True if the tenant's group is active or if no group is assigned; otherwise, false.</returns>
+    [InherentPermissions(PermissionObjectType::TableData, Database::TKAManagedBCTenantGroup, 'R')]
+    procedure IsTenantGroupActive(): Boolean
+    begin
+        exit(GetManagedBCTenant().IsTenantGroupActive());
+    end;
 }
