@@ -18,6 +18,12 @@ table 73275 TKAManagedBCTenantGroup
             Caption = 'Description';
             ToolTip = 'Specifies the description of the tenant group.';
         }
+        field(100; Status; Enum TKAManagedBCTenantGroupStatus)
+        {
+            Caption = 'Status';
+            InitValue = Active;
+            ToolTip = 'Specifies the status of the tenant group.';
+        }
     }
 
     keys

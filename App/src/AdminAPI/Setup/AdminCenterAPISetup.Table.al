@@ -87,7 +87,7 @@ table 73272 TKAAdminCenterAPISetup
     [InherentPermissions(PermissionObjectType::TableData, Database::TKAAdminCenterAPISetup, 'RI')]
     procedure InsertIfNotExists()
     var
-        TokenUrlTok: Label 'https://login.microsoftonline.com/%tenantid%/oauth2/v2.0/token', Locked = true;
+        TokenUrlTok: Label 'https://login.microsoftonline.com/%1/oauth2/v2.0/token', Locked = true;
         ScopeTok: Label 'https://api.businesscentral.dynamics.com/.default', Locked = true;
         APIBaseUrlTok: Label 'https://api.businesscentral.dynamics.com/admin/v2.24', Locked = true;
     begin

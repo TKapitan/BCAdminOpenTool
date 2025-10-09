@@ -3,11 +3,18 @@ report 73273 TKAUpdateEnvironmentsDetails
     Caption = 'Update Environments Details';
     UsageCategory = Tasks;
     ApplicationArea = All;
+    ProcessingOnly = true;
 
-    trigger OnPostReport()
-    var
-        GetTenants: Codeunit TKAGetTenants;
-    begin
-        GetTenants.CreateUpdateManageableTenants();
-    end;
+    dataset
+    {
+        dataitem(TKAManagedBCAdministrationApp; TKAManagedBCAdministrationApp)
+        {
+            trigger OnAfterGetRecord()
+            var
+                GetTenants: Codeunit TKAGetTenants;
+            begin
+                GetTenants.CreateUpdateManageableTenants(TKAManagedBCAdministrationApp);
+            end;
+        }
+    }
 }

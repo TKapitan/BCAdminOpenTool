@@ -48,6 +48,9 @@ codeunit 73281 TKAProcessGetTenantsRespImpl
         ManagedBCTenant.Validate(ClientId, ManagedBCAdministrationApp.ClientId);
         ManagedBCTenant.Modify(true);
 
+        if not ManagedBCTenant.IsTenantGroupActive() then
+            exit;
+
         GetEnvironments.CreateUpdateEnvironmentsForTenant(ManagedBCTenant, true);
         if not HideDialog then
             Message(CompletedSuccessfullyMsg);
