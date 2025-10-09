@@ -30,7 +30,7 @@ codeunit 73302 TKAUpgradeBCAdminOpenTool
         if UpgradeTag.HasUpgradeTag(SetTenantGroupStatus20251006Tok) then
             exit;
         DataTransfer.SetTables(Database::TKAManagedBCTenantGroup, Database::TKAManagedBCTenantGroup);
-        DataTransfer.AddConstantValue(true, ManagedBCTenantGroup.FieldNo(Status));
+        DataTransfer.AddConstantValue(ManagedBCTenantGroup.Status::Active, ManagedBCTenantGroup.FieldNo(Status));
         DataTransfer.CopyFields();
         UpgradeTag.SetUpgradeTag(SetTenantGroupStatus20251006Tok);
     end;
