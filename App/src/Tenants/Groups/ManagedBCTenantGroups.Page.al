@@ -14,6 +14,7 @@ page 73276 TKAManagedBCTenantGroups
             {
                 field("Code"; Rec."Code") { }
                 field(Description; Rec.Description) { }
+                field(Status; Rec.Status) { }
             }
         }
     }
