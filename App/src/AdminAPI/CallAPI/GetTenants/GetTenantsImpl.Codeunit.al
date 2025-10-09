@@ -9,7 +9,7 @@ codeunit 73280 TKAGetTenantsImpl
     procedure CreateUpdateManageableTenants()
     var
         ManagedBCAdministrationApp: Record TKAManagedBCAdministrationApp;
-        CompletedSuccessfullyMsg: Label 'Availabe tenants have been successfully updated.';
+        CompletedSuccessfullyMsg: Label 'Available tenants have been successfully updated.';
     begin
         ManagedBCAdministrationApp.ReadIsolation(IsolationLevel::ReadCommitted);
         if ManagedBCAdministrationApp.FindSet() then

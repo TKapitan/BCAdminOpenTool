@@ -121,7 +121,7 @@ table 73271 TKAManagedBCAdministrationApp
         Filename, CertificateAsText : Text;
         CertFileFilterTxt: Label 'Certificate File(*.cer)|*.cer';
         ExportCertificateFileDialogTxt: Label 'Choose the location where you want to save the certificate file.';
-        CertificateCannotBeDownloadedErr: Label 'The certificate cannot be downloaded.\\Additional detials: %1', Comment = '%1 - error message';
+        CertificateCannotBeDownloadedErr: Label 'The certificate cannot be downloaded.\\Additional details: %1', Comment = '%1 - error message';
     begin
         GetCertificate(CertificateAsText);
 
