@@ -21,6 +21,7 @@ table 73271 TKAManagedBCAdministrationApp
         {
             Caption = 'Authentication Type';
             ToolTip = 'Specifies whether to use Certificate or Client Secret for authentication.';
+            InitValue = Certificate;
 
             trigger OnValidate()
             begin
@@ -183,6 +184,7 @@ table 73271 TKAManagedBCAdministrationApp
     procedure GetOAuth2ClientApplication() OAuth2ClientApplication: Codeunit TKAOAuthClientApplication
     var
         OAuthCertificate: Codeunit TKAOAuthCertificate;
+        InvalidAuthTypeLbl: Label 'Unsupported authentication type: %1', Comment = '%1 - authentication type value';
         CertificateAsText: Text;
         CertificatePasswordAsSecretText: SecretText;
         ClientSecretAsSecretText: SecretText;
@@ -203,6 +205,8 @@ table 73271 TKAManagedBCAdministrationApp
                     GetClientSecret(ClientSecretAsSecretText);
                     OAuth2ClientApplication.SetClientSecret(ClientSecretAsSecretText);
                 end;
+            else
+                Error(InvalidAuthTypeLbl, Rec."Authentication Type");
         end;
 
         OAuth2ClientApplication.SetClientId(Format(Rec.ClientId, 0, 4));

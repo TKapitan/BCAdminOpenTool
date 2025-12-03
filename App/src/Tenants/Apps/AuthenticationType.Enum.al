@@ -1,7 +1,7 @@
 enum 73272 TKAAuthenticationType
 {
     Caption = 'Authentication Type';
-    Extensible = true;
+    Extensible = false;
 
     value(0; Certificate)
     {

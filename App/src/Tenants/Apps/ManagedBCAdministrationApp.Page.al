@@ -84,10 +84,9 @@ page 73280 TKAManagedBCAdministrationApp
                 begin
                     CurrPage.SaveRecord();
                     ClientSecretDialog.RunModal();
-                    if ClientSecretDialog.GetClientSecret(ClientSecretText) then begin
+                    if ClientSecretDialog.GetClientSecret(ClientSecretText) then
                         Rec.SetClientSecret(ClientSecretText);
-                        Rec.Modify(true);
-                    end;
+                    Rec.Modify(true);
                 end;
             }
         }

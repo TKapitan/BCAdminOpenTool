@@ -70,8 +70,14 @@ codeunit 73295 TKAOAuthConfidentialClientImpl
     end;
 
     local procedure FinishTokenRequestWithClientSecret(AccessTokenRequest: SecretText; OAuthClientApplication: Codeunit TKAOAuthClientApplication) ReturnValue: SecretText
+    var
+        TypeHelper: Codeunit "Type Helper";
+        EncodedSecret: SecretText;
     begin
-        ReturnValue := SecretStrSubstNo('%1&client_secret=%2', AccessTokenRequest, OAuthClientApplication.GetClientSecret());
+        // URL encode the client secret as per OAuth2 specification
+        EncodedSecret := OAuthClientApplication.GetClientSecret();
+        EncodedSecret := TypeHelper.UrlEncode(EncodedSecret);
+        ReturnValue := SecretStrSubstNo('%1&client_secret=%2', AccessTokenRequest, EncodedSecret);
     end;
 
     local procedure SignTokenRequest(MicrosoftEntraID: Codeunit TKAMicrosoftEntraID; OAuthClientApplication: Codeunit TKAOAuthClientApplication) Jwt: Text
