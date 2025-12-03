@@ -19,6 +19,15 @@ page 73280 TKAManagedBCAdministrationApp
                     ShowMandatory = true;
                 }
                 field(Name; Rec.Name) { }
+                field("Authentication Type"; Rec."Authentication Type")
+                {
+                    ShowMandatory = true;
+
+                    trigger OnValidate()
+                    begin
+                        CurrPage.Update(true);
+                    end;
+                }
             }
         }
     }
@@ -29,6 +38,7 @@ page 73280 TKAManagedBCAdministrationApp
         {
             actionref(CreateCertificateActionRef; CreateCertificateAction) { }
             actionref(DownloadCertificateActionRef; DownloadCertificateAction) { }
+            actionref(SetClientSecretActionRef; SetClientSecretAction) { }
         }
         area(Processing)
         {
@@ -37,6 +47,8 @@ page 73280 TKAManagedBCAdministrationApp
                 Caption = 'Create Certificate';
                 Image = NewResource;
                 ToolTip = 'Allows you to create a new self-signed certificate for the app.';
+                Visible = Rec."Authentication Type" = Rec."Authentication Type"::Certificate;
+                Enabled = Rec."Authentication Type" = Rec."Authentication Type"::Certificate;
 
                 trigger OnAction()
                 begin
@@ -49,10 +61,33 @@ page 73280 TKAManagedBCAdministrationApp
                 Caption = 'Download Certificate';
                 Image = Download;
                 ToolTip = 'Allows you to download the certificate in PFX format.';
+                Visible = Rec."Authentication Type" = Rec."Authentication Type"::Certificate;
+                Enabled = Rec."Authentication Type" = Rec."Authentication Type"::Certificate;
 
                 trigger OnAction()
                 begin
                     Rec.DownloadCertificate();
+                end;
+            }
+            action(SetClientSecretAction)
+            {
+                Caption = 'Set Client Secret';
+                Image = EncryptionKeys;
+                ToolTip = 'Allows you to enter and save the client secret for authentication.';
+                Visible = Rec."Authentication Type" = Rec."Authentication Type"::"Client Secret";
+                Enabled = Rec."Authentication Type" = Rec."Authentication Type"::"Client Secret";
+
+                trigger OnAction()
+                var
+                    ClientSecretDialog: Page TKAClientSecretDialog;
+                    ClientSecretText: SecretText;
+                begin
+                    CurrPage.SaveRecord();
+                    ClientSecretDialog.RunModal();
+                    if ClientSecretDialog.GetClientSecret(ClientSecretText) then begin
+                        Rec.SetClientSecret(ClientSecretText);
+                        Rec.Modify(true);
+                    end;
                 end;
             }
         }

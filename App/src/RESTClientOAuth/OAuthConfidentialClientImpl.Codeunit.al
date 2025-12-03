@@ -41,15 +41,37 @@ codeunit 73295 TKAOAuthConfidentialClientImpl
 
     local procedure FinishTokenRequest(AccessTokenRequest: SecretText; MicrosoftEntraID: Codeunit TKAMicrosoftEntraID; OAuthClientApplication: Codeunit TKAOAuthClientApplication) ReturnValue: SecretText
     var
-        SignatureTextBuilder: TextBuilder;
-        ClientCertificateNotSetErr: Label 'Client certificate must be set for confidential client authentication.';
+        ClientCredentialNotSetErr: Label 'Either client certificate or client secret must be set for confidential client authentication.';
     begin
-        if not OAuthClientApplication.GetCertificate().HasValue() then
-            Error(ClientCertificateNotSetErr);
+        // Check if using certificate-based authentication
+        if OAuthClientApplication.GetCertificate().HasValue() then begin
+            ReturnValue := FinishTokenRequestWithCertificate(AccessTokenRequest, MicrosoftEntraID, OAuthClientApplication);
+            exit;
+        end;
+
+        // Check if using client secret authentication
+        if OAuthClientApplication.HasClientSecret() then begin
+            ReturnValue := FinishTokenRequestWithClientSecret(AccessTokenRequest, OAuthClientApplication);
+            exit;
+        end;
+
+        // Neither certificate nor client secret is set
+        Error(ClientCredentialNotSetErr);
+    end;
+
+    local procedure FinishTokenRequestWithCertificate(AccessTokenRequest: SecretText; MicrosoftEntraID: Codeunit TKAMicrosoftEntraID; OAuthClientApplication: Codeunit TKAOAuthClientApplication) ReturnValue: SecretText
+    var
+        SignatureTextBuilder: TextBuilder;
+    begin
         SignatureTextBuilder.Append('&client_assertion_type=urn:ietf:params:oauth:client-assertion-type:jwt-bearer');
         SignatureTextBuilder.Append('&client_assertion=');
         SignatureTextBuilder.Append(SignTokenRequest(MicrosoftEntraID, OAuthClientApplication));
         ReturnValue := SecretStrSubstNo('%1%2', AccessTokenRequest, SignatureTextBuilder.ToText());
+    end;
+
+    local procedure FinishTokenRequestWithClientSecret(AccessTokenRequest: SecretText; OAuthClientApplication: Codeunit TKAOAuthClientApplication) ReturnValue: SecretText
+    begin
+        ReturnValue := SecretStrSubstNo('%1&client_secret=%2', AccessTokenRequest, OAuthClientApplication.GetClientSecret());
     end;
 
     local procedure SignTokenRequest(MicrosoftEntraID: Codeunit TKAMicrosoftEntraID; OAuthClientApplication: Codeunit TKAOAuthClientApplication) Jwt: Text

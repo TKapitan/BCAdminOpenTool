@@ -17,6 +17,21 @@ table 73271 TKAManagedBCAdministrationApp
             Caption = 'Name';
             ToolTip = 'Specifies the name of the app.';
         }
+        field(10; "Authentication Type"; Enum TKAAuthenticationType)
+        {
+            Caption = 'Authentication Type';
+            ToolTip = 'Specifies whether to use Certificate or Client Secret for authentication.';
+
+            trigger OnValidate()
+            begin
+                // Clear authentication data when switching types
+                if "Authentication Type" <> xRec."Authentication Type" then begin
+                    ClearIsolatedField(Certificate);
+                    ClearIsolatedField(CertificatePassword);
+                    ClearIsolatedField(ClientSecret);
+                end;
+            end;
+        }
         field(15; Certificate; Guid)
         {
             Caption = 'Certificate';
@@ -25,6 +40,11 @@ table 73271 TKAManagedBCAdministrationApp
         field(16; CertificatePassword; Guid)
         {
             Caption = 'Certificate';
+            AllowInCustomizations = Never;
+        }
+        field(17; ClientSecret; Guid)
+        {
+            Caption = 'Client Secret';
             AllowInCustomizations = Never;
         }
     }
@@ -50,6 +70,7 @@ table 73271 TKAManagedBCAdministrationApp
         TestNotUsed();
         ClearIsolatedField(Rec.Certificate);
         ClearIsolatedField(Rec.CertificatePassword);
+        ClearIsolatedField(Rec.ClientSecret);
     end;
 
     #endregion Triggers
@@ -73,6 +94,26 @@ table 73271 TKAManagedBCAdministrationApp
 
         if not IsolatedStorage.Set(Rec.CertificatePassword, Password, DataScope::Company) then
             Error(SavingCertErr);
+    end;
+
+    /// <summary>
+    /// Sets the client secret in isolated storage and saves a reference to it in the table.
+    /// </summary>
+    /// <param name="Secret">The client secret as SecretText. If an empty SecretText is passed, the existing secret (if any) is removed.</param>
+    procedure SetClientSecret(Secret: SecretText)
+    var
+        SavingSecretErr: Label 'Could not save the client secret.';
+    begin
+        ClearIsolatedField(Rec.ClientSecret);
+
+        if Secret.IsEmpty() then
+            exit;
+
+        Rec.ClientSecret := CreateGuid();
+        Rec.Modify(true);
+
+        if not IsolatedStorage.Set(Rec.ClientSecret, Secret, DataScope::Company) then
+            Error(SavingSecretErr);
     end;
 
     /// <summary>
@@ -144,15 +185,27 @@ table 73271 TKAManagedBCAdministrationApp
         OAuthCertificate: Codeunit TKAOAuthCertificate;
         CertificateAsText: Text;
         CertificatePasswordAsSecretText: SecretText;
+        ClientSecretAsSecretText: SecretText;
     begin
         Rec.TestField(ClientId);
+        Rec.TestField("Authentication Type");
 
-        GetCertificate(CertificateAsText, CertificatePasswordAsSecretText);
-        OAuthCertificate.SetCertificate(CertificateAsText);
-        OAuthCertificate.SetPrivateKey(CertificatePasswordAsSecretText);
+        case Rec."Authentication Type" of
+            Rec."Authentication Type"::Certificate:
+                begin
+                    GetCertificate(CertificateAsText, CertificatePasswordAsSecretText);
+                    OAuthCertificate.SetCertificate(CertificateAsText);
+                    OAuthCertificate.SetPrivateKey(CertificatePasswordAsSecretText);
+                    OAuth2ClientApplication.SetCertificate(OAuthCertificate);
+                end;
+            Rec."Authentication Type"::"Client Secret":
+                begin
+                    GetClientSecret(ClientSecretAsSecretText);
+                    OAuth2ClientApplication.SetClientSecret(ClientSecretAsSecretText);
+                end;
+        end;
 
         OAuth2ClientApplication.SetClientId(Format(Rec.ClientId, 0, 4));
-        OAuth2ClientApplication.SetCertificate(OAuthCertificate)
     end;
 
     #endregion "Global Procedures"
@@ -210,6 +263,17 @@ table 73271 TKAManagedBCAdministrationApp
             Error(ReadingCertPwdErr);
         OutCertificate := Base64StringAsText;
         OutCertificatePassword := Password;
+    end;
+
+    local procedure GetClientSecret(var OutClientSecret: SecretText)
+    var
+        ReadingSecretErr: Label 'Could not get the client secret.';
+    begin
+        if IsNullGuid(Rec.ClientSecret) then
+            exit;
+
+        if not IsolatedStorage.Get(Rec.ClientSecret, DataScope::Company, OutClientSecret) then
+            Error(ReadingSecretErr);
     end;
 
     #endregion "Local Procedures"

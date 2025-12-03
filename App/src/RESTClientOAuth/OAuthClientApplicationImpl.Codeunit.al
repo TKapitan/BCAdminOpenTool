@@ -33,6 +33,26 @@ codeunit 73286 TKAOAuthClientApplicationImpl
 
     #endregion
 
+    #region ClientSecret
+    var
+        ClientSecret: SecretText;
+
+    procedure SetClientSecret(Value: SecretText)
+    begin
+        ClientSecret := Value;
+    end;
+
+    procedure GetClientSecret() Value: SecretText
+    begin
+        Value := ClientSecret;
+    end;
+
+    procedure HasClientSecret(): Boolean
+    begin
+        exit(not ClientSecret.IsEmpty());
+    end;
+    #endregion
+
     #region Scopes
     var
         Scopes: List of [Text];
