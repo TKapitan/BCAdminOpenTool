@@ -32,12 +32,13 @@ page 73290 TKAClientSecretDialog
     var
         ClientSecretText: Text;
         SecretConfirmed: Boolean;
+        ClientSecretEmptyErr: Label 'Client secret cannot be empty.';
 
     trigger OnQueryClosePage(CloseAction: Action): Boolean
     begin
         if CloseAction = Action::OK then begin
             if ClientSecretText = '' then
-                Error('Client secret cannot be empty.');
+                Error(ClientSecretEmptyErr);
             SecretConfirmed := true;
         end;
     end;
