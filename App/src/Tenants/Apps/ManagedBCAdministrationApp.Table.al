@@ -203,6 +203,8 @@ table 73271 TKAManagedBCAdministrationApp
                     GetClientSecret(ClientSecretAsSecretText);
                     OAuth2ClientApplication.SetClientSecret(ClientSecretAsSecretText);
                 end;
+            else
+                Error('Unsupported authentication type: %1', Rec."Authentication Type");
         end;
 
         OAuth2ClientApplication.SetClientId(Format(Rec.ClientId, 0, 4));
