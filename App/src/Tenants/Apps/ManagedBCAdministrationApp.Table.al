@@ -21,6 +21,7 @@ table 73271 TKAManagedBCAdministrationApp
         {
             Caption = 'Authentication Type';
             ToolTip = 'Specifies whether to use Certificate or Client Secret for authentication.';
+            InitValue = Certificate;
 
             trigger OnValidate()
             begin
