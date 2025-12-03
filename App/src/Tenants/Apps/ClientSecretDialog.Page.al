@@ -30,7 +30,7 @@ page 73290 TKAClientSecretDialog
     }
 
     var
-        ClientSecretText: Text;
+        ClientSecretText: SecretText;
         SecretConfirmed: Boolean;
         ClientSecretEmptyErr: Label 'Client secret cannot be empty.';
 
