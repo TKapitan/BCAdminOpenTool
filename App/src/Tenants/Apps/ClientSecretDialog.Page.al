@@ -18,27 +18,48 @@ page 73290 TKAClientSecretDialog
             {
                 Caption = 'Client Secret';
 
-                field(ClientSecretField; ClientSecretText)
+                field(ClientSecretField; ClientSecretTextValue)
                 {
                     Caption = 'Client Secret';
                     ToolTip = 'Specifies the client secret from the Entra app registration.';
                     ExtendedDatatype = Masked;
                     ShowMandatory = true;
+
+                    trigger OnValidate()
+                    begin
+                        // Convert to SecretText immediately upon input to minimize exposure
+                        ClientSecretText := ClientSecretTextValue;
+                        // Clear the plain text variable immediately
+                        Clear(ClientSecretTextValue);
+                    end;
                 }
             }
         }
     }
 
     var
-        ClientSecretText: Text;
+        ClientSecretTextValue: Text;
+        ClientSecretText: SecretText;
         SecretConfirmed: Boolean;
 
     trigger OnQueryClosePage(CloseAction: Action): Boolean
+    var
+        ClientSecretEmptyLbl: Label 'Client secret cannot be empty.';
     begin
         if CloseAction = Action::OK then begin
-            if ClientSecretText = '' then
-                Error('Client secret cannot be empty.');
+            // Ensure any remaining input is converted
+            if ClientSecretTextValue <> '' then begin
+                ClientSecretText := ClientSecretTextValue;
+                Clear(ClientSecretTextValue);
+            end;
+
+            if ClientSecretText.IsEmpty() then
+                Error(ClientSecretEmptyLbl);
             SecretConfirmed := true;
+        end else begin
+            // Clear both variables if cancelled
+            Clear(ClientSecretTextValue);
+            Clear(ClientSecretText);
         end;
     end;
 
