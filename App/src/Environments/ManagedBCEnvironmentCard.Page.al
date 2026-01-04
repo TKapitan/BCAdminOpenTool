@@ -185,6 +185,15 @@ page 73274 TKAManagedBCEnvironmentCard
         }
         area(Navigation)
         {
+            action(OpenAvailableUpdates)
+            {
+                Caption = 'Available Updates';
+                ApplicationArea = All;
+                ToolTip = 'View available updates for this environment.';
+                Image = DateRange;
+                RunObject = page TKAManagedBCEnvAvailUpdates;
+                RunPageLink = TenantId = field(TenantId), EnvironmentName = field(Name);
+            }
             action(OpenManagedBCApps)
             {
                 Caption = 'Apps';
@@ -203,13 +212,19 @@ page 73274 TKAManagedBCEnvironmentCard
 
                 group(Change)
                 {
-                    Caption = 'Change';
+                    Caption = 'Change...';
                     Image = Change;
 
                     actionref(ChangeUpdateSettings_Promoted; ChangeUpdateSettings) { }
                     actionref(ChangeUpdateDate_Promoted; ChangeUpdateDate) { }
                     actionref(InstallApps_Promoted; InstallApps) { }
                 }
+            }
+            group(Category_Category5)
+            {
+                Caption = 'Navigation';
+
+                actionref(OpenAvailableUpdates_Promoted; OpenAvailableUpdates) { }
                 actionref(OpenManagedBCApps_Promoted; OpenManagedBCApps) { }
             }
         }

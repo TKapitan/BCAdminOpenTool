@@ -120,6 +120,16 @@ codeunit 73271 TKACallAdminAPI
     end;
 
     /// <summary>
+    /// Return the endpoint for getting updates for an environment.
+    /// </summary>
+    /// <param name="EnvironmentName">The name of the environment for which to get the updates.</param>
+    /// <returns>String containing the endpoint for getting updates for an environment.</returns>
+    procedure GetUpdatesForEnvironmentEndpoint(EnvironmentName: Text): Text
+    begin
+        exit('/applications/BusinessCentral/environments/{environmentName}/updates'.Replace('{environmentName}', EnvironmentName));
+    end;
+
+    /// <summary>
     /// Return the endpoint for getting scheduled update information for an environment.
     /// </summary>
     /// <param name="EnvironmentName">The name of the environment for which to get the scheduled update information.</param>

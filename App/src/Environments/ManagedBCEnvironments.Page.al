@@ -34,6 +34,12 @@ page 73273 TKAManagedBCEnvironments
                 field(CountryCode; Rec.CountryCode) { }
                 field(ApplicationVersion; Rec.ApplicationVersion) { }
                 field(PlatformVersion; Rec.PlatformVersion) { }
+                field(UpdateAvailableTargetVersion; Rec.UpdateAvailableTargetVersion) { }
+                field(UpdateIsScheduled; Rec.UpdateIsScheduled) { }
+                field(UpdateSelectedTargetVersion; Rec.UpdateSelectedTargetVersion) { }
+                field(UpdateDate; Rec.UpdateDate) { }
+                field(UpdateSelectedExpAvailability; Rec.UpdateSelectedExpAvailability) { }
+                field(IgnoreScheduleUpgradeWindow; Rec.IgnoreScheduleUpgradeWindow) { }
                 field(UpdateIsActive; Rec.UpdateIsActive) { }
                 field(UpdateTargetVersion; Rec.UpdateTargetVersion) { }
                 field(UpgradeDate; Rec.UpgradeDate) { }
@@ -226,6 +232,15 @@ page 73273 TKAManagedBCEnvironments
         }
         area(Navigation)
         {
+            action(OpenAvailableUpdates)
+            {
+                Caption = 'Available Updates';
+                ApplicationArea = All;
+                ToolTip = 'View available updates for this environment.';
+                Image = DateRange;
+                RunObject = page TKAManagedBCEnvAvailUpdates;
+                RunPageLink = TenantId = field(TenantId), EnvironmentName = field(Name);
+            }
             action(OpenManagedBCApps)
             {
                 Caption = 'Apps';
@@ -244,13 +259,19 @@ page 73273 TKAManagedBCEnvironments
 
                 group(Change)
                 {
-                    Caption = 'Change';
+                    Caption = 'Change...';
                     Image = Change;
 
                     actionref(ChangeUpdateSettings_Promoted; ChangeUpdateSettings) { }
                     actionref(ChangeUpdateDate_Promoted; ChangeUpdateDate) { }
                     actionref(InstallApps_Promoted; InstallApps) { }
                 }
+            }
+            group(Category_Category5)
+            {
+                Caption = 'Navigation';
+
+                actionref(OpenAvailableUpdates_Promoted; OpenAvailableUpdates) { }
                 actionref(OpenManagedBCApps_Promoted; OpenManagedBCApps) { }
             }
         }

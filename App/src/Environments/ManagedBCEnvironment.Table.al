@@ -122,6 +122,32 @@ table 73273 TKAManagedBCEnvironment
             Caption = 'Update Target Version';
             ToolTip = 'Specifies the version of the application that the environment will update to.';
         }
+#pragma warning disable AA0232 // SIFT index makes no sense for this field
+        field(701; UpdateAvailableTargetVersion; Text[20])
+#pragma warning restore AA0232
+        {
+            Caption = 'Update Available Target Version';
+            FieldClass = FlowField;
+            CalcFormula = max(TKAManagedBCEnvAvailUpdate.TargetVersion where(TenantId = field(TenantId), EnvironmentName = field(Name), Available = const(true)));
+            ToolTip = 'Specifies the latest version of the application that is available for the environment to update to.';
+            Editable = false;
+        }
+        field(702; UpdateSelectedTargetVersion; Text[20])
+        {
+            Caption = 'Update Selected Target Version';
+            FieldClass = FlowField;
+            CalcFormula = lookup(TKAManagedBCEnvAvailUpdate.TargetVersion where(TenantId = field(TenantId), EnvironmentName = field(Name), Selected = const(true)));
+            ToolTip = 'Specifies the version of the application that the environment has selected for the update.';
+            Editable = false;
+        }
+        field(703; UpdateSelectedExpAvailability; Text[20])
+        {
+            Caption = 'Selected Update Expected Availability';
+            FieldClass = FlowField;
+            CalcFormula = lookup(TKAManagedBCEnvAvailUpdate.ExpectedAvailability where(TenantId = field(TenantId), EnvironmentName = field(Name), Selected = const(true)));
+            ToolTip = 'Specifies the expected availability of the selected update for the environment.';
+            Editable = false;
+        }
         field(710; CanTenantSelectDate; Boolean)
         {
             Caption = 'Can Tenant Select Date';
@@ -147,6 +173,14 @@ table 73273 TKAManagedBCEnvironment
             Caption = 'Upgrade Date';
             ToolTip = 'The currently selected scheduled date of the update.';
         }
+        field(741; UpdateDate; Date)
+        {
+            Caption = 'Update Date';
+            FieldClass = FlowField;
+            CalcFormula = lookup(TKAManagedBCEnvAvailUpdate.SelectedDate where(TenantId = field(TenantId), EnvironmentName = field(Name), Selected = const(true)));
+            ToolTip = 'Specifies the date for which the update to the selected target version has been scheduled.';
+            Editable = false;
+        }
         field(750; UpdateStatus; Text[20])
         {
             Caption = 'Update Status';
@@ -157,10 +191,26 @@ table 73273 TKAManagedBCEnvironment
             Caption = 'Ignore Upgrade Window';
             ToolTip = 'Indicates if the environment''s update window will be ignored.';
         }
+        field(761; IgnoreScheduleUpgradeWindow; Boolean)
+        {
+            Caption = 'Update Is Scheduled';
+            FieldClass = FlowField;
+            CalcFormula = lookup(TKAManagedBCEnvAvailUpdate.IgnoreUpdateWindow where(TenantId = field(TenantId), EnvironmentName = field(Name), Selected = const(true)));
+            ToolTip = 'Indicates if an update is scheduled for the environment.';
+            Editable = false;
+        }
         field(770; UpdateIsActive; Boolean)
         {
             Caption = 'Update Is Active';
             ToolTip = 'Indicates if the update is activated and is scheduled to occur.';
+        }
+        field(771; UpdateIsScheduled; Boolean)
+        {
+            Caption = 'Update Is Scheduled';
+            FieldClass = FlowField;
+            CalcFormula = exist(TKAManagedBCEnvAvailUpdate where(TenantId = field(TenantId), EnvironmentName = field(Name), Selected = const(true)));
+            ToolTip = 'Indicates if an update is scheduled for the environment.';
+            Editable = false;
         }
         field(780; PreferredStartTime; Text[50])
         {

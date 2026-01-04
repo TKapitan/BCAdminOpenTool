@@ -95,6 +95,7 @@ codeunit 73273 TKAGetEnvironmentsImpl
         AdminCenterAPISetup: Record TKAAdminCenterAPISetup;
         CallAdminAPI: Codeunit TKACallAdminAPI;
         ProcessGetEnvResponseImpl: Codeunit TKAProcessGetEnvResponseImpl;
+        GetUpdates: Codeunit TKAGetUpdates;
         Response: Text;
     begin
         if not ManagedBCEnvironment.IsTenantGroupActive() then
@@ -106,6 +107,7 @@ codeunit 73273 TKAGetEnvironmentsImpl
         if AdminCenterAPISetup.GetScheduledUpdateAPIEnabled then begin
             Response := CallAdminAPI.GetFromAdminAPI(ManagedBCEnvironment.GetManagedBCTenant(), CallAdminAPI.GetScheduledUpdateForEnvironmentEndpoint(ManagedBCEnvironment.Name));
             ProcessGetEnvResponseImpl.ParseGetScheduledUpdateResponse(Response, ManagedBCEnvironment);
+            GetUpdates.GetUpdatesForEnvironment(ManagedBCEnvironment, true);
         end;
         if AdminCenterAPISetup.GetUpdateSettingsAPIEnabled then begin
             Response := CallAdminAPI.GetFromAdminAPI(ManagedBCEnvironment.GetManagedBCTenant(), CallAdminAPI.GetUpdateSettingsForEnvironmentEndpoint(ManagedBCEnvironment.Name));

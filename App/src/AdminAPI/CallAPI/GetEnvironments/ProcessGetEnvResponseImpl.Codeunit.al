@@ -102,7 +102,7 @@ codeunit 73274 TKAProcessGetEnvResponseImpl
     var
         ManagedBCEnvironment: Record TKAManagedBCEnvironment;
     begin
-        ManagedBCEnvironment.ReadIsolation(IsolationLevel::ReadCommitted);
+        ManagedBCEnvironment.ReadIsolation(IsolationLevel::UpdLock);
         ManagedBCEnvironment.SetRange(TenantId, TenantId);
         if ManagedBCEnvironment.FindSet() then
             repeat

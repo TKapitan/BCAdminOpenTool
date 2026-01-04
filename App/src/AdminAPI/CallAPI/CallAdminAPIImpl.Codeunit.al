@@ -53,7 +53,7 @@ codeunit 73270 TKACallAdminAPIImpl
     var
         HttpRequestMessage: Codeunit "Http Request Message";
     begin
-        HttpRequestMessage.SetRequestUri(GetBaseAPIUrl() + Endpoint);
+        HttpRequestMessage.SetRequestUri(GetAPIUrl(Endpoint));
         HttpRequestMessage.SetHttpMethod(Enum::"Http Method"::GET);
         exit(SendAPIRequest(ManagedBCTenant, HttpRequestMessage, HttpResponseMessage));
     end;
@@ -75,7 +75,7 @@ codeunit 73270 TKACallAdminAPIImpl
         HttpContent.Create(RequestBody);
         HttpRequestMessage.SetContent(HttpContent);
 
-        HttpRequestMessage.SetRequestUri(GetBaseAPIUrl() + Endpoint);
+        HttpRequestMessage.SetRequestUri(GetAPIUrl(Endpoint));
         HttpRequestMessage.SetHttpMethod(Method);
         exit(SendAPIRequest(ManagedBCEnvironment.GetManagedBCTenant(), HttpRequestMessage, HttpResponseMessage));
     end;
@@ -133,14 +133,25 @@ codeunit 73270 TKACallAdminAPIImpl
     end;
 
     [InherentPermissions(PermissionObjectType::TableData, Database::TKAAdminCenterAPISetup, 'R')]
-    local procedure GetBaseAPIUrl(): Text
+    local procedure GetAPIUrl(EndpointUrl: Text): Text
     var
         AdminCenterAPISetup: Record TKAAdminCenterAPISetup;
+        APIURL: Text;
     begin
         AdminCenterAPISetup.ReadIsolation(IsolationLevel::ReadCommitted);
-        AdminCenterAPISetup.SetLoadFields(APIUrl);
+        AdminCenterAPISetup.SetLoadFields(APIUrl, APIVersion);
         AdminCenterAPISetup.Get();
-        exit(AdminCenterAPISetup.APIUrl);
+
+        APIURL := AdminCenterAPISetup.APIUrl;
+        if not APIURL.EndsWith('/') then
+            APIURL += '/';
+        APIURL += Format(AdminCenterAPISetup.APIVersion);
+        if not APIURL.EndsWith('/') then
+            APIURL += '/';
+        if EndpointUrl.StartsWith('/') then
+            EndpointUrl := CopyStr(EndpointUrl, 2);
+        APIURL += EndpointUrl;
+        exit(APIURL);
     end;
 
     #endregion Local Procedures
