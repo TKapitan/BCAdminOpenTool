@@ -53,7 +53,7 @@ table 73273 TKAManagedBCEnvironment
             CalcFormula = lookup(TKAManagedBCTenant.CustomerNo where(TenantId = field(TenantId)));
             ToolTip = 'Specifies the customer number for the tenant.';
             Editable = false;
-            AllowInCustomizations = Always;
+            AllowInCustomizations = AsReadOnly;
         }
         field(20; ApplicationVersion; Text[20])
         {
@@ -97,7 +97,7 @@ table 73273 TKAManagedBCEnvironment
         }
         field(300; WebClientURL; Text[500])
         {
-            AllowInCustomizations = Always;
+            AllowInCustomizations = AsReadWrite;
             Caption = 'Web Client URL';
             ToolTip = 'Specifies the URL of the web client for the environment.';
             ExtendedDatatype = URL;

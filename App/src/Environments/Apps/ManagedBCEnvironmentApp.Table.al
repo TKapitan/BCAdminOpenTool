@@ -94,7 +94,7 @@ table 73276 TKAManagedBCEnvironmentApp
         }
         field(50; Hidden; Boolean)
         {
-            AllowInCustomizations = Always;
+            AllowInCustomizations = AsReadOnly;
             Caption = 'Hidden';
             Editable = false;
             ToolTip = 'Specifies whether the app is hidden. Apps that have name starting with "_Exclude" are hidden.';
