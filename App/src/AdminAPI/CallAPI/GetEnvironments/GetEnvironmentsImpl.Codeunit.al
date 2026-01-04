@@ -101,14 +101,26 @@ codeunit 73273 TKAGetEnvironmentsImpl
         if not ManagedBCEnvironment.IsTenantGroupActive() then
             exit;
         AdminCenterAPISetup.ReadIsolation(IsolationLevel::ReadUncommitted);
+#if not CLEAN29
+        AdminCenterAPISetup.SetLoadFields(GetScheduledUpdateAPIEnabled, GetUpdateSettingsAPIEnabled, GetInstalledAppsEnabled, APIVersion);
+#else
         AdminCenterAPISetup.SetLoadFields(GetScheduledUpdateAPIEnabled, GetUpdateSettingsAPIEnabled, GetInstalledAppsEnabled);
+#endif
         AdminCenterAPISetup.Get();
 
-        if AdminCenterAPISetup.GetScheduledUpdateAPIEnabled then begin
-            Response := CallAdminAPI.GetFromAdminAPI(ManagedBCEnvironment.GetManagedBCTenant(), CallAdminAPI.GetScheduledUpdateForEnvironmentEndpoint(ManagedBCEnvironment.Name));
-            ProcessGetEnvResponseImpl.ParseGetScheduledUpdateResponse(Response, ManagedBCEnvironment);
+#if not CLEAN29
+        if AdminCenterAPISetup.GetScheduledUpdateAPIEnabled then
+#pragma warning disable AL0432
+            if AdminCenterAPISetup.APIVersion = AdminCenterAPISetup.APIVersion::"v2.24" then begin
+                Response := CallAdminAPI.GetFromAdminAPI(ManagedBCEnvironment.GetManagedBCTenant(), CallAdminAPI.GetScheduledUpdateForEnvironmentEndpoint(ManagedBCEnvironment.Name));
+                ProcessGetEnvResponseImpl.ParseGetScheduledUpdateResponse(Response, ManagedBCEnvironment);
+            end else
+#pragma warning restore AL0432
+                GetUpdates.GetUpdatesForEnvironment(ManagedBCEnvironment, true);
+#else
+        if AdminCenterAPISetup.GetScheduledUpdateAPIEnabled then
             GetUpdates.GetUpdatesForEnvironment(ManagedBCEnvironment, true);
-        end;
+#endif
         if AdminCenterAPISetup.GetUpdateSettingsAPIEnabled then begin
             Response := CallAdminAPI.GetFromAdminAPI(ManagedBCEnvironment.GetManagedBCTenant(), CallAdminAPI.GetUpdateSettingsForEnvironmentEndpoint(ManagedBCEnvironment.Name));
             ProcessGetEnvResponseImpl.ParseUpdateSettingsResponse(Response, ManagedBCEnvironment);

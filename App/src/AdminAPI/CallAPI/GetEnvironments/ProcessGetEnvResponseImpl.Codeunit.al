@@ -152,19 +152,16 @@ codeunit 73274 TKAProcessGetEnvResponseImpl
     [InherentPermissions(PermissionObjectType::TableData, Database::TKAManagedBCEnvironment, 'M')]
     local procedure ClearUpdateSettingsFields(var ManagedBCEnvironment: Record TKAManagedBCEnvironment)
     begin
-        ManagedBCEnvironment.Validate(UpdateIsActive, false);
-        ManagedBCEnvironment.Validate(UpdateTargetVersion, '');
-        ManagedBCEnvironment.Validate(CanTenantSelectDate, false);
-        ManagedBCEnvironment.Validate(DidTenantSelectDate, false);
-        ManagedBCEnvironment.Validate(EarliestSelectableUpgradeDate, 0D);
-        ManagedBCEnvironment.Validate(LatestSelectableUpgradeDate, 0D);
-        ManagedBCEnvironment.Validate(UpgradeDate, 0D);
-        ManagedBCEnvironment.Validate(UpdateStatus, '');
-        ManagedBCEnvironment.Validate(IgnoreUpgradeWindow, false);
+        ManagedBCEnvironment.Validate(PreferredStartTime, '');
+        ManagedBCEnvironment.Validate(PreferredEndTime, '');
+        ManagedBCEnvironment.Validate(TimeZoneId, '');
+        ManagedBCEnvironment.Validate(PreferredStartTimeUtc, '');
+        ManagedBCEnvironment.Validate(PreferredEndTimeUtc, '');
         ManagedBCEnvironment.Modify(true);
     end;
 
     #endregion Update Settings
+#if not CLEAN29
     #region Scheduled Update
 
     /// <summary>
@@ -172,6 +169,7 @@ codeunit 73274 TKAProcessGetEnvResponseImpl
     /// </summary>
     /// <param name="Response">The response from the Admin API.</param>
     /// <param name="ManagedBCEnvironment">The managed BC environment for which to parse the response.</param>
+    [Obsolete('Replaced by flexible update logic and related fields.', '27.2')]
     [InherentPermissions(PermissionObjectType::TableData, Database::TKAManagedBCEnvironment, 'M')]
     procedure ParseGetScheduledUpdateResponse(Response: Text; var ManagedBCEnvironment: Record TKAManagedBCEnvironment)
     var
@@ -207,6 +205,7 @@ codeunit 73274 TKAProcessGetEnvResponseImpl
     [InherentPermissions(PermissionObjectType::TableData, Database::TKAManagedBCEnvironment, 'M')]
     local procedure ClearScheduledUpdateFields(var ManagedBCEnvironment: Record TKAManagedBCEnvironment)
     begin
+#pragma warning disable AL0432
         ManagedBCEnvironment.Validate(UpdateIsActive, false);
         ManagedBCEnvironment.Validate(UpdateTargetVersion, '');
         ManagedBCEnvironment.Validate(CanTenantSelectDate, false);
@@ -216,10 +215,12 @@ codeunit 73274 TKAProcessGetEnvResponseImpl
         ManagedBCEnvironment.Validate(UpgradeDate, 0D);
         ManagedBCEnvironment.Validate(UpdateStatus, '');
         ManagedBCEnvironment.Validate(IgnoreUpgradeWindow, false);
+#pragma warning restore AL0432
         ManagedBCEnvironment.Modify(true);
     end;
 
     #endregion Scheduled Update
+#endif
     #region Installed Apps
 
     /// <summary>
@@ -334,6 +335,7 @@ codeunit 73274 TKAProcessGetEnvResponseImpl
         exit(TempDateTime);
     end;
 
+#if not CLEAN29
     local procedure GetJsonDateTimeTokenAsDate(var JsonTokenValue: JsonToken): Date
     var
         TypeHelper: Codeunit "Type Helper";
@@ -350,6 +352,7 @@ codeunit 73274 TKAProcessGetEnvResponseImpl
 #pragma warning restore AA0206
         exit(TempDateTimeInUTC.Date());
     end;
+#endif
 
     #endregion Helpers
 }

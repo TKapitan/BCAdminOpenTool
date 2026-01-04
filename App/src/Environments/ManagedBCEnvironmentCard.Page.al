@@ -52,27 +52,123 @@ page 73274 TKAManagedBCEnvironmentCard
 
                 field(ApplicationVersion; Rec.ApplicationVersion) { }
                 field(PlatformVersion; Rec.PlatformVersion) { }
-                field(UpdateIsActive; Rec.UpdateIsActive) { }
-                field(UpdateTargetVersion; Rec.UpdateTargetVersion) { }
-                field(UpgradeDate; Rec.UpgradeDate) { }
-                field(UpdateStatus; Rec.UpdateStatus) { }
+                field(UpdateAvailableTargetVersion; Rec.UpdateAvailableTargetVersion)
+                {
+#if not CLEAN29
+#pragma warning disable AL0432
+                    Visible = not ShowLegacyUpdateStructure;
+#pragma warning restore AL0432
+# endif
+                }
+                field(UpdateIsScheduled; Rec.UpdateIsScheduled)
+                {
+#if not CLEAN29
+#pragma warning disable AL0432
+                    Visible = not ShowLegacyUpdateStructure;
+#pragma warning restore AL0432
+#endif
+                }
+                field(UpdateSelectedTargetVersion; Rec.UpdateSelectedTargetVersion)
+                {
+#if not CLEAN29
+#pragma warning disable AL0432
+                    Visible = not ShowLegacyUpdateStructure;
+#pragma warning restore AL0432
+#endif
+                }
+                field(UpdateDate; Rec.UpdateDate)
+                {
+#if not CLEAN29
+#pragma warning disable AL0432
+                    Visible = not ShowLegacyUpdateStructure;
+#pragma warning restore AL0432
+# endif
+                }
+                field(UpdateSelectedExpAvailability; Rec.UpdateSelectedExpAvailability)
+                {
+#if not CLEAN29
+#pragma warning disable AL0432
+                    Visible = not ShowLegacyUpdateStructure;
+#pragma warning restore AL0432
+# endif
+                }
+                field(IgnoreScheduleUpgradeWindow; Rec.IgnoreScheduleUpgradeWindow)
+                {
+#if not CLEAN29
+#pragma warning disable AL0432
+                    Visible = not ShowLegacyUpdateStructure;
+#pragma warning restore AL0432
+#endif
+                }
+#if not CLEAN29
+                field(UpdateIsActive; Rec.UpdateIsActive)
+                {
+                    Visible = ShowLegacyUpdateStructure;
+                    ObsoleteReason = 'Replaced by flexible update logic and related fields.';
+                    ObsoleteState = Pending;
+                    ObsoleteTag = '27.2';
+                }
+                field(UpdateTargetVersion; Rec.UpdateTargetVersion)
+                {
+                    Visible = ShowLegacyUpdateStructure;
+                    ObsoleteReason = 'Replaced by flexible update logic and related fields.';
+                    ObsoleteState = Pending;
+                    ObsoleteTag = '27.2';
+                }
+                field(UpgradeDate; Rec.UpgradeDate)
+                {
+                    Visible = ShowLegacyUpdateStructure;
+                    ObsoleteReason = 'Replaced by flexible update logic and related fields.';
+                    ObsoleteState = Pending;
+                    ObsoleteTag = '27.2';
+                }
+                field(UpdateStatus; Rec.UpdateStatus)
+                {
+                    Visible = ShowLegacyUpdateStructure;
+                    ObsoleteReason = 'Replaced by flexible update logic and related fields.';
+                    ObsoleteState = Pending;
+                    ObsoleteTag = '27.2';
+                }
                 field(CanTenantSelectDate; Rec.CanTenantSelectDate)
                 {
+                    Visible = ShowLegacyUpdateStructure;
                     Importance = Additional;
+                    ObsoleteReason = 'Replaced by flexible update logic and related fields.';
+                    ObsoleteState = Pending;
+                    ObsoleteTag = '27.2';
                 }
                 field(DidTenantSelectDate; Rec.DidTenantSelectDate)
                 {
+                    Visible = ShowLegacyUpdateStructure;
                     Importance = Additional;
+                    ObsoleteReason = 'Replaced by flexible update logic and related fields.';
+                    ObsoleteState = Pending;
+                    ObsoleteTag = '27.2';
                 }
                 field(EarliestSelectableUpgradeDate; Rec.EarliestSelectableUpgradeDate)
                 {
+                    Visible = ShowLegacyUpdateStructure;
                     Importance = Additional;
+                    ObsoleteReason = 'Replaced by flexible update logic and related fields.';
+                    ObsoleteState = Pending;
+                    ObsoleteTag = '27.2';
                 }
                 field(LatestSelectableUpgradeDate; Rec.LatestSelectableUpgradeDate)
                 {
+                    Visible = ShowLegacyUpdateStructure;
                     Importance = Additional;
+                    ObsoleteReason = 'Replaced by flexible update logic and related fields.';
+                    ObsoleteState = Pending;
+                    ObsoleteTag = '27.2';
                 }
-                field(IgnoreUpgradeWindow; Rec.IgnoreUpgradeWindow) { }
+                field(IgnoreUpgradeWindow; Rec.IgnoreUpgradeWindow)
+                {
+                    Visible = ShowLegacyUpdateStructure;
+                    ObsoleteReason = 'Replaced by flexible update logic and related fields.';
+                    ObsoleteState = Pending;
+                    ObsoleteTag = '27.2';
+                }
+#endif
                 field(PreferredStartTime; Rec.PreferredStartTime) { }
                 field(PreferredEndTime; Rec.PreferredEndTime) { }
                 field(TimeZoneId; Rec.TimeZoneId) { }
@@ -142,6 +238,7 @@ page 73274 TKAManagedBCEnvironmentCard
                     CurrPage.Update();
                 end;
             }
+#if not CLEAN29
             action(ChangeUpdateDate)
             {
                 ApplicationArea = All;
@@ -149,6 +246,10 @@ page 73274 TKAManagedBCEnvironmentCard
                 Caption = 'Change Update Date';
                 ToolTip = 'Change the update date for the selected environment.';
                 Image = ChangeLog;
+                ObsoleteReason = 'Replaced by flexible update logic and related fields.';
+                ObsoleteState = Pending;
+                ObsoleteTag = '27.2';
+                Visible = ShowLegacyUpdateStructure;
 
                 trigger OnAction()
                 var
@@ -162,6 +263,7 @@ page 73274 TKAManagedBCEnvironmentCard
                     CurrPage.Update();
                 end;
             }
+#endif
             action(InstallApps)
             {
                 ApplicationArea = All;
@@ -193,6 +295,11 @@ page 73274 TKAManagedBCEnvironmentCard
                 Image = DateRange;
                 RunObject = page TKAManagedBCEnvAvailUpdates;
                 RunPageLink = TenantId = field(TenantId), EnvironmentName = field(Name);
+#if not CLEAN29
+#pragma warning disable AL0432
+                Visible = not ShowLegacyUpdateStructure;
+#pragma warning restore AL0432
+#endif
             }
             action(OpenManagedBCApps)
             {
@@ -216,7 +323,16 @@ page 73274 TKAManagedBCEnvironmentCard
                     Image = Change;
 
                     actionref(ChangeUpdateSettings_Promoted; ChangeUpdateSettings) { }
-                    actionref(ChangeUpdateDate_Promoted; ChangeUpdateDate) { }
+#if not CLEAN29
+#pragma warning disable AL0432
+                    actionref(ChangeUpdateDate_Promoted; ChangeUpdateDate)
+#pragma warning restore AL0432
+                    {
+                        ObsoleteReason = 'Replaced by flexible update logic and related fields.';
+                        ObsoleteState = Pending;
+                        ObsoleteTag = '27.2';
+                    }
+#endif
                     actionref(InstallApps_Promoted; InstallApps) { }
                 }
             }
@@ -230,6 +346,25 @@ page 73274 TKAManagedBCEnvironmentCard
         }
     }
 
+#if not CLEAN29
+    trigger OnOpenPage()
+    var
+        AdminCenterAPISetup: Record TKAAdminCenterAPISetup;
+    begin
+#pragma warning disable AL0432
+        ShowLegacyUpdateStructure := false;
+        AdminCenterAPISetup.ReadIsolation(IsolationLevel::ReadUncommitted);
+        AdminCenterAPISetup.SetLoadFields(APIVersion);
+        AdminCenterAPISetup.Get();
+        ShowLegacyUpdateStructure := AdminCenterAPISetup.APIVersion = AdminCenterAPISetup.APIVersion::"v2.24";
+#pragma warning restore AL0432
+    end;
+#endif
+
     var
         OpenEnvironmentLbl: Label 'Open Environment';
+#if not CLEAN29
+        [Obsolete('Replaced by flexible update logic and related fields.', '27.2')]
+        ShowLegacyUpdateStructure: Boolean;
+#endif
 }

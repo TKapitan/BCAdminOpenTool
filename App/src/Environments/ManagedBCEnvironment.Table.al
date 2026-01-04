@@ -121,6 +121,14 @@ table 73273 TKAManagedBCEnvironment
         {
             Caption = 'Update Target Version';
             ToolTip = 'Specifies the version of the application that the environment will update to.';
+            ObsoleteReason = 'Replaced by flexible update logic and related fields.';
+#if not CLEAN29
+            ObsoleteState = Pending;
+            ObsoleteTag = '27.2';
+#else
+            ObsoleteState = Removed;
+            ObsoleteTag = '29.0';
+#endif
         }
 #pragma warning disable AA0232 // SIFT index makes no sense for this field
         field(701; UpdateAvailableTargetVersion; Text[20])
@@ -152,26 +160,66 @@ table 73273 TKAManagedBCEnvironment
         {
             Caption = 'Can Tenant Select Date';
             ToolTip = 'Indicates if a new update date can be selected.';
+            ObsoleteReason = 'Replaced by flexible update logic and related fields.';
+#if not CLEAN29
+            ObsoleteState = Pending;
+            ObsoleteTag = '27.2';
+#else
+            ObsoleteState = Removed;
+            ObsoleteTag = '29.0';
+#endif
         }
         field(715; DidTenantSelectDate; Boolean)
         {
             Caption = 'Did Tenant Select Date';
             ToolTip = 'Indicates if the tenant has selected the current date for the update.';
+            ObsoleteReason = 'Replaced by flexible update logic and related fields.';
+#if not CLEAN29
+            ObsoleteState = Pending;
+            ObsoleteTag = '27.2';
+#else
+            ObsoleteState = Removed;
+            ObsoleteTag = '29.0';
+#endif
         }
         field(720; EarliestSelectableUpgradeDate; Date)
         {
             Caption = 'Earliest Selectable Upgrade Date';
             ToolTip = 'Specifies the earliest date that can be chosen for the update.';
+            ObsoleteReason = 'Replaced by flexible update logic and related fields.';
+#if not CLEAN29
+            ObsoleteState = Pending;
+            ObsoleteTag = '27.2';
+#else
+            ObsoleteState = Removed;
+            ObsoleteTag = '29.0';
+#endif
         }
         field(730; LatestSelectableUpgradeDate; Date)
         {
             Caption = 'Latest Selectable Upgrade Date';
             ToolTip = 'Specifies the latest date that can be chosen for the update.';
+            ObsoleteReason = 'Replaced by flexible update logic and related fields.';
+#if not CLEAN29
+            ObsoleteState = Pending;
+            ObsoleteTag = '27.2';
+#else
+            ObsoleteState = Removed;
+            ObsoleteTag = '29.0';
+#endif
         }
         field(740; UpgradeDate; Date)
         {
             Caption = 'Upgrade Date';
             ToolTip = 'The currently selected scheduled date of the update.';
+            ObsoleteReason = 'Replaced by flexible update logic and related fields.';
+#if not CLEAN29
+            ObsoleteState = Pending;
+            ObsoleteTag = '27.2';
+#else
+            ObsoleteState = Removed;
+            ObsoleteTag = '29.0';
+#endif
         }
         field(741; UpdateDate; Date)
         {
@@ -185,31 +233,55 @@ table 73273 TKAManagedBCEnvironment
         {
             Caption = 'Update Status';
             ToolTip = 'The current status of the environment''s update.';
+            ObsoleteReason = 'Replaced by flexible update logic and related fields.';
+#if not CLEAN29
+            ObsoleteState = Pending;
+            ObsoleteTag = '27.2';
+#else
+            ObsoleteState = Removed;
+            ObsoleteTag = '29.0';
+#endif
         }
         field(760; IgnoreUpgradeWindow; Boolean)
         {
             Caption = 'Ignore Upgrade Window';
             ToolTip = 'Indicates if the environment''s update window will be ignored.';
+            ObsoleteReason = 'Replaced by flexible update logic and related fields.';
+#if not CLEAN29
+            ObsoleteState = Pending;
+            ObsoleteTag = '27.2';
+#else
+            ObsoleteState = Removed;
+            ObsoleteTag = '29.0';
+#endif
         }
         field(761; IgnoreScheduleUpgradeWindow; Boolean)
         {
-            Caption = 'Update Is Scheduled';
+            Caption = 'Ignore Scheduled Upgrade Window';
             FieldClass = FlowField;
             CalcFormula = lookup(TKAManagedBCEnvAvailUpdate.IgnoreUpdateWindow where(TenantId = field(TenantId), EnvironmentName = field(Name), Selected = const(true)));
-            ToolTip = 'Indicates if an update is scheduled for the environment.';
+            ToolTip = 'Specifies whether the environment is set to ignore the update window for the scheduled update.';
             Editable = false;
         }
         field(770; UpdateIsActive; Boolean)
         {
             Caption = 'Update Is Active';
             ToolTip = 'Indicates if the update is activated and is scheduled to occur.';
+            ObsoleteReason = 'Replaced by flexible update logic and related fields.';
+#if not CLEAN29
+            ObsoleteState = Pending;
+            ObsoleteTag = '27.2';
+#else
+            ObsoleteState = Removed;
+            ObsoleteTag = '29.0';
+#endif
         }
         field(771; UpdateIsScheduled; Boolean)
         {
             Caption = 'Update Is Scheduled';
             FieldClass = FlowField;
             CalcFormula = exist(TKAManagedBCEnvAvailUpdate where(TenantId = field(TenantId), EnvironmentName = field(Name), Selected = const(true)));
-            ToolTip = 'Indicates if an update is scheduled for the environment.';
+            ToolTip = 'Specifies if an update is scheduled for the environment.';
             Editable = false;
         }
         field(780; PreferredStartTime; Text[50])

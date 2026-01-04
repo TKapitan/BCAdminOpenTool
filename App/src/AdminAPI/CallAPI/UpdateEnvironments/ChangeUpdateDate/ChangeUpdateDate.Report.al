@@ -1,9 +1,13 @@
+#if not CLEAN29
 report 73270 TKAChangeUpdateDate
 {
     ApplicationArea = All;
     Caption = 'Change Update Date';
     ProcessingOnly = true;
     UsageCategory = None;
+    ObsoleteReason = 'Replaced by flexible update logic and related fields.';
+    ObsoleteState = Pending;
+    ObsoleteTag = '27.2';
 
     requestpage
     {
@@ -63,3 +67,4 @@ report 73270 TKAChangeUpdateDate
         ManagedBCEnvironment.Copy(NewManagedBCEnvironment);
     end;
 }
+#endif

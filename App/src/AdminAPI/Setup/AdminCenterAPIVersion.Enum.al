@@ -7,6 +7,9 @@ enum 73271 TKAAdminCenterAPIVersion
     value(0; "v2.24")
     {
         Caption = 'v2.24', Locked = true;
+        ObsoleteReason = 'Replaced by flexible update logic and related fields.';
+        ObsoleteState = Pending;
+        ObsoleteTag = '27.2';
     }
 #pragma warning restore LC0045
     value(5; "v2.28")

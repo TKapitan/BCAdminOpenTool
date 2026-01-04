@@ -1,6 +1,10 @@
+#if not CLEAN29
 codeunit 73275 TKAChangeUpdateDateImpl
 {
     Access = Internal;
+    ObsoleteReason = 'Replaced by flexible update logic and related fields.';
+    ObsoleteState = Pending;
+    ObsoleteTag = '27.2';
 
     procedure RunChangeUpdateDate(var ManagedBCEnvironment: Record TKAManagedBCEnvironment; NewUpdateDate: Date; ChangeIgnoreUpgradeWindow: Boolean; NewIgnoreUpgradeWindow: Boolean)
     begin
@@ -46,10 +50,13 @@ codeunit 73275 TKAChangeUpdateDateImpl
                 NewIgnoreUpgradeWindow := ManagedBCEnvironment.IgnoreUpgradeWindow;
             RequestBodyJsonObject.Add('ignoreUpgradeWindow', NewIgnoreUpgradeWindow);
 
+#pragma warning disable AL0432
             Endpoint := CallAdminAPI.GetScheduledUpdateForEnvironmentEndpoint(ManagedBCEnvironment.Name);
+#pragma warning restore AL0432
             if not CallAdminAPI.PutToAdminAPI(ManagedBCEnvironment, Endpoint, RequestBodyJsonObject, HttpResponseMessage) then
                 CallAdminAPI.ThrowError(HttpResponseMessage);
         until ManagedBCEnvironment.Next() < 1;
         GetEnvironments.UpdateSelectedEnvironments(ManagedBCEnvironment, false);
     end;
 }
+#endif

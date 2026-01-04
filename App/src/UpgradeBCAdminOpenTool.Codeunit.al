@@ -17,6 +17,12 @@ codeunit 73302 TKAUpgradeBCAdminOpenTool
     begin
         SetTenantGroupStatus20251006();
         SetAPIVersionv22420260104();
+#if CLEAN28
+        SetDefaultAPIv22820260104();
+#endif
+#if CLEAN29
+        ForceAPIv22820260104();
+#endif
     end;
 
     internal procedure RunOnUpgradePerDatabase()
@@ -51,11 +57,51 @@ codeunit 73302 TKAUpgradeBCAdminOpenTool
         UpgradeTag.SetUpgradeTag(SetAPIVersionv22420260104Tok);
     end;
 
+#if CLEAN28
+    local procedure SetDefaultAPIv22820260104()
+    var
+        AdminCenterAPISetup: Record TKAAdminCenterAPISetup;
+    begin
+        if UpgradeTag.HasUpgradeTag(SetDefaultAPIv22820260104Tok) then
+            exit;
+        if not AdminCenterAPISetup.Get() then
+            exit;
+        if AdminCenterAPISetup.APIVersion <> AdminCenterAPISetup.APIVersion::"v2.24" then
+            exit;
+        AdminCenterAPISetup.Validate(APIVersion, AdminCenterAPISetup.APIVersion::"v2.28");
+        AdminCenterAPISetup.Modify(true);
+        UpgradeTag.SetUpgradeTag(SetDefaultAPIv22820260104Tok);
+    end;
+#endif
+
+#if CLEAN29
+    local procedure ForceAPIv22820260104()
+    var
+        AdminCenterAPISetup: Record TKAAdminCenterAPISetup;
+    begin
+        if UpgradeTag.HasUpgradeTag(ForceAPIv22820260104Tok) then
+            exit;
+        if not AdminCenterAPISetup.Get() then
+            exit;
+        if AdminCenterAPISetup.APIVersion <> AdminCenterAPISetup.APIVersion::"v2.24" then
+            exit;
+        AdminCenterAPISetup.Validate(APIVersion, AdminCenterAPISetup.APIVersion::"v2.28");
+        AdminCenterAPISetup.Modify(true);
+        UpgradeTag.SetUpgradeTag(ForceAPIv22820260104Tok);
+    end;
+#endif
+
     [EventSubscriber(ObjectType::Codeunit, Codeunit::"Upgrade Tag", OnGetPerCompanyUpgradeTags, '', false, false)]
     local procedure OnGetPerCompanyUpgradeTags(var PerCompanyUpgradeTags: List of [Code[250]])
     begin
         PerCompanyUpgradeTags.Add(SetTenantGroupStatus20251006Tok);
         PerCompanyUpgradeTags.Add(SetAPIVersionv22420260104Tok);
+#if CLEAN28
+        PerCompanyUpgradeTags.Add(SetDefaultAPIv22820260104Tok);
+#endif
+#if CLEAN29
+        PerCompanyUpgradeTags.Add(ForceAPIv22820260104Tok);
+#endif
     end;
 
     [EventSubscriber(ObjectType::Codeunit, Codeunit::"Upgrade Tag", OnGetPerDatabaseUpgradeTags, '', false, false)]
@@ -67,4 +113,10 @@ codeunit 73302 TKAUpgradeBCAdminOpenTool
         UpgradeTag: Codeunit "Upgrade Tag";
         SetTenantGroupStatus20251006Tok: Label 'TKA-BCAdminOpenTool-SetTenantGroupStatus-20251006', Locked = true;
         SetAPIVersionv22420260104Tok: Label 'TKA-BCAdminOpenTool-SetAPIVersionv224-20260104', Locked = true;
+#if CLEAN28
+        SetDefaultAPIv22820260104Tok: Label 'TKA-BCAdminOpenTool-SetDefaultAPIv228-20260104', Locked = true;
+#endif
+#if CLEAN29
+        ForceAPIv22820260104Tok: Label 'TKA-BCAdminOpenTool-ForceAPIv228-20260104', Locked = true;
+#endif
 }

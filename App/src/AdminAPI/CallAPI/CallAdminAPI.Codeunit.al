@@ -134,6 +134,7 @@ codeunit 73271 TKACallAdminAPI
     /// </summary>
     /// <param name="EnvironmentName">The name of the environment for which to get the scheduled update information.</param>
     /// <returns>String containing the endpoint for getting scheduled update information for an environment.</returns>
+    [Obsolete('Replaced by flexible update logic and related fields.', '27.2')]
     procedure GetScheduledUpdateForEnvironmentEndpoint(EnvironmentName: Text): Text
     begin
         exit('/applications/BusinessCentral/environments/{environmentName}/upgrade'.Replace('{environmentName}', EnvironmentName));

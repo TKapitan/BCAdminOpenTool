@@ -36,4 +36,18 @@ page 73282 TKAManagedBCEnvAvailUpdates
             }
         }
     }
+#if not CLEAN29
+    trigger OnOpenPage()
+    var
+        AdminCenterAPISetup: Record TKAAdminCenterAPISetup;
+    begin
+        AdminCenterAPISetup.ReadIsolation(IsolationLevel::ReadUncommitted);
+        AdminCenterAPISetup.SetLoadFields(APIVersion);
+        AdminCenterAPISetup.Get();
+#pragma warning disable AL0432
+        if AdminCenterAPISetup.APIVersion = AdminCenterAPISetup.APIVersion::"v2.24" then
+#pragma warning restore AL0432
+            AdminCenterAPISetup.FieldError(APIVersion);
+    end;
+#endif
 }
