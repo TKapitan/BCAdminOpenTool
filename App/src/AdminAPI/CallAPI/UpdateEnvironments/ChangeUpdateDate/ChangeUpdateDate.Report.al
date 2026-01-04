@@ -14,17 +14,10 @@ report 73270 TKAChangeUpdateDate
                 group(General)
                 {
                     Caption = 'General';
-                    field(ChangeUpdateDateField; ChangeUpdateDate)
-                    {
-                        ApplicationArea = All;
-                        Caption = 'Change Update Date';
-                        ToolTip = 'Specifies if the update date should be changed.';
-                    }
                     field(NewUpdateDateField; NewUpdateDate)
                     {
                         ApplicationArea = All;
                         Caption = 'New Update Date';
-                        Editable = ChangeUpdateDate;
                         ToolTip = 'Specifies the new update date.';
                     }
                     field(ChangeIgnoreUpgradeWindowField; ChangeIgnoreUpgradeWindow)
@@ -48,20 +41,16 @@ report 73270 TKAChangeUpdateDate
     trigger OnPostReport()
     var
         ChangeUpdateDateImpl: Codeunit TKAChangeUpdateDateImpl;
-        NothingToChangeErr: Label 'At least one of the fields "Change Update Date" or "Change Ignore Upgrade Window" must be set to Yes.';
         NewUpdateDateMustHaveValueErr: Label 'The field "New Update Date" must have a value.';
     begin
-        if not ChangeIgnoreUpgradeWindow and not ChangeUpdateDate then
-            Error(NothingToChangeErr);
-        if ChangeUpdateDate and (NewUpdateDate = 0D) then
+        if NewUpdateDate = 0D then
             Error(NewUpdateDateMustHaveValueErr);
-
-        ChangeUpdateDateImpl.RunChangeUpdateDate(ManagedBCEnvironment, ChangeUpdateDate, NewUpdateDate, ChangeIgnoreUpgradeWindow, NewIgnoreUpgradeWindow);
+        ChangeUpdateDateImpl.RunChangeUpdateDate(ManagedBCEnvironment, NewUpdateDate, ChangeIgnoreUpgradeWindow, NewIgnoreUpgradeWindow);
     end;
 
     var
         ManagedBCEnvironment: Record TKAManagedBCEnvironment;
-        ChangeUpdateDate, ChangeIgnoreUpgradeWindow : Boolean;
+        ChangeIgnoreUpgradeWindow: Boolean;
         NewUpdateDate: Date;
         NewIgnoreUpgradeWindow: Boolean;
 

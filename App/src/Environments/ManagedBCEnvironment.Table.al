@@ -46,6 +46,15 @@ table 73273 TKAManagedBCEnvironment
             Caption = 'Country Code';
             ToolTip = 'Specifies the country code for the environment.';
         }
+        field(15; CustomerNo; Code[20])
+        {
+            Caption = 'Customer No.';
+            FieldClass = FlowField;
+            CalcFormula = lookup(TKAManagedBCTenant.CustomerNo where(TenantId = field(TenantId)));
+            ToolTip = 'Specifies the customer number for the tenant.';
+            Editable = false;
+            AllowInCustomizations = AsReadOnly;
+        }
         field(20; ApplicationVersion; Text[20])
         {
             Caption = 'Application Version';
@@ -88,7 +97,7 @@ table 73273 TKAManagedBCEnvironment
         }
         field(300; WebClientURL; Text[500])
         {
-            AllowInCustomizations = Always;
+            AllowInCustomizations = AsReadWrite;
             Caption = 'Web Client URL';
             ToolTip = 'Specifies the URL of the web client for the environment.';
             ExtendedDatatype = URL;

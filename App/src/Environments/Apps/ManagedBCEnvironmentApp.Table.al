@@ -78,9 +78,23 @@ table 73276 TKAManagedBCEnvironmentApp
             ToolTip = 'Specifies whether the app is a whitelisted third party app.';
             Editable = false;
         }
+        field(35; WhitelistedThirdPartyAppForEnv; Boolean)
+        {
+            Caption = 'Whitelisted Third Party App for Environment';
+            ToolTip = 'Specifies whether the app is a whitelisted third party app for the environment.';
+
+            trigger OnValidate()
+            var
+                ExistingWhitelistedThirdPartyApp: Record TKAWhitelistedThirdPartyApp;
+            begin
+                if ExistingWhitelistedThirdPartyApp.Get(Rec.ID) then
+                    exit;
+                Rec.WhitelistedThirdPartyApp := Rec.WhitelistedThirdPartyAppForEnv;
+            end;
+        }
         field(50; Hidden; Boolean)
         {
-            AllowInCustomizations = Always;
+            AllowInCustomizations = AsReadOnly;
             Caption = 'Hidden';
             Editable = false;
             ToolTip = 'Specifies whether the app is hidden. Apps that have name starting with "_Exclude" are hidden.';
@@ -114,5 +128,18 @@ table 73276 TKAManagedBCEnvironmentApp
         RecordCannotBeRenamedErr: Label 'Record cannot be renamed.';
     begin
         Error(RecordCannotBeRenamedErr);
+    end;
+
+    procedure AddToWhitelistedApps()
+    var
+        NewWhitelistedThirdPartyApp: Record TKAWhitelistedThirdPartyApp;
+    begin
+        if NewWhitelistedThirdPartyApp.Get(Rec.ID) then
+            exit; // Already whitelisted
+        NewWhitelistedThirdPartyApp.Init();
+        NewWhitelistedThirdPartyApp.Validate(AppId, Rec.ID);
+        NewWhitelistedThirdPartyApp.Validate(Publisher, Rec.Publisher);
+        NewWhitelistedThirdPartyApp.Validate(Name, Rec.Name);
+        NewWhitelistedThirdPartyApp.Insert(true);
     end;
 }

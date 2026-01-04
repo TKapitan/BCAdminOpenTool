@@ -27,12 +27,39 @@ page 73277 TKAManagedBCEnvironmentApps
                 field(Version; Rec."Version") { }
                 field(State; Rec.State) { }
                 field(WhitelistedThirdPartyApp; Rec.WhitelistedThirdPartyApp) { }
+                field(WhitelistedThirdPartyAppForEnv; Rec.WhitelistedThirdPartyAppForEnv) { }
                 field(InstalledOn; Rec.InstalledOn) { }
                 field(LastOperationId; Rec.LastOperationId)
                 {
                     Visible = false;
                 }
                 field(LastUpdateAttemptResult; Rec.LastUpdateAttemptResult) { }
+            }
+        }
+    }
+
+    actions
+    {
+        area(Processing)
+        {
+            action(AddToWhitelistedApps)
+            {
+                ApplicationArea = All;
+                Caption = 'Add to Whitelisted Apps';
+                Image = Add;
+                ToolTip = 'Add selected AppSource offerings to the whitelisted third party apps.';
+
+                trigger OnAction()
+                var
+                    ManagedBCEnvironmentApp: Record TKAManagedBCEnvironmentApp;
+                begin
+                    CurrPage.SetSelectionFilter(ManagedBCEnvironmentApp);
+                    if ManagedBCEnvironmentApp.FindSet() then
+                        repeat
+                            ManagedBCEnvironmentApp.AddToWhitelistedApps();
+                        until ManagedBCEnvironmentApp.Next() < 1;
+                    CurrPage.Update();
+                end;
             }
         }
     }
