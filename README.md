@@ -37,7 +37,7 @@ The tool also includes the **Available Update Timezones** page, which lists all 
 
 # Managed BC Administration Apps
 
-This page is designed to help you manage your Business Central Administration Apps using the Business Central Admin Center API. Here, you can input essential details like the Client ID, Name, and Client Secret for your apps.
+This page is designed to help you manage your Business Central Administration Apps using the Business Central Admin Center API. Here, you can input essential details like the Client ID, Name, and choose between Certificate or Client Secret authentication for your apps.
 
 ### Client ID
 The **Client ID** is a field where you enter the ID of the Entra App registered to access the Business Central Admin API. This ID can belong to either a single tenant or a multi-tenant app. The Client ID is essentially your app's unique identifier, allowing it to communicate with the Business Central Admin API.
@@ -45,8 +45,24 @@ The **Client ID** is a field where you enter the ID of the Entra App registered 
 ### Name
 The **Name** specifies the name of your app.
 
-### Client Secret
-The **Client Secret** is the key that allows your app to access the Business Central Admin API. Once you store this value, it can't be retrieved again, so make sure to keep a copy of it in a secure place when you first enter it. For security reasons, the Client Secret is stored in Isolated Storage (with scope **Company** that ensure that the secret can be obtained only by this app and only in the company where it's configured), ensuring that it remains protected from unauthorized access.
+### Authentication Type
+The **Authentication Type** field allows you to choose between two authentication methods:
+- **Certificate**: Uses certificate-based authentication (recommended for production)
+- **Client Secret**: Uses client secret authentication
+
+**Certificate Authentication (Recommended)**
+Certificate-based authentication is more secure than client secrets and is recommended by Microsoft for production environments. When you select this option:
+1. Use the **Create Certificate** action to generate a self-signed certificate
+2. Use the **Download Certificate** action to download the certificate (.cer file)
+3. Upload the certificate to your Entra app registration under **Certificates & secrets** > **Certificates**
+
+**Client Secret Authentication**
+Client secret authentication is simpler to set up but less secure than certificates. When you select this option:
+1. In your Entra app registration, go to **Certificates & secrets** > **Client secrets** > **New client secret**
+2. Copy the generated secret value (you won't be able to see it again!)
+3. Use the **Set Client Secret** action in BC Admin Open Tool to enter and save the secret
+
+For security reasons, both certificates and client secrets are stored in Isolated Storage (with scope **Company** that ensures the credentials can be obtained only by this app and only in the company where they're configured), ensuring that they remain protected from unauthorized access.
 
 # Managed BC Tenants
 

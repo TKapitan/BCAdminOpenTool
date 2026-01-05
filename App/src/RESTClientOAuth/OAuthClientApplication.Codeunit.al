@@ -43,6 +43,35 @@ codeunit 73285 TKAOAuthClientApplication
     end;
     #endregion
 
+    #region ClientSecret
+    /// <summary>
+    /// Sets the Client Secret used for authentication.
+    /// </summary>
+    /// <param name="Value">The Client Secret to set.</param>
+    procedure SetClientSecret(Value: SecretText)
+    begin
+        OAuthClientApplicationImpl.SetClientSecret(Value);
+    end;
+
+    /// <summary>
+    /// Gets the Client Secret used for authentication.
+    /// </summary>
+    /// <returns>The Client Secret.</returns>
+    procedure GetClientSecret() Value: SecretText
+    begin
+        Value := OAuthClientApplicationImpl.GetClientSecret();
+    end;
+
+    /// <summary>
+    /// Checks if the Client Secret has been set.
+    /// </summary>
+    /// <returns>True if the Client Secret has a value; otherwise, false.</returns>
+    procedure HasClientSecret(): Boolean
+    begin
+        exit(OAuthClientApplicationImpl.HasClientSecret());
+    end;
+    #endregion
+
     #region Scopes
     /// <summary>
     /// Adds a scope to the OAuth Client Application.
