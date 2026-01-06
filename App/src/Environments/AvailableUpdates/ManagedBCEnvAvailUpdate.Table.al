@@ -100,6 +100,7 @@ table 73280 TKAManagedBCEnvAvailUpdate
         {
             Clustered = true;
         }
+        key(TargetVersion; TargetVersion) { }
     }
 
     fieldgroups

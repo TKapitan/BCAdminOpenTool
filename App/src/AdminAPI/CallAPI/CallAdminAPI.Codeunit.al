@@ -51,6 +51,19 @@ codeunit 73271 TKACallAdminAPI
     end;
 
     /// <summary>
+    /// Calls the PATCH method of the Admin API for the specified BC tenant and API endpoint.
+    /// </summary>
+    /// <param name="ManagedBCEnvironment">Specifies the managed BC environment for which the API call is to be made.</param>
+    /// <param name="Endpoint">Specifies the API endpoint to be called.</param>
+    /// <param name="RequestBody">Specifies the request body as a JsonObject</param>
+    /// <param name="HttpResponseMessage">>Specifies the HttpResponseMessage object to be used for the API call.</param>
+    /// <returns>True if the API call was successful; otherwise, false.</returns>
+    procedure PatchToAdminAPI(ManagedBCEnvironment: Record TKAManagedBCEnvironment; Endpoint: Text; RequestBody: JsonObject; var HttpResponseMessage: Codeunit "Http Response Message"): Boolean
+    begin
+        exit(CallAdminAPIImpl.WriteToAdminAPI(Enum::"Http Method"::PATCH, ManagedBCEnvironment, Endpoint, RequestBody, HttpResponseMessage));
+    end;
+
+    /// <summary>
     /// Calls the PUT method of the Admin API for the specified BC tenant and API endpoint.
     /// </summary>
     /// <param name="ManagedBCEnvironment">Specifies the managed BC environment for which the API call is to be made.</param>
@@ -130,6 +143,18 @@ codeunit 73271 TKACallAdminAPI
     end;
 
     /// <summary>
+    /// Return the endpoint for scheduling an update for an environment.
+    /// </summary>
+    /// <param name="EnvironmentName">The name of the environment for which to get the endpoint.</param>
+    /// <param name="TargetVersion">The target version for which to get the endpoint.</param>
+    /// <returns>String containing the endpoint for scheduling an update for an environment.</returns>
+    procedure GetScheduleUpdateForEnvironmentEndpoint(EnvironmentName: Text; TargetVersion: Code[20]): Text
+    begin
+        exit('/applications/BusinessCentral/environments/{environmentName}/updates/{targetVersion}'.Replace('{environmentName}', EnvironmentName).Replace('{targetVersion}', TargetVersion));
+    end;
+
+#if not CLEAN29
+    /// <summary>
     /// Return the endpoint for getting scheduled update information for an environment.
     /// </summary>
     /// <param name="EnvironmentName">The name of the environment for which to get the scheduled update information.</param>
@@ -139,6 +164,7 @@ codeunit 73271 TKACallAdminAPI
     begin
         exit('/applications/BusinessCentral/environments/{environmentName}/upgrade'.Replace('{environmentName}', EnvironmentName));
     end;
+#endif
 
     /// <summary>
     /// Return the endpoint for getting update settings for an environment.

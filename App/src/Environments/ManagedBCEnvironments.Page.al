@@ -246,7 +246,6 @@ page 73273 TKAManagedBCEnvironments
                     CurrPage.Update();
                 end;
             }
-#if not CLEAN29
             action(ChangeUpdateDate)
             {
                 ApplicationArea = All;
@@ -254,10 +253,6 @@ page 73273 TKAManagedBCEnvironments
                 Caption = 'Change Update Date';
                 ToolTip = 'Change the update date for the selected environments.';
                 Image = ChangeLog;
-                ObsoleteReason = 'Replaced by flexible update logic and related fields.';
-                ObsoleteState = Pending;
-                ObsoleteTag = '27.2';
-                Visible = ShowLegacyUpdateStructure;
 
                 trigger OnAction()
                 var
@@ -270,7 +265,6 @@ page 73273 TKAManagedBCEnvironments
                     CurrPage.Update();
                 end;
             }
-#endif
             action(InstallApps)
             {
                 ApplicationArea = All;
