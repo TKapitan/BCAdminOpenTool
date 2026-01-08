@@ -2,9 +2,9 @@
 
 The BC Admin Open Tool is a solution designed to streamline the management of Business Central environments and tenants using the Business Central Admin Center API. This tool offers a range of functionalities that allow experienced Business Central developers and consultants to efficiently manage their environments, update settings, and scheduled updates.
 
-With the **Managed BC Administration Apps** page, users can register and manage their Business Central Administration Apps by inputting essential details like Client ID, Name, and Client Secret. The **Managed BC Tenants** page enables users to manage their tenants, including actions to create or update tenants and environments, test connections, and view environments associated with each tenant. The **Managed BC Environments** page provides detailed information about each environment, including update settings and scheduled updates, ensuring that users have all the necessary data at their fingertips.
+With the **Managed BC Administration Apps** page, users can register and manage their Business Central Administration Apps by inputting essential details like Client ID, Name, and managing authentication certificates. The **Managed BC Tenants** page enables users to manage their tenants, including actions to create or update tenants and environments, test connections, and view environments associated with each tenant. The **Managed BC Environments** page provides detailed information about each environment, including update settings and scheduled updates, ensuring that users have all the necessary data at their fingertips.
 
-The tool also includes the **Available Update Timezones** page, which lists all available time zones for scheduling updates, and the **Admin Center API Setup** page, where users can configure API settings and optimize the process by enabling or disabling specific endpoints.
+The tool also includes advanced features such as **Tenant Group Management** for organizing tenants, **App Whitelisting** functionality for third-party applications, **Available Updates** management with modern API v2.28 support, the **Available Update Timezones** page which lists all available time zones for scheduling updates, and the **Admin Center API Setup** page where users can configure API settings and optimize the process by enabling or disabling specific endpoints.
 
 ## Why Open Source and Not Available Through AppSource
 
@@ -15,13 +15,16 @@ The tool also includes the **Available Update Timezones** page, which lists all 
 - [Managed BC Administration Apps](#managed-bc-administration-apps)
   - [Client ID](#client-id)
   - [Name](#name)
-  - [Client Secret](#client-secret)
+  - [Certificate Management](#certificate-management)
 - [Managed BC Tenants](#managed-bc-tenants)
+  - [Tenant Groups](#tenant-groups)
   - [Create/Update Tenants & Environment](#createupdate-tenants--environment)
   - [Create/Update Environments](#createupdate-environments)
   - [Test Connection](#test-connection)
   - [Environments](#environments)
 - [Managed BC Environments](#managed-bc-environments)
+  - [App Management](#app-management)
+  - [Available Updates](#available-updates)
   - [Update Settings](#update-settings)
   - [Scheduled Updates](#scheduled-updates)
   - [Update Environments](#update-environments)
@@ -29,15 +32,19 @@ The tool also includes the **Available Update Timezones** page, which lists all 
   - [Change Update Settings](#change-update-settings)
   - [Install Apps](#install-apps)
 - [AppSource Offerings](#appsource-offerings)
+- [Whitelisted Third Party Apps](#whitelisted-third-party-apps)
 - [Available Update Timezones](#available-update-timezones)
   - [Get Available Timezones](#get-available-timezones)
 - [Admin Center API Setup](#admin-center-api-setup)
+  - [API Version Support](#api-version-support)
   - [Additional Endpoints](#additional-endpoints)
-  - [Disableable Endpoints](#disableable-endpoints)
+  - [App Configuration](#app-configuration)
+- [Permission Sets](#permission-sets)
+- [User Setup](#user-setup)
 
 # Managed BC Administration Apps
 
-This page is designed to help you manage your Business Central Administration Apps using the Business Central Admin Center API. Here, you can input essential details like the Client ID, Name, and Client Secret for your apps.
+This page is designed to help you manage your Business Central Administration Apps using the Business Central Admin Center API. Here, you can input essential details like the Client ID, Name, and manage authentication certificates for your apps.
 
 ### Client ID
 The **Client ID** is a field where you enter the ID of the Entra App registered to access the Business Central Admin API. This ID can belong to either a single tenant or a multi-tenant app. The Client ID is essentially your app's unique identifier, allowing it to communicate with the Business Central Admin API.
@@ -45,8 +52,23 @@ The **Client ID** is a field where you enter the ID of the Entra App registered 
 ### Name
 The **Name** specifies the name of your app.
 
-### Client Secret
-The **Client Secret** is the key that allows your app to access the Business Central Admin API. Once you store this value, it can't be retrieved again, so make sure to keep a copy of it in a secure place when you first enter it. For security reasons, the Client Secret is stored in Isolated Storage (with scope **Company** that ensure that the secret can be obtained only by this app and only in the company where it's configured), ensuring that it remains protected from unauthorized access.
+### Certificate Management
+The BC Admin Open Tool uses **certificate-based authentication** instead of client secrets for enhanced security. This approach provides stronger security and is the recommended method for production applications.
+
+#### Certificate Features:
+- **Create Certificate**: Generate a new self-signed certificate directly within the application
+- **Download Certificate**: Export the certificate for registration in your Entra app
+- **Secure Storage**: Certificates and private keys are stored securely in Isolated Storage with company scope
+- **Automatic Configuration**: The tool automatically handles certificate-based OAuth 2.0 flows
+
+#### Setup Process:
+1. Create a new Administration App record with Client ID and Name
+2. Use **Create Certificate** to generate a self-signed certificate
+3. **Download Certificate** to get the .cer file
+4. Upload the certificate to your Entra app registration
+5. The tool will automatically use certificate-based authentication for all API calls
+
+**Security Benefits**: Certificate-based authentication eliminates the need to store client secrets and provides a more secure authentication method that's harder to compromise.
 
 # Managed BC Tenants
 
@@ -65,6 +87,19 @@ The **Group Code** field allows you to group tenants into multiple groups. Users
 
 ### Client ID
 The **Client ID** is the ID of the existing app (created in the Managed BC Administration Apps page). This app must have access to the specified Tenant ID to ensure proper connectivity and functionality.
+
+## Tenant Groups
+
+The application supports tenant group management through the **Managed BC Tenant Groups** page. Tenant groups allow you to organize your tenants for better management and filtering:
+
+- **Code**: A unique code identifying the tenant group
+- **Description**: A descriptive name for the group
+- **Status**: Groups can be Active or Inactive. Only tenants in active groups will be processed during API operations
+
+Tenant groups provide an organizational layer that helps in:
+- Filtering environments by tenant groups in the user interface
+- Controlling which tenants are processed during bulk operations
+- Organizing tenants based on customer, project, or any other business logic
 
 ## Actions
 
@@ -93,6 +128,41 @@ The **Name** field displays the name of the environment as retrieved from the AP
 
 ### Tenant Name
 The **Tenant Name** field shows the name of the associated tenant, as specified in the Managed BC Tenants page.
+
+## App Management
+
+The Managed BC Environments page provides comprehensive app management functionality:
+
+### App Counts
+The page displays several app-related metrics for each environment:
+- **No. of Apps**: Total number of AppSource apps installed in the environment
+- **No. of Our Apps**: Number of apps published by your organization (configurable in Admin Center API Setup)
+- **No. of Third-Party Apps**: Number of apps from other publishers (excluding Microsoft)
+- **No. of Third-Party Apps excl. Whitelisted**: Third-party apps that are not on your whitelist (highlighted if > 0)
+
+### App Actions
+- **Apps**: Opens the Managed BC Environment Apps page to view and manage individual apps
+- **Add to Whitelisted Apps**: Allows adding third-party apps to a whitelist for better organization
+
+## Available Updates
+
+The tool supports modern update management through the Admin Center API v2.28:
+
+### Available Updates Page
+Each environment has an **Available Updates** action that opens a dedicated page showing:
+- **Target Version**: The version number available for update
+- **Target Version Type**: Type of update (GA, Preview, etc.)
+- **Available**: Whether the update has been released
+- **Selected**: Whether this version is selected for the next update
+- **Expected Availability**: When the update is expected to be available
+- **Latest Selectable Date**: Last date the update can be scheduled
+- **Rollout Status**: Current rollout status of the update
+
+### Update Fields
+New update-related fields are available on the environment card:
+- **Update Available Target Version**: Latest available version for update
+- **Update Selected Target Version**: Currently selected version for update  
+- **Update Is Scheduled**: Whether an update is currently scheduled
 
 ### Additional Fields
 The additional fields on the **Managed BC Environments** page provide comprehensive information about each environment. These fields are obtained from multiple API endpoints and include details about the environment, update settings, and scheduled updates. Here are some of the key fields:
@@ -145,9 +215,36 @@ The additional fields on the **Managed BC Environments** page provide comprehens
 This action updates the selected environments. It retrieves the latest values from the API and updates the corresponding Business Central records to ensure they reflect the most current information and settings.
 
 ### Change Update Date
-This action allows you to change the scheduled update date for selected environments. You can specify a new update date and indicate whether the update should ignore the update window.
+This action allows you to change the scheduled update date for selected environments. The functionality varies significantly based on the API version:
 
-**Note**: The update date must be in the future and must be within the allowed period for the environment.
+#### API v2.28 and newer:
+**Target Version Selection**: Choose from available updates using a lookup that shows:
+- Available versions with their types (GA, Preview, etc.)
+- Expected availability dates
+- Rollout status information
+- Version-specific selectable date ranges
+
+**Enhanced Date Selection**: 
+- Specify a new update date within the allowed timeframe for the selected version
+- Each target version has its own earliest and latest selectable dates
+- Date validation based on the selected target version
+
+**Update Window Control**: Option to ignore the environment's configured update window for the specific update.
+
+**Version Restrictions**: Only General Availability (GA) versions can be selected through this interface for security and stability.
+
+#### API v2.24 (Legacy Implementation - Deprecated):
+**Simple Date Change**: Direct modification of the scheduled update date without target version selection.
+- Uses the existing target version from the scheduled update
+- Basic date validation against environment-wide date ranges
+- Limited metadata and update information
+
+**Migration Note**: Legacy functionality is automatically hidden when using API v2.28 and will be completely removed in Business Central v29.0.
+
+**Requirements**: 
+- The update date must be in the future and within the allowed period for the selected environment and target version
+- Target version must be available and support scheduling
+- Environment must have active tenant group status
 
 ### Change Update Settings
 This action allows you to change the preferred start time, end time, and time zone for the selected environments. All values must be specified. The time zone must be selected from the available time zones (which will be described later).
@@ -166,6 +263,27 @@ After the installation process completes, you'll receive a summary showing:
 - Number of apps skipped (already installed in the environment)
 - Number of apps not found (either not available in AppSource or not compatible with environment's localization) including details (tenant, environment, app, version and localization)
 - Number of apps that couldn't be installed due to missing dependencies including details (tenant, environment and information about missing dependencies). You can install dependencies automatically by enabling option **Install/Update Needed Dependencies** on the request page.
+
+# Whitelisted Third Party Apps
+
+This page manages a list of approved third-party applications that you want to track separately from other third-party apps. This feature helps in:
+
+### App Organization
+- **Publisher**: The publisher name of the whitelisted app
+- **Name**: The name of the whitelisted app
+- **AppId**: The unique identifier of the app
+- **Comment**: Optional comment about why the app is whitelisted
+
+### Automatic Detection
+When third-party apps are discovered in environments, they are automatically checked against the whitelist and marked appropriately. This helps in:
+- Identifying unexpected third-party apps in environments
+- Maintaining visibility of approved vs. unapproved applications
+- Supporting compliance and governance requirements
+
+### Management Actions
+- Apps can be added to the whitelist directly from the Environment Apps page
+- Whitelisted status is automatically applied to existing environment apps when added
+- Individual environment apps can be marked as whitelisted per environment if needed
 
 # AppSource Offerings
 
@@ -192,9 +310,137 @@ This setup page allows you to configure the Admin Center API settings.
 
 **Note**: Do not change the URL and scopes unless you are familiar with the consequences.
 
+## API Version Support
+
+The application supports multiple API versions with significant differences in update management capabilities:
+
+### API v2.24 (Legacy - Being Phased Out)
+- **Limited Update Management**: Uses simple scheduled update approach
+- **Single Update Endpoint**: `/environments/{environmentName}/upgrade` 
+- **Simple Update Fields**: Basic fields like `UpdateTargetVersion`, `UpgradeDate`, `UpdateIsActive`
+- **Legacy Change Update Date**: Direct date modification without version selection
+- **Deprecation Notice**: This version will be **removed in Business Central 2026 wave 2 (v29.0)**
+
+### API v2.28 (Modern - Current Implementation)
+- **Enhanced Update Management**: Flexible update system with multiple target versions
+- **Multiple Update Endpoints**: 
+  - `/environments/{environmentName}/updates` - Get available updates
+  - `/environments/{environmentName}/updates/{targetVersion}` - Schedule specific version update
+- **Rich Update Information**: Detailed available updates with metadata:
+  - Target versions with types (GA, Preview, etc.)
+  - Rollout status and expected availability
+  - Selectable date ranges per version
+  - Selected vs. available updates distinction
+- **Advanced Change Update Date**: Version-specific scheduling with target version lookup
+- **Available Updates Page**: Dedicated interface for viewing and managing available updates
+
+### Migration Strategy
+The application follows a gradual migration approach across Business Central versions:
+
+#### **New Installations (All Versions)**:
+- Automatically configured with API v2.28
+- All modern features available immediately
+- No legacy functionality visible
+
+#### **Existing Installations**:
+
+**Current Behavior**: 
+- Retain current API version (typically v2.24)
+- No automatic migration during updates
+- **Manual Migration Available**: Switch to v2.28 in Admin Center API Setup if desired
+
+**Business Central v28.0 (CLEAN28)**:
+- v2.28 becomes the **default for upgraded installations**
+- Legacy v2.24 remains available as optional fallback
+- Users can still manually switch between v2.24 and v2.28
+- Recommended to migrate to v2.28 for enhanced features
+
+**Business Central v29.0 (CLEAN29)**:
+- **Only v2.28 supported** - complete removal of v2.24
+- Forced migration for any remaining v2.24 installations
+- All legacy functionality permanently removed
+
+### How to Switch API Versions
+
+#### To Enable Modern Features (v2.28):
+1. Navigate to **Admin Center API Setup** page
+2. Change **API Version** field from "v2.24" to "v2.28"  
+3. Modern features become immediately available:
+   - Available Updates page for each environment
+   - Enhanced Change Update Date with target version selection
+   - New update fields and improved scheduling
+
+#### To Revert to Legacy (v2.24) - Until v29.0:
+1. Navigate to **Admin Center API Setup** page
+2. Change **API Version** field from "v2.28" to "v2.24"
+3. Legacy interface becomes visible again
+
+**Important**: After v29.0, reverting to v2.24 will no longer be possible.
+
+## App Configuration
+
+### Our Publisher Name
+Configure your organization's publisher name to distinguish your apps from third-party apps in the environment listings.
+
+### Exclude Hidden Apps
+Enable this option to exclude apps with names starting with "_Exclude" from being displayed in app lists. This helps clean up the interface by hiding system or internal apps.
+
 ## Additional Endpoints
 You can enable or disable additional endpoints that are run automatically when the list of environments is updated. This can be used to optimize the process if you don't need some of the endpoints. For example, if you do not plan to change update settings, there is no reason to download information from this endpoint.
 
-### Disableable Endpoints
-- **Get Scheduled Update**
-- **Get Update Settings**
+### Configurable Endpoints
+- **Get Scheduled Update**: Downloads scheduled update information (legacy API v2.24 only)
+- **Get Updates**: Downloads available updates information (API v2.28 and later) 
+- **Get Update Settings**: Downloads environment update window settings
+- **Get Installed Apps**: Downloads list of installed apps for each environment
+
+# Permission Sets
+
+The BC Admin Open Tool provides a comprehensive permission model with multiple permission sets to support different user roles:
+
+## BC Admin Read
+Base permission set that provides read-only access to all BC Admin tool data. This includes:
+- View managed BC environments and apps
+- View tenants and tenant groups
+- View AppSource offerings and whitelisted apps
+- View update information and API setup
+
+## BC Admin Manage Environments  
+Extends read permissions with the ability to:
+- Modify environment data
+- Update environment apps information
+- Manage environment-specific settings
+
+## BC Admin Edit Apps
+Provides permissions for app-related operations:
+- Install apps to environments
+- Manage AppSource offerings
+- Handle whitelisted third-party apps
+
+## BC Admin Manage Tenants
+Includes environment management plus:
+- Create, modify, and delete tenant records
+- Manage tenant groups
+- Handle tenant-to-app relationships
+
+## BC Admin Admin
+Full administrative access combining all other permission sets plus:
+- Configure API setup
+- Manage available update timezones
+- Full access to tenant group management
+- Administrative functions across the tool
+
+# User Setup
+
+The tool extends the standard User Setup page with BC Admin specific functionality:
+
+## Visible BC Tenant Group Code
+Users can configure a default tenant group filter that automatically applies when viewing the Managed BC Environments page. This helps users focus on environments from specific tenant groups without having to manually apply filters each time.
+
+**Usage**: 
+- Set the field to a valid tenant group code
+- The Managed BC Environments page will automatically filter to show only environments from that tenant group
+- Users can still remove or modify the filter manually if needed
+- This setting is per-user and does not affect other users' views
+
+**Note**: This is a convenience feature, not a security restriction. Users with appropriate permissions can still access environments from other groups by modifying the filters.
