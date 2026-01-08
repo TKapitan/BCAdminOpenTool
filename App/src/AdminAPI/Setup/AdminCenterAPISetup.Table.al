@@ -30,6 +30,11 @@ table 73272 TKAAdminCenterAPISetup
             Caption = 'API Url';
             ToolTip = 'Specifies the API URL for the Admin Center API.';
         }
+        field(55; APIVersion; Enum TKAAdminCenterAPIVersion)
+        {
+            Caption = 'API Version';
+            ToolTip = 'Specifies the API version for the Admin Center API.';
+        }
         field(100; GetScheduledUpdateAPIEnabled; Boolean)
         {
             Caption = 'Get Scheduled Update API Enabled';
@@ -89,7 +94,7 @@ table 73272 TKAAdminCenterAPISetup
     var
         TokenUrlTok: Label 'https://login.microsoftonline.com/%1/oauth2/v2.0/token', Locked = true;
         ScopeTok: Label 'https://api.businesscentral.dynamics.com/.default', Locked = true;
-        APIBaseUrlTok: Label 'https://api.businesscentral.dynamics.com/admin/v2.24', Locked = true;
+        APIBaseUrlTok: Label 'https://api.businesscentral.dynamics.com/admin/', Locked = true;
     begin
         Rec.Reset();
         if not Rec.Get() then begin
@@ -97,6 +102,7 @@ table 73272 TKAAdminCenterAPISetup
             Rec.Validate(TokenUrl, TokenUrlTok);
             Rec.Validate(Scope, ScopeTok);
             Rec.Validate(APIUrl, APIBaseUrlTok);
+            Rec.Validate(APIVersion, Rec.APIVersion::"v2.28");
             Rec.Validate(ExcludeHiddedApps, true);
             Rec.Validate(GetScheduledUpdateAPIEnabled, true);
             Rec.Validate(GetUpdateSettingsAPIEnabled, true);

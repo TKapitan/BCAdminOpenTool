@@ -34,9 +34,70 @@ page 73273 TKAManagedBCEnvironments
                 field(CountryCode; Rec.CountryCode) { }
                 field(ApplicationVersion; Rec.ApplicationVersion) { }
                 field(PlatformVersion; Rec.PlatformVersion) { }
-                field(UpdateIsActive; Rec.UpdateIsActive) { }
-                field(UpdateTargetVersion; Rec.UpdateTargetVersion) { }
-                field(UpgradeDate; Rec.UpgradeDate) { }
+                field(UpdateAvailableTargetVersion; Rec.UpdateAvailableTargetVersion) { }
+                field(UpdateIsScheduled; Rec.UpdateIsScheduled)
+                {
+#if not CLEAN29
+#pragma warning disable AL0432
+                    Visible = not ShowLegacyUpdateStructure;
+#pragma warning restore AL0432
+#endif
+                }
+                field(UpdateSelectedTargetVersion; Rec.UpdateSelectedTargetVersion)
+                {
+#if not CLEAN29
+#pragma warning disable AL0432
+                    Visible = not ShowLegacyUpdateStructure;
+#pragma warning restore AL0432
+#endif
+                }
+                field(UpdateDate; Rec.UpdateDate)
+                {
+#if not CLEAN29
+#pragma warning disable AL0432
+                    Visible = not ShowLegacyUpdateStructure;
+#pragma warning restore AL0432
+#endif
+                }
+                field(UpdateSelectedExpAvailability; Rec.UpdateSelectedExpAvailability)
+                {
+#if not CLEAN29
+#pragma warning disable AL0432
+                    Visible = not ShowLegacyUpdateStructure;
+#pragma warning restore AL0432
+# endif
+                }
+                field(IgnoreScheduleUpgradeWindow; Rec.IgnoreScheduleUpgradeWindow)
+                {
+#if not CLEAN29
+#pragma warning disable AL0432
+                    Visible = not ShowLegacyUpdateStructure;
+#pragma warning restore AL0432
+# endif
+                }
+#if not CLEAN29
+                field(UpdateIsActive; Rec.UpdateIsActive)
+                {
+                    Visible = ShowLegacyUpdateStructure;
+                    ObsoleteReason = 'Replaced by flexible update logic and related fields.';
+                    ObsoleteState = Pending;
+                    ObsoleteTag = '27.2';
+                }
+                field(UpdateTargetVersion; Rec.UpdateTargetVersion)
+                {
+                    Visible = ShowLegacyUpdateStructure;
+                    ObsoleteReason = 'Replaced by flexible update logic and related fields.';
+                    ObsoleteState = Pending;
+                    ObsoleteTag = '27.2';
+                }
+                field(UpgradeDate; Rec.UpgradeDate)
+                {
+                    Visible = ShowLegacyUpdateStructure;
+                    ObsoleteReason = 'Replaced by flexible update logic and related fields.';
+                    ObsoleteState = Pending;
+                    ObsoleteTag = '27.2';
+                }
+#endif
                 field(PreferredStartTime; Rec.PreferredStartTime)
                 {
                     Visible = false;
@@ -226,6 +287,20 @@ page 73273 TKAManagedBCEnvironments
         }
         area(Navigation)
         {
+            action(OpenAvailableUpdates)
+            {
+                Caption = 'Available Updates';
+                ApplicationArea = All;
+                ToolTip = 'View available updates for this environment.';
+                Image = DateRange;
+                RunObject = page TKAManagedBCEnvAvailUpdates;
+                RunPageLink = TenantId = field(TenantId), EnvironmentName = field(Name);
+#if not CLEAN29
+#pragma warning disable AL0432
+                Visible = not ShowLegacyUpdateStructure;
+#pragma warning restore AL0432
+#endif
+            }
             action(OpenManagedBCApps)
             {
                 Caption = 'Apps';
@@ -244,13 +319,28 @@ page 73273 TKAManagedBCEnvironments
 
                 group(Change)
                 {
-                    Caption = 'Change';
+                    Caption = 'Change...';
                     Image = Change;
 
                     actionref(ChangeUpdateSettings_Promoted; ChangeUpdateSettings) { }
-                    actionref(ChangeUpdateDate_Promoted; ChangeUpdateDate) { }
+#if not CLEAN29
+#pragma warning disable AL0432
+                    actionref(ChangeUpdateDate_Promoted; ChangeUpdateDate)
+#pragma warning restore AL0432
+                    {
+                        ObsoleteReason = 'Replaced by flexible update logic and related fields.';
+                        ObsoleteState = Pending;
+                        ObsoleteTag = '27.2';
+                    }
+#endif
                     actionref(InstallApps_Promoted; InstallApps) { }
                 }
+            }
+            group(Category_Category5)
+            {
+                Caption = 'Navigation';
+
+                actionref(OpenAvailableUpdates_Promoted; OpenAvailableUpdates) { }
                 actionref(OpenManagedBCApps_Promoted; OpenManagedBCApps) { }
             }
         }
@@ -258,10 +348,23 @@ page 73273 TKAManagedBCEnvironments
 
     trigger OnOpenPage()
     var
+#if not CLEAN29
+        AdminCenterAPISetup: Record TKAAdminCenterAPISetup;
+#endif
         SoftDeletedStatusTok: Label 'SoftDeleted', Locked = true;
     begin
         Rec.SetFilter(Status, '<>%1', SoftDeletedStatusTok);
         SetVisibleBCTenantGroupFilter();
+
+#if not CLEAN29
+#pragma warning disable AL0432
+        ShowLegacyUpdateStructure := false;
+        AdminCenterAPISetup.ReadIsolation(IsolationLevel::ReadUncommitted);
+        AdminCenterAPISetup.SetLoadFields(APIVersion);
+        AdminCenterAPISetup.Get();
+        ShowLegacyUpdateStructure := AdminCenterAPISetup.APIVersion = AdminCenterAPISetup.APIVersion::"v2.24";
+#pragma warning restore AL0432
+#endif
     end;
 
     trigger OnAfterGetRecord()
@@ -273,6 +376,10 @@ page 73273 TKAManagedBCEnvironments
         OpenEnvironmentLbl: Label 'Open Environment';
         NoOfThirdPartyAppsExclWhitelistedStyle: Text;
         NoOfApps, NoOfOurApps, NoOfThirdPartyApps, NoOfThirdPartyAppsExclWhitelisted : Integer;
+#if not CLEAN29
+        [Obsolete('Replaced by flexible update logic and related fields.', '27.2')]
+        ShowLegacyUpdateStructure: Boolean;
+#endif
 
 
     local procedure SetVisibleBCTenantGroupFilter()

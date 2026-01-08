@@ -18,6 +18,7 @@ page 73272 TKAAdminCenterAPISetup
                 field(TokenUrl; Rec.TokenUrl) { }
                 field(Scope; Rec.Scope) { }
                 field(APIUrl; Rec.APIUrl) { }
+                field(APIVersion; Rec.APIVersion) { }
             }
             group(Apps)
             {
