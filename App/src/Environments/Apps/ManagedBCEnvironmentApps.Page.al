@@ -1,10 +1,12 @@
 page 73277 TKAManagedBCEnvironmentApps
 {
     Caption = 'Managed BC Environment Apps';
-    Editable = false;
     PageType = List;
     UsageCategory = Lists;
     ApplicationArea = All;
+    InsertAllowed = false;
+    ModifyAllowed = true;
+    DeleteAllowed = false;
     SourceTable = TKAManagedBCEnvironmentApp;
 
     layout
